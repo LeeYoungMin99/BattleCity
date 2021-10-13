@@ -39,14 +39,14 @@ void TitleScene::Update()
 			{
 			case player_1:
 				selecTitle = selectedTitle::player_1;
-				SceneManager::GetSingleton()->ChangeScene("½ºÄÚ¾î¾À", "·Îµù¾À");
+				SceneManager::GetSingleton()->ChangeScene("Stage1", "LoadingScene");
 				break;
 			case player_2:
 				selecTitle = selectedTitle::player_1;
 				break;
 			case CONSTRUCTION:
 				selecTitle = selectedTitle::player_2;
-				SceneManager::GetSingleton()->ChangeScene("°ÔÀÓ¿À¹ö¾À");
+				SceneManager::GetSingleton()->ChangeScene("GameOverScene");
 				break;
 			}
 			return;

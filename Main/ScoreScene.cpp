@@ -145,7 +145,7 @@ void ScoreScene::Update()
 		elapsedcount++;
 		if (elapsedcount >= 100)
 		{
-			SceneManager::GetSingleton()->ChangeScene("°ÔÀÓ¿À¹ö¾À");
+			SceneManager::GetSingleton()->ChangeScene("GameOverScene");
 		}
 	}
 	

@@ -23,17 +23,17 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->Init();
 
 
-	SceneManager::GetSingleton()->AddScene("타이틀씬", new TitleScene());
-	SceneManager::GetSingleton()->AddScene("스코어씬", new ScoreScene());
-	SceneManager::GetSingleton()->AddScene("타일맵툴", new TilemapToolScene());
-	SceneManager::GetSingleton()->AddScene("스테이지1", new Stage1Scene());
-	SceneManager::GetSingleton()->AddScene("스테이지2", new Stage2Scene());
-	SceneManager::GetSingleton()->AddScene("스테이지3", new Stage3Scene());
-	SceneManager::GetSingleton()->AddScene("게임오버씬", new GameOverScene());
-	SceneManager::GetSingleton()->AddLoadingScene("로딩씬", new LoadingScene());
+	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
+	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
+	SceneManager::GetSingleton()->AddScene("TilemapToolScene", new TilemapToolScene());
+	SceneManager::GetSingleton()->AddScene("Stage1", new Stage1Scene());
+	SceneManager::GetSingleton()->AddScene("Stage2", new Stage2Scene());
+	SceneManager::GetSingleton()->AddScene("Stage3", new Stage3Scene());
+	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
+	SceneManager::GetSingleton()->AddLoadingScene("LoadingScene", new LoadingScene());
 
 
-	SceneManager::GetSingleton()->ChangeScene("스테이지1");
+	SceneManager::GetSingleton()->ChangeScene("TitleScene");
 
 
 	srand((unsigned int) time(nullptr));

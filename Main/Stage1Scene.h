@@ -20,9 +20,12 @@ private:
 	Image *lifeImage;
 	Image *stageImage;
 	Image* stageLevel;
+	Image* backGround;
 
 	Tank* tank;
 	vector<TankFactorial*> vecTankFactorial;
+
+	bool check = false;
 public:
 	void Load(int index);
 	virtual HRESULT Init() override;
