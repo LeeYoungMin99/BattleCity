@@ -6,51 +6,47 @@
 class Tank : public GameObject
 {
 public:
-	TankType type;
-	MoveDir moveDir;
+	TankType type = TankType::Player;
+	MoveDir moveDir = MoveDir::Up;
 	int checkMoveCount = 0;
-	int enforceCount = 0;
-	bool isAlive;
+	int enforceCount = 2;
+	bool bIsAlive = true;
 
-	// 필요한 멤버변수인지 확인필요.
-	POINTFLOAT barrelEnd;
-	float barrelSize;
-	float barrelAngle;
+	int ammoCount = 0;
+	
+	TILE_INFO* tileInfo = nullptr;
+	Ammo* ammoPack = nullptr;
 
-	int ammoCount;
-	Ammo* ammoPack;
-
+	int delay = rand();
+	int elapsedCount = 0;
 public:
-	virtual HRESULT Init(TankType type) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
-	virtual void Update() {}									// 오버라이딩을 한다
-	virtual void Render(HDC hdc) {}
-	virtual void Release() {}
+	virtual HRESULT Init(TILE_INFO* tileInfo) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
+	virtual void Update();												// 오버라이딩을 한다
+	virtual void Render(HDC hdc);
+	virtual void Release();
 
-	virtual void Move(MoveDir dir) {};
+	virtual void Move();
 	virtual void Fire() {};
 
-	void AutoMove();
-	void RotateBarrelAngle(float rotateAngle);
+	virtual bool IsCollided();
+	virtual void SetShape();
 
+	inline void SetIsAlive(bool alive) { this->bIsAlive = alive; }
 
-	inline void SetBarrelAngle(float angle) { this->barrelAngle = angle; }
-	inline void SetIsAlive(bool alive) { this->isAlive = alive; }
-
-	Tank();
-	virtual ~Tank();
+	Tank() {}
+	virtual ~Tank() {}
 };
 
 class PlayerTank : public Tank
 {
 public:
-	virtual HRESULT Init(TankType type);
-	virtual void Update();						
-	virtual void Render(HDC hdc);
-	virtual void Release();
+	virtual HRESULT Init(TILE_INFO* tileInfo) override;
+	virtual void Update() override;						
+	virtual void Render(HDC hdc) override;
+	virtual void Release() override;
 
-	virtual void Move(MoveDir dir) override;
+	virtual void Move() override;
 	virtual void Fire() override;
-	void ProcessInputKey();
 
 	PlayerTank() {}
 	virtual ~PlayerTank() {}
@@ -59,14 +55,7 @@ public:
 class NormalEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TankType type);
-	virtual void Update();
-	virtual void Render(HDC hdc);
-	virtual void Release();
-
-	virtual void Move(MoveDir dir) override;
-	virtual void Fire() override {}
-	void ProcessInputKey();
+	virtual HRESULT Init() override;
 
 	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
@@ -75,36 +64,26 @@ public:
 class SpeedEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TankType type);
-	virtual void Update();
-	virtual void Render(HDC hdc);
-	virtual void Release();
+	virtual HRESULT Init() override;
 
-	virtual void Move(MoveDir dir) override;
-	virtual void Fire() override;
+	SpeedEnemyTank() {}
+	virtual ~SpeedEnemyTank() {}
 };
 
 class RapidEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TankType type);
-	virtual void Update();
-	virtual void Render(HDC hdc);
-	virtual void Release();
+	virtual HRESULT Init() override;
 
-	virtual void Move(MoveDir dir) override;
-	virtual void Fire() override;
-
+	RapidEnemyTank() {}
+	virtual ~RapidEnemyTank() {}
 };
 
-class EnemyTank : public Tank
+class DefensiveEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TankType type);
-	virtual void Update();
-	virtual void Render(HDC hdc);
-	virtual void Release();
+	virtual HRESULT Init() override;
 
-	virtual void Move(MoveDir dir) override;
-	virtual void Fire() override;
+	DefensiveEnemyTank() {}
+	virtual ~DefensiveEnemyTank() {}
 };

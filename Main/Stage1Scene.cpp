@@ -3,6 +3,8 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
+#include "Tank.h"
+#include "TankFactorial.h"
 
 HRESULT Stage1Scene::Init()
 {
@@ -16,8 +18,17 @@ HRESULT Stage1Scene::Init()
         return E_FAIL;
     }
 
-
     Load(0);
+
+    vecTankFactorial.resize(5);
+    vecTankFactorial[0] = new PlayerTankFactorial;
+    vecTankFactorial[1] = new NormalEnemyTankFactorial;
+    vecTankFactorial[2] = new SpeedEnemyTankFactorial;
+    vecTankFactorial[3] = new RapidEnemyTankFactorial;
+    vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
+
+    tank = vecTankFactorial[0]->CreateTank();
+    tank->Init(tileInfo);
 
     cout << tileInfo[0].frameX << endl;
     return S_OK;
@@ -25,6 +36,7 @@ HRESULT Stage1Scene::Init()
 
 void Stage1Scene::Update()
 {
+    tank->Update();
 }
 
 void Stage1Scene::Render(HDC hdc)
@@ -42,6 +54,7 @@ void Stage1Scene::Render(HDC hdc)
         }
     }
 
+    tank->Render(hdc);
 }
 
 void Stage1Scene::Release()
@@ -50,7 +63,6 @@ void Stage1Scene::Release()
 
 void Stage1Scene::Load(int index)
 {
-
     string filePath = "Save/saveMapData" + to_string(0) + ".map";
 
     HANDLE hFile = CreateFile(filePath.c_str(),
@@ -69,6 +81,4 @@ void Stage1Scene::Load(int index)
     }
 
     CloseHandle(hFile);
-
-
 }
