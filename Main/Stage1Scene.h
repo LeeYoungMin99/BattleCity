@@ -4,8 +4,9 @@
 
 #pragma once
 class Image;
-class TankFactorial;
+class EnemyManager;
 class Tank;
+class TankFactorial;
 class Stage1Scene : public GameEntity
 {
 private:
@@ -22,8 +23,15 @@ private:
 	Image* stageLevel;
 	Image* backGround;
 
-	Tank* tank;
-	vector<TankFactorial*> vecTankFactorial;
+	Tank* tank = nullptr;
+	vector<TankFactorial*> vecTankFactorial = {};
+
+	int spawnCount = 0;
+	int maxSpawnCount = 3;
+	int currSpawnEnemy = 0;
+	int maxSpawnEnemy = 6;
+	POINTFLOAT spawnEnemyPos[3] = {};
+	EnemyManager* enemyMgr = nullptr;
 
 	bool check = false;
 public:
@@ -33,5 +41,6 @@ public:
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
 
+	void SpawnEnemy(TankType type);
 };
 

@@ -1,42 +1,14 @@
 #include "EnemyManager.h"
 #include "Enemy.h"
+#include "Tank.h"
 
-HRESULT EnemyManager::Init()
+HRESULT EnemyManager::Init(TILE_INFO* tileMap)
 {
-	enemyMaxCount = 10;
+	enemyMaxCount = 6;
+	vecEnemys.reserve(enemyMaxCount);
+	tileInfo = tileMap;
 
-	// 데이터타입 : Enemy* 데이터를 10개를 생성, 삽입
-	vecEnemys.resize(enemyMaxCount);
-
-	for (int i = 0; i < enemyMaxCount; i++)
-	{
-		vecEnemys[i] = new Enemy;
-		vecEnemys[i]->Init();
-		POINTFLOAT pos{ 100.0f + (i % 5) * 100.0f, 100.0f + (i / 5) * 80.0f };
-		vecEnemys[i]->SetPos(pos);
-	}
-
-	// 데이터타입 : Enemy* 데이터 10개를 삽입할 수 있는 메모리만 확보
-	//vecEnemys.reserve(10);
-	//int count = vecEnemys.size();
-
-	//cout << "reserve count : " << count << endl;
-
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	vecEnemys.push_back(new Enemy);
-	//	vecEnemys[i]->Init();
-	//}
-
-	//// 포인터 10개짜리 배열
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	enemy[i] = new Enemy;
-	//	enemy[i]->Init();
-	//	POINTFLOAT pos { 100.0f + (i % 5) * 100.0f, 100.0f + (i / 5) * 80.0f };
-	//	enemy[i]->SetPos(pos);
-	//}
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 	return S_OK;
 }
 
@@ -47,11 +19,6 @@ void EnemyManager::Update()
 	{
 		(*itEnemys)->Update();
 	}
-
-	//for (int i = 0; i < enemyMaxCount; i++)
-	//{
-	//	vecEnemys[i]->Update();
-	//}
 }
 
 void EnemyManager::Render(HDC hdc)
@@ -61,11 +28,6 @@ void EnemyManager::Render(HDC hdc)
 	{
 		(*itEnemys)->Render(hdc);
 	}
-
-	//for (int i = 0; i < enemyMaxCount; i++)
-	//{
-	//	vecEnemys[i]->Render(hdc);
-	//}
 }
 
 void EnemyManager::Release()
@@ -76,14 +38,11 @@ void EnemyManager::Release()
 		SAFE_RELEASE((*itEnemys));
 	}
 	vecEnemys.clear();
-
-	//for (int i = 0; i < enemyMaxCount; i++)
-	//{
-	//	SAFE_RELEASE(vecEnemys[i]);
-	//}
-	//vecEnemys.clear();
 }
 
-void EnemyManager::AddEnemy(float posX, float posY)
+void EnemyManager::AddEnemy(Tank* tank,POINTFLOAT pos)
 {
+	tank->Init(tileInfo);
+	tank->SetPos(pos);
+	vecEnemys.push_back(tank);
 }

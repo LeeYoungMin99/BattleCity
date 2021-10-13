@@ -12,8 +12,8 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 		return E_FAIL;
 	}
 
-	pos.x = TILEMAPTOOL_SIZE_X / 2.0f + 200;
-	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f + 200;
+	pos.x = 200;
+	pos.y = 430;
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
@@ -69,11 +69,11 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
-			if ((int)pos.y % 16 <= 4)
+			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
 				pos.y -= (int)pos.y % 16;
 			}
-			else if ((int)pos.y % 16 >= 12)
+			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
 				pos.y += 16 - (int)pos.y % 16;
 			}
@@ -82,7 +82,7 @@ void PlayerTank::Move()
 
 		pos.x -= moveSpeed;
 		SetShape();
-		if (IsCollided() || shape.left < 0)
+		if (IsCollided() || shape.left < STAGE_SIZE_X)
 		{
 			pos.x += moveSpeed;
 			SetShape();
@@ -95,11 +95,11 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
-			if ((int)pos.y % 16 <= 4)
+			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
 				pos.y -= (int)pos.y % 16;
 			}
-			else if ((int)pos.y % 16 >= 12)
+			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
 				pos.y += 16 - (int)pos.y % 16;
 			}
@@ -109,7 +109,7 @@ void PlayerTank::Move()
 		pos.x += moveSpeed;
 		SetShape();
 
-		if (IsCollided() || shape.right > 416)
+		if (IsCollided() || shape.right > 416 + STAGE_SIZE_X)
 		{
 			pos.x -= moveSpeed;
 			SetShape();
@@ -122,11 +122,11 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
 		{
-			if ((int)pos.x % 16 <= 4)
+			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
 			{
 				pos.x -= (int)pos.x % 16;
 			}
-			else if ((int)pos.x % 16 >= 12)
+			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
 			{
 				pos.x += 16 - (int)pos.x % 16;
 			}
@@ -135,7 +135,7 @@ void PlayerTank::Move()
 
 		pos.y -= moveSpeed;
 		SetShape();
-		if (IsCollided() || shape.top < 0)
+		if (IsCollided() || shape.top < STAGE_SIZE_Y)
 		{
 			pos.y += moveSpeed;
 			SetShape();
@@ -148,11 +148,11 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
 		{
-			if ((int)pos.x % 16 <= 4)
+			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
 			{
 				pos.x -= (int)pos.x % 16;
 			}
-			else if ((int)pos.x % 16 >= 12)
+			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
 			{
 				pos.x += 16 - (int)pos.x % 16;
 			}
@@ -161,7 +161,7 @@ void PlayerTank::Move()
 
 		pos.y += moveSpeed;
 		SetShape();
-		if (IsCollided() || shape.bottom > 416)
+		if (IsCollided() || shape.bottom > 416 + STAGE_SIZE_Y)
 		{
 			pos.y -= moveSpeed;
 			SetShape();
@@ -190,7 +190,7 @@ void PlayerTank::Fire()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init()
+HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 
@@ -205,6 +205,8 @@ HRESULT NormalEnemyTank::Init()
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+
+	tileInfo = tile;
 
 	SetShape();
 
@@ -225,7 +227,7 @@ HRESULT NormalEnemyTank::Init()
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init()
+HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 
@@ -240,6 +242,8 @@ HRESULT SpeedEnemyTank::Init()
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+
+	tileInfo = tile;
 
 	SetShape();
 
@@ -260,7 +264,7 @@ HRESULT SpeedEnemyTank::Init()
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init()
+HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 
@@ -275,6 +279,8 @@ HRESULT RapidEnemyTank::Init()
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+
+	tileInfo = tile;
 
 	SetShape();
 
@@ -295,7 +301,7 @@ HRESULT RapidEnemyTank::Init()
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init()
+HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 
@@ -310,6 +316,8 @@ HRESULT DefensiveEnemyTank::Init()
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+
+	tileInfo = tile;
 
 	SetShape();
 
@@ -333,6 +341,7 @@ void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
+	elapsedCount++;
 	Move();
 	Fire();
 }
@@ -356,14 +365,11 @@ void Tank::Release()
 
 void Tank::Move()
 {
-	// 한방향으로 이동중일떄
-	// 일정 프레임동안 이동이 안되면
-	// 방향을 전환.
-	// 리스폰떄 아래방향 보고있음.
-
 	if (elapsedCount == delay)
 	{
-		moveDir = (MoveDir)((rand() % 4) * 2);
+		elapsedCount = 0;
+		delay = RANDOM(10,20);
+		moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
 
 	switch (moveDir)
@@ -371,11 +377,11 @@ void Tank::Move()
 	case MoveDir::Left:
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
-			if ((int)pos.y % 16 <= 4)
+			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
 				pos.y -= (int)pos.y % 16;
 			}
-			else if ((int)pos.y % 16 >= 12)
+			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
 				pos.y += 16 - (int)pos.y % 16;
 			}
@@ -383,7 +389,7 @@ void Tank::Move()
 
 		pos.x -= moveSpeed;
 		SetShape();
-		if (IsCollided() || shape.left < 0)
+		if (IsCollided() || shape.left < STAGE_SIZE_X)
 		{
 			pos.x += moveSpeed;
 			SetShape();
@@ -394,13 +400,80 @@ void Tank::Move()
 
 		break;
 	case MoveDir::Right:
+		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
+		{
+			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
+			{
+				pos.y -= (int)pos.y % 16;
+			}
+			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
+			{
+				pos.y += 16 - (int)pos.y % 16;
+			}
+		}
+		moveDir = MoveDir::Right;
 
+		pos.x += moveSpeed;
+		SetShape();
+
+		if (IsCollided() || shape.right > 416 + STAGE_SIZE_X)
+		{
+			pos.x -= moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
 		break;
 	case MoveDir::Up:
+		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
+		{
+			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
+			{
+				pos.x -= (int)pos.x % 16;
+			}
+			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
+			{
+				pos.x += 16 - (int)pos.x % 16;
+			}
+		}
+		moveDir = MoveDir::Up;
 
+		pos.y -= moveSpeed;
+		SetShape();
+		if (IsCollided() || shape.top < STAGE_SIZE_Y)
+		{
+			pos.y += moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
 		break;
 	case MoveDir::Down:
+		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
+		{
+			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
+			{
+				pos.x -= (int)pos.x % 16;
+			}
+			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
+			{
+				pos.x += 16 - (int)pos.x % 16;
+			}
+		}
+		moveDir = MoveDir::Down;
 
+		pos.y += moveSpeed;
+		SetShape();
+		if (IsCollided() || shape.bottom > 416 + STAGE_SIZE_Y)
+		{
+			pos.y -= moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
 		break;
 	default:
 		break;

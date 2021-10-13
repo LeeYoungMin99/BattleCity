@@ -17,7 +17,7 @@ public:
 	TILE_INFO* tileInfo = nullptr;
 	Ammo* ammoPack = nullptr;
 
-	int delay = rand();
+	int delay = RANDOM(10, 20);
 	int elapsedCount = 0;
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
@@ -55,7 +55,7 @@ public:
 class NormalEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init() override;
+	virtual HRESULT Init(TILE_INFO* tileInfo) override;
 
 	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
@@ -64,7 +64,7 @@ public:
 class SpeedEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init() override;
+	virtual HRESULT Init(TILE_INFO* tileInfo) override;
 
 	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
@@ -73,7 +73,7 @@ public:
 class RapidEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init() override;
+	virtual HRESULT Init(TILE_INFO* tileInfo) override;
 
 	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
@@ -82,7 +82,7 @@ public:
 class DefensiveEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init() override;
+	virtual HRESULT Init(TILE_INFO* tileInfo) override;
 
 	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}

@@ -5,6 +5,7 @@
 
 #include "Tank.h"
 #include "TankFactorial.h"
+#include "EnemyManager.h"
 
 HRESULT Stage1Scene::Init()
 {
@@ -27,7 +28,7 @@ HRESULT Stage1Scene::Init()
 	stageImage = ImageManager::GetSingleton()->AddImage("Image/Icon/StageFlag.bmp",
 		35, 40, 1, 1, true, RGB(255, 0, 255));
 	stageLevel = ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
-	backGround = ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024,768, 1,1, true, RGB(255,0,255));
+	backGround = ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
 
 	Load(1);
 
@@ -36,15 +37,21 @@ HRESULT Stage1Scene::Init()
 	{
 		for (int j = 0; j < TILE_COUNT_X; j++)
 		{
-			tileInfo[i * TILE_COUNT_X + j].collider.left += (WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16) ;
-			tileInfo[i * TILE_COUNT_X + j].collider.right += (WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16);
-			tileInfo[i * TILE_COUNT_X + j].collider.top += WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
-			tileInfo[i * TILE_COUNT_X + j].collider.bottom += WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
+			tileInfo[i * TILE_COUNT_X + j].collider.left += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].collider.right += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
+			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
 
 		}
 
 	}
 
+	spawnEnemyPos[0].x = tileInfo[0].rc.right	+ STAGE_SIZE_X +16;
+	spawnEnemyPos[0].y = tileInfo[0].rc.bottom	+ STAGE_SIZE_Y *2;
+	spawnEnemyPos[1].x = tileInfo[12].rc.right	+ STAGE_SIZE_X +16;
+	spawnEnemyPos[1].y = tileInfo[12].rc.bottom + STAGE_SIZE_Y *2;
+	spawnEnemyPos[2].x = tileInfo[24].rc.right	+ STAGE_SIZE_X +16;
+	spawnEnemyPos[2].y = tileInfo[24].rc.bottom + STAGE_SIZE_Y *2;
 
 	vecTankFactorial.resize(5);
 	vecTankFactorial[0] = new PlayerTankFactorial;
@@ -56,15 +63,23 @@ HRESULT Stage1Scene::Init()
 	tank = vecTankFactorial[0]->CreateTank();
 	tank->Init(tileInfo);
 
-	cout << tileInfo[0].frameX << endl;
+	enemyMgr = new EnemyManager;
+	enemyMgr->Init(tileInfo);
+
 	return S_OK;
 }
 
 void Stage1Scene::Update()
 {
-
 	tank->Update();
+	enemyMgr->Update();
 
+	if (currSpawnEnemy < maxSpawnEnemy)
+	{
+		remainSpawnMonster--;
+		currSpawnEnemy++;
+		SpawnEnemy(TankType::Normal);
+	}
 
 	if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
 	{
@@ -94,9 +109,9 @@ void Stage1Scene::Render(HDC hdc)
 			if (check)
 			{
 				Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].collider.left,
-				tileInfo[i * TILE_COUNT_X + j].collider.top,
-				tileInfo[i * TILE_COUNT_X + j].collider.right,
-				tileInfo[i * TILE_COUNT_X + j].collider.bottom);
+					tileInfo[i * TILE_COUNT_X + j].collider.top,
+					tileInfo[i * TILE_COUNT_X + j].collider.right,
+					tileInfo[i * TILE_COUNT_X + j].collider.bottom);
 			}
 		}
 
@@ -116,10 +131,23 @@ void Stage1Scene::Render(HDC hdc)
 	stageImage->Render(hdc, 480, 370);
 	stageLevel->Render(hdc, 490, 390, 1, 0);
 	tank->Render(hdc);
+	enemyMgr->Render(hdc);
+
 }
 
 void Stage1Scene::Release()
 {
+}
+
+void Stage1Scene::SpawnEnemy(TankType type)
+{
+	spawnCount++;
+	if (spawnCount >= maxSpawnCount)
+	{
+		spawnCount = 0;
+	}
+
+	enemyMgr->AddEnemy(vecTankFactorial[(int)type + 1]->CreateTank(), spawnEnemyPos[spawnCount]);
 }
 
 void Stage1Scene::Load(int index)

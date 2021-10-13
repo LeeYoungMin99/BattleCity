@@ -2,21 +2,25 @@
 #include "Config.h"
 #include "GameEntity.h"
 
-class Enemy;
+class Tank;
 class EnemyManager : public GameEntity
 {
 private:
-	vector<Enemy*> vecEnemys;
-	vector<Enemy*>::iterator itEnemys;
+	vector<Tank*> vecEnemys;
+	vector<Tank*>::iterator itEnemys;
 
 	int enemyMaxCount;
 
+	TILE_INFO* tileInfo = nullptr;
+
 public:
-	HRESULT Init();
+	HRESULT Init(TILE_INFO* tilemap);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 
-	void AddEnemy(float posX, float posY);
+	void AddEnemy(Tank* tank,POINTFLOAT pos);
+	
+	inline vector<Tank*> GetVecEnemys() { return vecEnemys; }
 };
 

@@ -49,6 +49,12 @@ extern POINT g_ptMouse;
 #define TILE_COUNT_Y	26
 #define SAMPLE_TILE_COUNT_X 8
 #define SAMPLE_TILE_COUNT_Y	1
+#define STAGE_SIZE_X (WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16)
+#define STAGE_SIZE_Y (WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y)
+
+#define RANDOM(min, max) (rand() % ((max) - (min) + 1) + (min))
+#define CORRECTION_POS_MIN 6
+#define CORRECTION_POS_MAX 10
 
 enum class Terrain { Earth, Wall, Water, Grass, BreakableWall, End };
 
