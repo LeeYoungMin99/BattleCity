@@ -25,6 +25,8 @@ private:
 	Tank* tank;
 	vector<TankFactorial*> vecTankFactorial;
 
+	POINTFLOAT spawnPos[3];
+
 	bool check = false;
 public:
 	void Load(int index);
@@ -32,6 +34,6 @@ public:
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
-
+	void Spawn();
 };
 

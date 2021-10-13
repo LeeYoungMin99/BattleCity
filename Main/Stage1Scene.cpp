@@ -40,9 +40,7 @@ HRESULT Stage1Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.right += (WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16);
 			tileInfo[i * TILE_COUNT_X + j].collider.top += WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
-
 		}
-
 	}
 
 
@@ -64,7 +62,6 @@ void Stage1Scene::Update()
 {
 
 	tank->Update();
-
 
 	if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
 	{

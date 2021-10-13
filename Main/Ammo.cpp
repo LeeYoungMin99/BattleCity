@@ -27,17 +27,19 @@ HRESULT Ammo::Init()
 	isFire = false;
 	//isAlive = true;
 
-	ImageManager::GetSingleton()->AddImage("Image/bullet.bmp", bodySize, bodySize, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->FindImage("Image/bullet.bmp");
+	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Down.bmp", 6, 8, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Left.bmp", 6, 8, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Right.bmp", 6, 8, true, RGB(255, 0, 255));
+	img = ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
+	 
 	if (img == nullptr)
 	{
 		return E_FAIL;
 	}
 
 
-	moveSpeed2 = 0.0f;
-	maxMoveSpeed = 500.0f;
-	accel = 98.1f;
+
+	bulletDir = BulletDir::Up;
 
 	return S_OK;
 }
@@ -47,62 +49,12 @@ void Ammo::Update()
 	//if (isAlive == false)	return;
 
 	if (isFire)
-	{
-		//// 타겟이 있을 때만 유도 공식이 적용된다.
-		//if (target)
-		//{
-		//	float targetAngle = atan2f(-(target->GetPos().y - pos.y),
-		//		(target->GetPos().x - pos.x));
-
-		//	cout << "1. TargetAngle : " << targetAngle << endl;
-		//	cout << "1. MoveAngle : " << moveAngle << endl << endl;
-
-		//	float tempAngle;
-		//	float ratio = 9.0f;
-		//	if (GetDistance(target->GetPos(), pos) < 230.0f)
-		//	{
-		//		ratio = 3.0f;
-		//	}
-		//	if ((targetAngle - moveAngle) > PI)
-		//	{
-		//		tempAngle = ((targetAngle - PI2) - moveAngle) / ratio;
-		//		cout << "2_1. tempAngle : " << tempAngle << endl;
-		//	}
-		//	else if ((targetAngle - moveAngle) < -PI)
-		//	{
-		//		tempAngle = ((targetAngle + PI2) - moveAngle) / ratio;
-		//		cout << "2_2. tempAngle : " << tempAngle << endl;
-		//	}
-		//	else
-		//	{
-		//		tempAngle = (targetAngle - moveAngle) / ratio;
-		//		cout << "2_0. tempAngle : " << tempAngle << endl;
-		//	}
-
-		//	moveAngle += tempAngle;
-		//	if (moveAngle > PI2)
-		//	{
-		//		moveAngle -= PI2;
-		//	}
-		//	else if (moveAngle < -PI2)
-		//	{
-		//		moveAngle += PI2;
-		//	}
-
-		//	cout << "2. TargetAngle : " << targetAngle << endl;
-		//	cout << "2. MoveAngle : " << moveAngle << endl << endl;
-
-
-		//	//RotateToTarget(target->GetPos());
-		//}
-
-		moveSpeed2 += (accel * TimerManager::GetSingleton()->GetDeltaTime());
-		moveSpeed2 = min(moveSpeed2, maxMoveSpeed);
+	{	
+		cout << moveAngle << endl;
 
 		pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// 프레임당 이동거리 -> 시간 당 이동거리
 		pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
-		pos.y += moveSpeed2 * TimerManager::GetSingleton()->GetDeltaTime();
-		cout << moveSpeed2 << endl;
+
 
 		shape.left = pos.x - (bodySize / 2.0f);
 		shape.top = pos.y - (bodySize / 2.0f);
@@ -123,37 +75,9 @@ void Ammo::Update()
 			isFire = false;
 		}
 	}
-	else
-	{
-		moveSpeed2 = 0;
-	}
+
 }
 
-void Ammo::RotateToTarget(POINTFLOAT targetPos)
-{
-	if (!isFire) return;
-
-	float toTargetAngle = moveAngle -
-		atan2(-(targetPos.y - pos.y), targetPos.x - pos.x);
-
-	if (toTargetAngle > PI)
-	{
-		toTargetAngle = -(PI * 2 - toTargetAngle);
-	}
-	else if (toTargetAngle < -PI)
-	{
-		toTargetAngle = PI * 2 + toTargetAngle;
-	}
-
-	if (toTargetAngle > 0)
-	{
-		moveAngle -= DEGREE_TO_RADIAN(5.0f);
-	}
-	else
-	{
-		moveAngle += DEGREE_TO_RADIAN(5.0f);
-	}
-}
 
 void Ammo::SetIsFire(bool fire)
 {
@@ -199,6 +123,35 @@ bool Ammo::CheckCollision()
 		return true;
 
 	return false;
+}
+
+void Ammo::SetMoveDir(string dir)
+{
+	cout << dir;
+	if (dir._Equal("Left"))
+	{
+		bulletDir = BulletDir::Left;
+		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Left.bmp");
+		SetMoveAngle(DEGREE_TO_RADIAN(180));
+	}
+	else if (dir._Equal("Right"))
+	{
+		bulletDir = BulletDir::Right;
+		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Right.bmp");
+		SetMoveAngle(0.0f);
+	}
+	else if (dir._Equal("Up"))
+	{
+		bulletDir = BulletDir::Up;
+		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
+		SetMoveAngle(DEGREE_TO_RADIAN(90));
+	}
+	else if (dir._Equal("Down"))
+	{
+		bulletDir = BulletDir::Down;
+		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Down.bmp");
+		SetMoveAngle(DEGREE_TO_RADIAN(270));
+	}
 }
 
 Ammo::Ammo()

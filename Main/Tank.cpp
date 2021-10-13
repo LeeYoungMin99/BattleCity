@@ -12,8 +12,8 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 		return E_FAIL;
 	}
 
-	pos.x = TILEMAPTOOL_SIZE_X / 2.0f + 200;
-	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f + 200;
+	pos.x = 200;
+	pos.y = 430;
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
@@ -26,7 +26,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 
 	bIsAlive = true;
 
-	ammoCount = 30;
+	ammoCount = 1;
 	ammoPack = new Ammo[ammoCount];
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
@@ -34,12 +34,18 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 		ammoPack[i].Init();
 	}
 
+	BarrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
+
 	return S_OK;
 }
 
 void PlayerTank::Update()
 {
 	if (bIsAlive == false)	return;
+	ammoPack->Update();
+
+
+
 	SetShape();
 	Move();
 	Fire();
@@ -174,17 +180,42 @@ void PlayerTank::Move()
 
 void PlayerTank::Fire()
 {
-	for (int i = 0; i < ammoCount; i++)
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
 	{
-		// 전체 미사일을 순회하면서 발사 됐는지 안됐는지 판단
-		if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
-			continue;
+		for (int i = 0; i < ammoCount; i++)
+		{
+			// 전체 미사일을 순회하면서 발사 됐는지 안됐는지 판단
+			if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
+				continue;
 
-		//ammoPack[i].SetIsAlive(true);
-		ammoPack[i].SetPos(pos);	// 미사일 위치 변경
-		ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
+			switch (moveDir)
+			{
+			case Left:
+				BarrelPos = { pos.x - bodySize / 2, pos.y - bodySize / 4 };
+				ammoPack[i].SetMoveDir("Left");
+				break;
+			case Right:
+				BarrelPos = { pos.x, pos.y - bodySize / 4 };
+				ammoPack[i].SetMoveDir("Right");
+				break;
+			case Up:
+				BarrelPos = { pos.x - bodySize / 4, pos.y - bodySize / 2 };
+				ammoPack[i].SetMoveDir("Up");
+				break;
+			case Down:
+				BarrelPos = { pos.x - bodySize / 4, pos.y };
+				ammoPack[i].SetMoveDir("Down");
+				break;
+			default:
+				break;
+			}
 
-		break;
+			//ammoPack[i].SetIsAlive(true);
+			ammoPack[i].SetPos(BarrelPos);	// 미사일 위치 변경
+			ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
+
+			break;
+		}
 	}
 }
 #pragma endregion

@@ -13,6 +13,8 @@ public:
 	bool bIsAlive = true;
 
 	int ammoCount = 0;
+
+	POINTFLOAT BarrelPos;
 	
 	TILE_INFO* tileInfo = nullptr;
 	Ammo* ammoPack = nullptr;
