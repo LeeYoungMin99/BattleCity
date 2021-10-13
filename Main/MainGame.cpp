@@ -9,8 +9,6 @@
 #include "Stage1Scene.h"
 #include "ScoreScene.h"
 
-#include "Tank.h"
-#include "TankFactorial.h"
 
 HRESULT MainGame::Init()
 {
@@ -25,7 +23,7 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->AddScene("스테이지1", new Stage1Scene());
 	SceneManager::GetSingleton()->AddLoadingScene("로딩씬", new LoadingScene());
 
-	SceneManager::GetSingleton()->ChangeScene("타이틀씬");
+	SceneManager::GetSingleton()->ChangeScene("스테이지1");
 
 	srand((unsigned int) time(nullptr));
 
@@ -43,14 +41,6 @@ HRESULT MainGame::Init()
 	int maxSizeY = WIN_SIZE_Y > TILEMAPTOOL_SIZE_Y ? WIN_SIZE_Y : TILEMAPTOOL_SIZE_Y;
 
 	backBuffer->Init("Image/mapImage.bmp", maxSizeX, maxSizeY);
-
-	vecTankFactorial.resize(5);
-	vecTankFactorial[0] = new PlayerTankFactorial;
-	vecTankFactorial[1] = new NormalEnemyTankFactorial;
-
-	tank = vecTankFactorial[0]->CreateTank();
-	tank->Init(TankType::Player);
-
 	return S_OK;
 }
 
@@ -59,8 +49,6 @@ void MainGame::Update()
 	TimerManager::GetSingleton()->Update();
 
 	SceneManager::GetSingleton()->Update();
-
-	tank->Update();
 
 	InvalidateRect(g_hWnd, NULL, false);
 }
@@ -78,7 +66,6 @@ void MainGame::Render(HDC hdc)
 	SceneManager::GetSingleton()->Render(hBackBufferDC);
 
 	TimerManager::GetSingleton()->Render(hBackBufferDC);
-
 
 	backBuffer->Render(hdc);
 }
