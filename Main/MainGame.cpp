@@ -7,6 +7,8 @@
 #include "PixelCollisionScene.h"
 #include "AStarScene.h"
 #include "Stage1Scene.h"
+#include "Stage2Scene.h"
+#include "Stage3Scene.h"
 #include "ScoreScene.h"
 #include "GameOverScene.h"
 #include "Tank.h"
@@ -20,15 +22,19 @@ HRESULT MainGame::Init()
 	TimerManager::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
 
+
 	SceneManager::GetSingleton()->AddScene("타이틀씬", new TitleScene());
 	SceneManager::GetSingleton()->AddScene("스코어씬", new ScoreScene());
 	SceneManager::GetSingleton()->AddScene("타일맵툴", new TilemapToolScene());
 	SceneManager::GetSingleton()->AddScene("스테이지1", new Stage1Scene());
+	SceneManager::GetSingleton()->AddScene("스테이지2", new Stage2Scene());
+	SceneManager::GetSingleton()->AddScene("스테이지3", new Stage3Scene());
 	SceneManager::GetSingleton()->AddScene("게임오버씬", new GameOverScene());
 	SceneManager::GetSingleton()->AddLoadingScene("로딩씬", new LoadingScene());
 
 
 	SceneManager::GetSingleton()->ChangeScene("스테이지1");
+
 
 	srand((unsigned int) time(nullptr));
 
@@ -61,12 +67,6 @@ void MainGame::Update()
 void MainGame::Render(HDC hdc)
 {
 	HDC hBackBufferDC = backBuffer->GetMemDC();
-
-	wsprintf(text, "MousePosX : %d", mousePosX);
-	TextOut(hBackBufferDC, WIN_SIZE_X-50, 10, text, strlen(text));
-
-	wsprintf(text, "MousePosY : %d", mousePosY);
-	TextOut(hBackBufferDC, WIN_SIZE_X-50, 40, text, strlen(text));
 
 	SceneManager::GetSingleton()->Render(hBackBufferDC);
 

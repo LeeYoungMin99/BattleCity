@@ -122,6 +122,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:		// 윈도우 화면이 다시 그려지는 경우 발생하는 메시지
 		hdc = BeginPaint(g_hWnd, &ps);
 
+		RECT rect;
+		SetMapMode(hdc, MM_ANISOTROPIC);
+		SetWindowExtEx(hdc, WIN_SIZE_X, WIN_SIZE_Y, NULL);
+		GetClientRect(g_hWnd, &rect);
+		SetViewportExtEx(hdc, rect.right, rect.bottom, NULL);
+
 		g_mainGame.Render(hdc);
 
 		EndPaint(g_hWnd, &ps);

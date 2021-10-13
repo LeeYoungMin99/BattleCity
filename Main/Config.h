@@ -13,8 +13,8 @@ using namespace std;
 
 #define WIN_START_POS_X	400
 #define WIN_START_POS_Y	100
-#define WIN_SIZE_X	600
-#define WIN_SIZE_Y	800
+#define WIN_SIZE_X	512
+#define WIN_SIZE_Y	448
 #define TILEMAPTOOL_SIZE_X	800
 #define TILEMAPTOOL_SIZE_Y	600
 #define PIXELMAP_SIZE_X	1000
@@ -52,6 +52,7 @@ extern POINT g_ptMouse;
 
 enum class Terrain { Earth, Wall, Water, Grass, BreakableWall, End };
 
+enum class TileType {Ground, Wall, Water, Grass, Brick};
 typedef struct tagSampleTile
 {
 	RECT rc;

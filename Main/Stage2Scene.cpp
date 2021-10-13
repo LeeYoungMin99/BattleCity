@@ -1,19 +1,17 @@
-#include "Stage1Scene.h"
+#include "Stage2Scene.h"
 #include "ImageManager.h"
 #include "Image.h"
 #include "CommonFunction.h"
 
-#include "Tank.h"
-#include "TankFactorial.h"
 
-HRESULT Stage1Scene::Init()
+HRESULT Stage2Scene::Init()
 {
     SetWindowSize(20, 20, WIN_SIZE_X, WIN_SIZE_Y);
     sampleImage = ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
         128, 16, 8, 1, true, RGB(255, 0, 255));
     if (sampleImage == nullptr)
     {
-        cout << "Image/Tile1.bmp ë¡œë“œ ì‹¤íŒ¨!!" << endl;
+        cout << "Image/Tile1.bmp ·Îµå ½ÇÆĞ!!" << endl;
         return E_FAIL;
     }
 
@@ -28,40 +26,26 @@ HRESULT Stage1Scene::Init()
         35, 40, 1, 1, true, RGB(255, 0, 255));
     stageLevel = ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
 
-    Load(1);
+    Load(2);
 
-
-
-    vecTankFactorial.resize(5);
-    vecTankFactorial[0] = new PlayerTankFactorial;
-    vecTankFactorial[1] = new NormalEnemyTankFactorial;
-    vecTankFactorial[2] = new SpeedEnemyTankFactorial;
-    vecTankFactorial[3] = new RapidEnemyTankFactorial;
-    vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
-
-    tank = vecTankFactorial[0]->CreateTank();
-    tank->Init(tileInfo);
-
-    cout << tileInfo[0].frameX << endl;
     return S_OK;
 }
 
-void Stage1Scene::Update()
+void Stage2Scene::Update()
 {
 
-    tank->Update();
 }
 
-void Stage1Scene::Render(HDC hdc)
+void Stage2Scene::Render(HDC hdc)
 {
-    // ë©”ì¸ ì˜ì—­
+    // ¸ŞÀÎ ¿µ¿ª
     for (int i = 0; i < TILE_COUNT_Y; i++)
     {
         for (int j = 0; j < TILE_COUNT_X; j++)
         {
             sampleImage->Render(hdc,
-                tileInfo[i * TILE_COUNT_X + j].rc.left + TILE_SIZE / 2 + WIN_SIZE_X/2 - 8 * TILE_COUNT_X - 16,
-                tileInfo[i * TILE_COUNT_X + j].rc.top + TILE_SIZE / 2 + WIN_SIZE_Y/2 - 8 * TILE_COUNT_Y,
+                tileInfo[i * TILE_COUNT_X + j].rc.left + TILE_SIZE / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
+                tileInfo[i * TILE_COUNT_X + j].rc.top + TILE_SIZE / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y,
                 tileInfo[i * TILE_COUNT_X + j].frameX,
                 tileInfo[i * TILE_COUNT_X + j].frameY);
         }
@@ -70,39 +54,41 @@ void Stage1Scene::Render(HDC hdc)
     for (int i = 0; i < remainSpawnMonster; i++)
     {
         if (i % 2 == 0)
-            spawnMonsterImage->Render(hdc, 472, 35 + 16*(i / 2));
+            spawnMonsterImage->Render(hdc, 472, 35 + 16 * (i / 2));
         else
-            spawnMonsterImage->Render(hdc, 472+16, 35 + 16*(i / 2));
+            spawnMonsterImage->Render(hdc, 472 + 16, 35 + 16 * (i / 2));
     }
 
     lifeImage->Render(hdc, 480, 260);
     stageImage->Render(hdc, 480, 370);
-    stageLevel->Render(hdc, 490, 390, 1, 0);
-    tank->Render(hdc);
+    stageLevel->Render(hdc, 490, 390, 2, 0);
 }
 
-void Stage1Scene::Release()
+void Stage2Scene::Release()
 {
 }
 
-void Stage1Scene::Load(int index)
+void Stage2Scene::Load(int index)
 {
+
     string filePath = "Save/saveMapData" + to_string(index) + ".map";
 
     HANDLE hFile = CreateFile(filePath.c_str(),
-        GENERIC_READ,                  //ì½ê¸°, ì“°ê¸° íƒ€ì…
-        0, NULL,                        //ê³µìœ , ë³´ì•ˆ ëª¨ë“œ
-        OPEN_EXISTING,                  //íŒŒì¼ì„ ë§Œë“¤ê±°ë‚˜ ì½ì„ ë•Œ ì˜µì…˜
-        FILE_ATTRIBUTE_NORMAL,          //íŒŒì¼ ì†ì„±(ì½ê¸° ì „ìš©, ìˆ¨ê¹€ ë“±ë“±)
+        GENERIC_READ,                  //ÀĞ±â, ¾²±â Å¸ÀÔ
+        0, NULL,                        //°øÀ¯, º¸¾È ¸ğµå
+        OPEN_EXISTING,                  //ÆÄÀÏÀ» ¸¸µé°Å³ª ÀĞÀ» ¶§ ¿É¼Ç
+        FILE_ATTRIBUTE_NORMAL,          //ÆÄÀÏ ¼Ó¼º(ÀĞ±â Àü¿ë, ¼û±è µîµî)
         NULL);                          //
 
-    //ì½ê¸°
+    //ÀĞ±â
 
     DWORD readByte;
     if (ReadFile(hFile, tileInfo, sizeof(tagTile) * TILE_COUNT_X * TILE_COUNT_Y, &readByte, NULL) == false)
     {
-        MessageBox(g_hWnd, "ë§µ ë°ì´í„° ë¡œë“œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.", "ì—ëŸ¬", MB_OK);
+        MessageBox(g_hWnd, "¸Ê µ¥ÀÌÅÍ ·Îµå¿¡ ½ÇÆĞÇß½À´Ï´Ù.", "¿¡·¯", MB_OK);
     }
 
     CloseHandle(hFile);
+
+
 }

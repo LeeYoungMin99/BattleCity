@@ -102,6 +102,12 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>MainGame\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Stage3Scene.cpp">
+      <Filter>MainGame\Scene\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage2Scene.cpp">
+      <Filter>MainGame\Scene\Stage</Filter>
+    </ClCompile>
     <ClCompile Include="GameOverScene.cpp">
       <Filter>MainGame\Scene</Filter>
     </ClCompile>
@@ -178,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="TitleScene.h">
       <Filter>MainGame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage2Scene.h">
+      <Filter>MainGame\Scene\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage3Scene.h">
+      <Filter>MainGame\Scene\Stage</Filter>
     </ClInclude>
     <ClInclude Include="GameOverScene.h">
       <Filter>MainGame\Scene</Filter>
