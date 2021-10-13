@@ -1,7 +1,9 @@
 #include "Tank.h"
 #include "Image.h"
 
-HRESULT PlayerTank::Init(TankType type)
+
+#pragma region PlyaerTank
+HRESULT PlayerTank::Init(TILE_INFO* tile)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
@@ -10,43 +12,19 @@ HRESULT PlayerTank::Init(TankType type)
 		return E_FAIL;
 	}
 
-	this->type = type;
+	pos.x = TILEMAPTOOL_SIZE_X / 2.0f + 200;
+	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f + 200;
 
-	switch (type)
-	{
-	case TankType::Player:
-		pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
-		pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
+	bodySize = 64;
+	moveSpeed = 2.0f;
 
-		bodySize = 80;
-		moveSpeed = 3.0f;
+	tileInfo = tile;
 
-		barrelSize = 140.0f;
-		barrelAngle = 90.0f * (PI / 180.0f);
-		break;
-	case TankType::Enemy:
-		pos.x = WIN_SIZE_X / 2.0f;
-		pos.y = 100.0f;
-
-		bodySize = 100;
-		moveSpeed = 5.0f;
-
-		barrelSize = 140.0f;
-		barrelAngle = 270.0f * (PI / 180.0f);
-		break;
-	}
-
-	shape.left = pos.x - (bodySize / 2);
-	shape.top = pos.y - (bodySize / 2);
-	shape.right = shape.left + bodySize;
-	shape.bottom = shape.top + bodySize;
-
-	barrelEnd.x = pos.x + cos(barrelAngle) * barrelSize;
-	barrelEnd.y = pos.y - sin(barrelAngle) * barrelSize;
+	SetShape();
 
 	moveDir = MoveDir::Up;
 
-	isAlive = true;
+	bIsAlive = true;
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
@@ -61,40 +39,23 @@ HRESULT PlayerTank::Init(TankType type)
 
 void PlayerTank::Update()
 {
-	if (isAlive == false)	return;
-
-	// 위치에 따른 모양값 갱신
-	shape.left = pos.x - (bodySize / 2);
-	shape.top = pos.y - (bodySize / 2);
-	shape.right = shape.left + bodySize;
-	shape.bottom = shape.top + bodySize;
-
-	//for (int i = 0; i < ammoCount; i++)
-	//{
-	//	ammoPack[i].Update();
-	//}
-
-	//switch (type)
-	//{
-	//case TankType::Player:
-	ProcessInputKey();
-	//	break;
-	//case TankType::Enemy:
-	//	AutoMove();
-	//	break;
-	//}
+	if (bIsAlive == false)	return;
+	SetShape();
+	Move();
+	Fire();
 }
 
 void PlayerTank::Render(HDC hdc)
 {
-	if (isAlive == false)	return;
+	if (bIsAlive == false)	return;
 
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Render(hdc);
 	}
 
-	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, 0);
+	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, enforceCount, 0.5f);
 }
 
 void PlayerTank::Release()
@@ -102,14 +63,112 @@ void PlayerTank::Release()
 	delete[] ammoPack;
 }
 
-void PlayerTank::Move(MoveDir dir)
+void PlayerTank::Move()
 {
-	switch (dir)
+	if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
 	{
-	case MoveDir::Left: pos.x -= moveSpeed; break;
-	case MoveDir::Right: pos.x += moveSpeed; break;
-	case MoveDir::Up: pos.y -= moveSpeed; break;
-	case MoveDir::Down: pos.y += moveSpeed; break;
+		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
+		{
+			if ((int)pos.y % 16 <= 4)
+			{
+				pos.y -= (int)pos.y % 16;
+			}
+			else if ((int)pos.y % 16 >= 12)
+			{
+				pos.y += 16 - (int)pos.y % 16;
+			}
+		}
+		moveDir = MoveDir::Left;
+
+		pos.x -= moveSpeed;
+		SetShape();
+		if (IsCollided() || shape.left < 0)
+		{
+			pos.x += moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
+	}
+	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
+	{
+		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
+		{
+			if ((int)pos.y % 16 <= 4)
+			{
+				pos.y -= (int)pos.y % 16;
+			}
+			else if ((int)pos.y % 16 >= 12)
+			{
+				pos.y += 16 - (int)pos.y % 16;
+			}
+		}
+		moveDir = MoveDir::Right;
+
+		pos.x += moveSpeed;
+		SetShape();
+
+		if (IsCollided() || shape.right > 416)
+		{
+			pos.x -= moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
+	}
+	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
+	{
+		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
+		{
+			if ((int)pos.x % 16 <= 4)
+			{
+				pos.x -= (int)pos.x % 16;
+			}
+			else if ((int)pos.x % 16 >= 12)
+			{
+				pos.x += 16 - (int)pos.x % 16;
+			}
+		}
+		moveDir = MoveDir::Up;
+
+		pos.y -= moveSpeed;
+		SetShape();
+		if (IsCollided() || shape.top < 0)
+		{
+			pos.y += moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
+	}
+	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
+	{
+		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
+		{
+			if ((int)pos.x % 16 <= 4)
+			{
+				pos.x -= (int)pos.x % 16;
+			}
+			else if ((int)pos.x % 16 >= 12)
+			{
+				pos.x += 16 - (int)pos.x % 16;
+			}
+		}
+		moveDir = MoveDir::Down;
+
+		pos.y += moveSpeed;
+		SetShape();
+		if (IsCollided() || shape.bottom > 416)
+		{
+			pos.y -= moveSpeed;
+			SetShape();
+		}
+
+		if (checkMoveCount > 0) { checkMoveCount = 0; }
+		else { checkMoveCount = 1; }
 	}
 }
 
@@ -124,95 +183,17 @@ void PlayerTank::Fire()
 		//ammoPack[i].SetIsAlive(true);
 		ammoPack[i].SetPos(pos);	// 미사일 위치 변경
 		ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
-		ammoPack[i].SetMoveAngle(barrelAngle); // 미사일 각도 변경
 
 		break;
 	}
 }
+#pragma endregion
 
-void PlayerTank::ProcessInputKey()
-{
-	// 키입력을 확인
-	if (Singleton<KeyManager>::GetSingleton()->IsOnceKeyDown(VK_SPACE))
-	{
-		Fire();
-	}
-
-	if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
-	{
-		moveDir = MoveDir::Left;
-		Move(moveDir);
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
-	{
-		moveDir = MoveDir::Right;
-		Move(moveDir);
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
-	{
-		moveDir = MoveDir::Up;
-		Move(moveDir);
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-		RotateBarrelAngle(1);
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
-	{
-		moveDir = MoveDir::Down;
-		Move(moveDir);
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-		RotateBarrelAngle(-1);
-	}
-}
-
-void Tank::RotateBarrelAngle(float rotateAngle)
-{
-	barrelAngle += (rotateAngle * PI / 180.0f);
-
-	barrelEnd.x = pos.x + cos(barrelAngle) * barrelSize;
-	barrelEnd.y = pos.y - sin(barrelAngle) * barrelSize;
-}
-
-void Tank::AutoMove()
-{
-	if (shape.right >= WIN_SIZE_X)
-	{
-		moveDir = MoveDir::Left;
-	}
-	else if (shape.left <= 0)
-	{
-		moveDir = MoveDir::Right;
-	}
-
-	switch (moveDir)
-	{
-	case MoveDir::Left:		pos.x -= moveSpeed; break;
-	case MoveDir::Right:	pos.x += moveSpeed; break;
-	}
-}
-
-
-
-Tank::Tank()
-{
-}
-
-Tank::~Tank()
-{
-}
-
-HRESULT NormalEnemyTank::Init(TankType type)
+#pragma region NormalEnemyTank
+HRESULT NormalEnemyTank::Init()
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
+
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
 	if (img == nullptr)
 	{
@@ -222,20 +203,14 @@ HRESULT NormalEnemyTank::Init(TankType type)
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
 
-	bodySize = 80;
-	moveSpeed = 3.0f;
+	bodySize = 64;
+	moveSpeed = 2.0f;
 
-	barrelSize = 140.0f;
-	barrelAngle = 90.0f * (PI / 180.0f);
-
-	shape.left = pos.x - (bodySize / 2);
-	shape.top = pos.y - (bodySize / 2);
-	shape.right = shape.left + bodySize;
-	shape.bottom = shape.top + bodySize;
+	SetShape();
 
 	moveDir = MoveDir::Down;
 
-	isAlive = true;
+	bIsAlive = true;
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
@@ -247,89 +222,210 @@ HRESULT NormalEnemyTank::Init(TankType type)
 
 	return S_OK;
 }
+#pragma endregion
 
-void NormalEnemyTank::Update()
+#pragma region SpeedEnemyTank
+HRESULT SpeedEnemyTank::Init()
 {
-	if (isAlive == false)	return;
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 
-	// 위치에 따른 모양값 갱신
-	shape.left = pos.x - (bodySize / 2);
-	shape.top = pos.y - (bodySize / 2);
-	shape.right = shape.left + bodySize;
-	shape.bottom = shape.top + bodySize;
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	if (img == nullptr)
+	{
+		return E_FAIL;
+	}
 
-	ProcessInputKey();
+	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
+	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
+
+	bodySize = 64;
+	moveSpeed = 2.0f;
+
+	SetShape();
+
+	moveDir = MoveDir::Down;
+
+	bIsAlive = true;
+
+	ammoCount = 30;
+	ammoPack = new Ammo[ammoCount];
+	// 미사일 초기화
+	for (int i = 0; i < ammoCount; i++)
+	{
+		ammoPack[i].Init();
+	}
+
+	return S_OK;
+}
+#pragma endregion
+
+#pragma region RapidEnemyTank
+HRESULT RapidEnemyTank::Init()
+{
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
+
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	if (img == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
+	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
+
+	bodySize = 64;
+	moveSpeed = 2.0f;
+
+	SetShape();
+
+	moveDir = MoveDir::Down;
+
+	bIsAlive = true;
+
+	ammoCount = 30;
+	ammoPack = new Ammo[ammoCount];
+	// 미사일 초기화
+	for (int i = 0; i < ammoCount; i++)
+	{
+		ammoPack[i].Init();
+	}
+
+	return S_OK;
+}
+#pragma endregion
+
+#pragma region DefensiveEnemyTank
+HRESULT DefensiveEnemyTank::Init()
+{
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
+
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	if (img == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
+	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
+
+	bodySize = 64;
+	moveSpeed = 2.0f;
+
+	SetShape();
+
+	moveDir = MoveDir::Down;
+
+	bIsAlive = true;
+
+	ammoCount = 30;
+	ammoPack = new Ammo[ammoCount];
+	// 미사일 초기화
+	for (int i = 0; i < ammoCount; i++)
+	{
+		ammoPack[i].Init();
+	}
+
+	return S_OK;
+}
+#pragma endregion
+
+void Tank::Update()
+{
+	if (bIsAlive == false)	return;
+	SetShape();
+	Move();
+	Fire();
 }
 
-void NormalEnemyTank::Render(HDC hdc)
+void Tank::Render(HDC hdc)
 {
-	if (isAlive == false)	return;
+	if (bIsAlive == false)	return;
 
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Render(hdc);
 	}
 
-	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, 0);
+	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
 }
 
-void NormalEnemyTank::Release()
+void Tank::Release()
 {
 	delete[] ammoPack;
 }
 
-void NormalEnemyTank::ProcessInputKey()
+void Tank::Move()
 {
-	// 키입력을 확인
-	if (Singleton<KeyManager>::GetSingleton()->IsOnceKeyDown(VK_SPACE))
+	// 한방향으로 이동중일떄
+	// 일정 프레임동안 이동이 안되면
+	// 방향을 전환.
+	// 리스폰떄 아래방향 보고있음.
+
+	if (elapsedCount == delay)
 	{
-		Fire();
+		moveDir = (MoveDir)((rand() % 4) * 2);
 	}
 
-	if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
+	switch (moveDir)
 	{
-		moveDir = MoveDir::Left;
-		Move(moveDir);
+	case MoveDir::Left:
+		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
+		{
+			if ((int)pos.y % 16 <= 4)
+			{
+				pos.y -= (int)pos.y % 16;
+			}
+			else if ((int)pos.y % 16 >= 12)
+			{
+				pos.y += 16 - (int)pos.y % 16;
+			}
+		}
+
+		pos.x -= moveSpeed;
+		SetShape();
+		if (IsCollided() || shape.left < 0)
+		{
+			pos.x += moveSpeed;
+			SetShape();
+		}
 
 		if (checkMoveCount > 0) { checkMoveCount = 0; }
 		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
-	{
-		moveDir = MoveDir::Right;
-		Move(moveDir);
 
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
-	{
-		moveDir = MoveDir::Up;
-		Move(moveDir);
+		break;
+	case MoveDir::Right:
 
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-		RotateBarrelAngle(1);
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
-	{
-		moveDir = MoveDir::Down;
-		Move(moveDir);
+		break;
+	case MoveDir::Up:
 
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-		RotateBarrelAngle(-1);
+		break;
+	case MoveDir::Down:
+
+		break;
+	default:
+		break;
 	}
 }
 
-void NormalEnemyTank::Move(MoveDir dir)
+bool Tank::IsCollided()
 {
-	switch (dir)
+	RECT temp = {};
+
+	for (int i = 0; i < TILE_COUNT_Y * TILE_COUNT_X; i++)
 	{
-	case MoveDir::Left: pos.x -= moveSpeed; break;
-	case MoveDir::Right: pos.x += moveSpeed; break;
-	case MoveDir::Up: pos.y -= moveSpeed; break;
-	case MoveDir::Down: pos.y += moveSpeed; break;
+		if (IntersectRect(&temp, &tileInfo[i].collider, &shape))
+		{
+			return true;
+		}
 	}
+
+	return false;
 }
 
+void Tank::SetShape()
+{
+	shape.left = pos.x - (bodySize / 2);
+	shape.top = pos.y - (bodySize / 2);
+	shape.right = shape.left + bodySize / 2;
+	shape.bottom = shape.top + bodySize / 2;
+}

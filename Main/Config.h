@@ -28,8 +28,8 @@ using namespace std;
 #define SAFE_RELEASE(p)	{ if (p) { p->Release(); delete p; p = nullptr; } }
 #define SAFE_DELETE(p)	{ if (p) { delete p; p = nullptr; } }
 
-enum MoveDir { Left =2, Right =6, Up = 0, Down = 4};
-enum class TankType { Player, Enemy };
+enum MoveDir { Left = 2, Right = 6, Up = 0, Down = 4 };
+enum class TankType { Player, Normal = 0 , Speed, Rapid, Defensive };
 
 
 #include "TimerManager.h"
@@ -75,7 +75,7 @@ typedef struct ArgumentFuncPtr
 {
 	string sceneName;
 	string loadingSceneName;
-	TILE_INFO *tileInfo;
+	TILE_INFO* tileInfo;
 	int saveIndex;
 	int loadIndex;
-} ARGUMENT_PTR, *LPARGUMENT_PTR;
+} ARGUMENT_PTR, * LPARGUMENT_PTR;

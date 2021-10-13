@@ -3,6 +3,8 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
+#include "Tank.h"
+#include "TankFactorial.h"
 
 HRESULT Stage1Scene::Init()
 {
@@ -11,7 +13,7 @@ HRESULT Stage1Scene::Init()
         128, 16, 8, 1, true, RGB(255, 0, 255));
     if (sampleImage == nullptr)
     {
-        cout << "Image/Tile1.bmp ·Îµå ½ÇÆĞ!!" << endl;
+        cout << "Image/Tile1.bmp ë¡œë“œ ì‹¤íŒ¨!!" << endl;
         return E_FAIL;
     }
 
@@ -28,17 +30,31 @@ HRESULT Stage1Scene::Init()
 
     Load(1);
 
+
+
+    vecTankFactorial.resize(5);
+    vecTankFactorial[0] = new PlayerTankFactorial;
+    vecTankFactorial[1] = new NormalEnemyTankFactorial;
+    vecTankFactorial[2] = new SpeedEnemyTankFactorial;
+    vecTankFactorial[3] = new RapidEnemyTankFactorial;
+    vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
+
+    tank = vecTankFactorial[0]->CreateTank();
+    tank->Init(tileInfo);
+
+    cout << tileInfo[0].frameX << endl;
     return S_OK;
 }
 
 void Stage1Scene::Update()
 {
 
+    tank->Update();
 }
 
 void Stage1Scene::Render(HDC hdc)
 {
-    // ¸ŞÀÎ ¿µ¿ª
+    // ë©”ì¸ ì˜ì—­
     for (int i = 0; i < TILE_COUNT_Y; i++)
     {
         for (int j = 0; j < TILE_COUNT_X; j++)
@@ -62,6 +78,7 @@ void Stage1Scene::Render(HDC hdc)
     lifeImage->Render(hdc, 480, 260);
     stageImage->Render(hdc, 480, 370);
     stageLevel->Render(hdc, 490, 390, 1, 0);
+    tank->Render(hdc);
 }
 
 void Stage1Scene::Release()
@@ -70,25 +87,22 @@ void Stage1Scene::Release()
 
 void Stage1Scene::Load(int index)
 {
-
     string filePath = "Save/saveMapData" + to_string(index) + ".map";
 
     HANDLE hFile = CreateFile(filePath.c_str(),
-        GENERIC_READ,                  //ÀĞ±â, ¾²±â Å¸ÀÔ
-        0, NULL,                        //°øÀ¯, º¸¾È ¸ğµå
-        OPEN_EXISTING,                  //ÆÄÀÏÀ» ¸¸µé°Å³ª ÀĞÀ» ¶§ ¿É¼Ç
-        FILE_ATTRIBUTE_NORMAL,          //ÆÄÀÏ ¼Ó¼º(ÀĞ±â Àü¿ë, ¼û±è µîµî)
+        GENERIC_READ,                  //ì½ê¸°, ì“°ê¸° íƒ€ì…
+        0, NULL,                        //ê³µìœ , ë³´ì•ˆ ëª¨ë“œ
+        OPEN_EXISTING,                  //íŒŒì¼ì„ ë§Œë“¤ê±°ë‚˜ ì½ì„ ë•Œ ì˜µì…˜
+        FILE_ATTRIBUTE_NORMAL,          //íŒŒì¼ ì†ì„±(ì½ê¸° ì „ìš©, ìˆ¨ê¹€ ë“±ë“±)
         NULL);                          //
 
-    //ÀĞ±â
+    //ì½ê¸°
 
     DWORD readByte;
     if (ReadFile(hFile, tileInfo, sizeof(tagTile) * TILE_COUNT_X * TILE_COUNT_Y, &readByte, NULL) == false)
     {
-        MessageBox(g_hWnd, "¸Ê µ¥ÀÌÅÍ ·Îµå¿¡ ½ÇÆĞÇß½À´Ï´Ù.", "¿¡·¯", MB_OK);
+        MessageBox(g_hWnd, "ë§µ ë°ì´í„° ë¡œë“œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.", "ì—ëŸ¬", MB_OK);
     }
 
     CloseHandle(hFile);
-
-
 }

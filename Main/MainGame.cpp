@@ -10,9 +10,10 @@
 #include "Stage2Scene.h"
 #include "Stage3Scene.h"
 #include "ScoreScene.h"
-
+#include "GameOverScene.h"
 #include "Tank.h"
 #include "TankFactorial.h"
+
 
 HRESULT MainGame::Init()
 {
@@ -21,19 +22,23 @@ HRESULT MainGame::Init()
 	TimerManager::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
 
-	SceneManager::GetSingleton()->AddScene("Å¸ÀÌÆ²¾À", new TitleScene());
-	SceneManager::GetSingleton()->AddScene("½ºÄÚ¾î¾À", new ScoreScene());
-	SceneManager::GetSingleton()->AddScene("Å¸ÀÏ¸ÊÅø", new TilemapToolScene());
-	SceneManager::GetSingleton()->AddScene("½ºÅ×ÀÌÁö1", new Stage1Scene());
-	SceneManager::GetSingleton()->AddScene("½ºÅ×ÀÌÁö2", new Stage2Scene());
-	SceneManager::GetSingleton()->AddScene("½ºÅ×ÀÌÁö3", new Stage3Scene());
-	SceneManager::GetSingleton()->AddLoadingScene("·Îµù¾À", new LoadingScene());
 
-	SceneManager::GetSingleton()->ChangeScene("½ºÅ×ÀÌÁö3");
+	SceneManager::GetSingleton()->AddScene("íƒ€ì´í‹€ì”¬", new TitleScene());
+	SceneManager::GetSingleton()->AddScene("ìŠ¤ì½”ì–´ì”¬", new ScoreScene());
+	SceneManager::GetSingleton()->AddScene("íƒ€ì¼ë§µíˆ´", new TilemapToolScene());
+	SceneManager::GetSingleton()->AddScene("ìŠ¤í…Œì´ì§€1", new Stage1Scene());
+	SceneManager::GetSingleton()->AddScene("ìŠ¤í…Œì´ì§€2", new Stage2Scene());
+	SceneManager::GetSingleton()->AddScene("ìŠ¤í…Œì´ì§€3", new Stage3Scene());
+	SceneManager::GetSingleton()->AddScene("ê²Œì„ì˜¤ë²„ì”¬", new GameOverScene());
+	SceneManager::GetSingleton()->AddLoadingScene("ë¡œë”©ì”¬", new LoadingScene());
+
+
+	SceneManager::GetSingleton()->ChangeScene("ìŠ¤í…Œì´ì§€1");
+
 
 	srand((unsigned int) time(nullptr));
 
-	// Å¸ÀÌ¸Ó ¼ÂÆÃ
+	// íƒ€ì´ë¨¸ ì…‹íŒ…
 	hTimer = (HANDLE)SetTimer(g_hWnd, 0, 10, NULL);
 
 	mousePosX = 0;
@@ -41,20 +46,12 @@ HRESULT MainGame::Init()
 	clickedMousePosX = 0; 
 	clickedMousePosY = 0; 
 
-	// ¹é¹öÆÛ
+	// ë°±ë²„í¼
 	backBuffer = new Image;
 	int maxSizeX = WIN_SIZE_X > TILEMAPTOOL_SIZE_X ? WIN_SIZE_X : TILEMAPTOOL_SIZE_X;
 	int maxSizeY = WIN_SIZE_Y > TILEMAPTOOL_SIZE_Y ? WIN_SIZE_Y : TILEMAPTOOL_SIZE_Y;
 
 	backBuffer->Init("Image/mapImage.bmp", maxSizeX, maxSizeY);
-
-	vecTankFactorial.resize(5);
-	vecTankFactorial[0] = new PlayerTankFactorial;
-	vecTankFactorial[1] = new NormalEnemyTankFactorial;
-
-	tank = vecTankFactorial[0]->CreateTank();
-	tank->Init(TankType::Player);
-
 	return S_OK;
 }
 
@@ -63,8 +60,6 @@ void MainGame::Update()
 	TimerManager::GetSingleton()->Update();
 
 	SceneManager::GetSingleton()->Update();
-
-	tank->Update();
 
 	InvalidateRect(g_hWnd, NULL, false);
 }
@@ -76,7 +71,6 @@ void MainGame::Render(HDC hdc)
 	SceneManager::GetSingleton()->Render(hBackBufferDC);
 
 	TimerManager::GetSingleton()->Render(hBackBufferDC);
-
 
 	backBuffer->Render(hdc);
 }
@@ -97,7 +91,7 @@ void MainGame::Release()
 	SceneManager::GetSingleton()->Release();
 	SceneManager::GetSingleton()->ReleaseSingleton();
 
-	// Å¸ÀÌ¸Ó °´Ã¼ »èÁ¦
+	// íƒ€ì´ë¨¸ ê°ì²´ ì‚­ì œ
 	KillTimer(g_hWnd, 0);
 }
 

@@ -23,9 +23,6 @@ private:
 	// ¹é¹öÆÛ
 	Image* backBuffer;
 
-	Tank* tank;
-	vector<TankFactorial*> vecTankFactorial;
-
 
 public:
 	HRESULT Init();
