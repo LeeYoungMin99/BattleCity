@@ -8,7 +8,9 @@ HRESULT GameOverScene::Init()
 	
 	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	
+
+	elapsedcount = 0;
+
 	test_1 = 0;
 	test_2 = backGround->GetHeight();
 	return S_OK;
@@ -21,8 +23,8 @@ void GameOverScene::Update()
 	{
 		SceneManager::GetSingleton()->ChangeScene("TitleScene");
 	}
-	test_1 -= 5;
-	test_2 += 5;
+	test_1 -= 1;
+	test_2 += 1;
 }
 
 void GameOverScene::Render(HDC hdc)
