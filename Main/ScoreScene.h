@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "GameEntity.h"
 
-#define elapsedTest 20
+#define elapsedTest 5		//점수 반영 속도 (적으면 빠름)
 
 class Image;
 class ScoreScene : public GameEntity
@@ -11,27 +11,31 @@ private:
 	//Image* hiScoreText;	//하이스코어 갱신될시 사용
 	Image* hiScore;
 	Image* totalScore;
+	Image* player;
 	Image* playerScore;
 	Image* stage;
-	Image* stageNum;
+	Image* number;
 	Image* enemyTank;
 	Image* arrow;
 	Image* pts;
 	Image* backGround;
 
 	int elapsedcount;
-	//변수명 
+	//변수명 고민
 	int killNormalEnemy, killSpeedEnemy, killRapidEnemy, killBossEnemy;
 	int scoreNormalEnemy, scoreSpeedEnemy, scoreRapidEnemy, scoreBossEnemy;
 	bool bScoreNormalEnemy, bScoreSpeedEnemy, bScoreRapidEnemy, bScoreBossEnemy;
 
-	//구현용 편하게
-	int KNE, KSE, KRE, KBE;
-	int SNE, SNE_1, SNE_10, SSE, SSE_1, SSE_10, SRE, SRE_1, SRE_10, SBE, SBE_1, SBE_10;
-	int bSNE, bSSE, bSRE, bSBE;
+	//디버깅용 편하게
+	int KNE, KSE, KRE, KBE;				//종류별 죽인 몬스터수
+	int CNE, CSE, CRE, CBE;				//죽인 몬스터를 1씩 카운트하기위한 변수
+	int SNE, SSE, SRE, SBE;				//스코어 점수
+	int bSNE, bSSE, bSRE, bSBE;			//순서대로 점수계산을 위한 불타입
+	int TK_1, TK_10;					//토탈 킬수 1의자리, 10의자리
+	int bTotalScore;					// 점수계산 끝나고 토탈점수 
+	int round;
 
 
-	int score;
 
 public:
 	virtual HRESULT Init() override;

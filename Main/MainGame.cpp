@@ -8,7 +8,7 @@
 #include "AStarScene.h"
 #include "Stage1Scene.h"
 #include "ScoreScene.h"
-
+#include "GameOverScene.h"
 #include "Tank.h"
 #include "TankFactorial.h"
 
@@ -23,9 +23,10 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->AddScene("스코어씬", new ScoreScene());
 	SceneManager::GetSingleton()->AddScene("타일맵툴", new TilemapToolScene());
 	SceneManager::GetSingleton()->AddScene("스테이지1", new Stage1Scene());
+	SceneManager::GetSingleton()->AddScene("게임오버씬", new GameOverScene());
 	SceneManager::GetSingleton()->AddLoadingScene("로딩씬", new LoadingScene());
 
-	SceneManager::GetSingleton()->ChangeScene("타이틀씬");
+	SceneManager::GetSingleton()->ChangeScene("스코어씬");
 
 	srand((unsigned int) time(nullptr));
 
