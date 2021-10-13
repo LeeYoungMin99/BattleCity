@@ -1,10 +1,11 @@
-#include "Stage1Scene.h"
+#include "Stage3Scene.h"
+#include "Stage3Scene.h"
 #include "ImageManager.h"
 #include "Image.h"
 #include "CommonFunction.h"
 
 
-HRESULT Stage1Scene::Init()
+HRESULT Stage3Scene::Init()
 {
     SetWindowSize(20, 20, WIN_SIZE_X, WIN_SIZE_Y);
     sampleImage = ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
@@ -26,17 +27,17 @@ HRESULT Stage1Scene::Init()
         35, 40, 1, 1, true, RGB(255, 0, 255));
     stageLevel = ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
 
-    Load(1);
+    Load(3);
 
     return S_OK;
 }
 
-void Stage1Scene::Update()
+void Stage3Scene::Update()
 {
 
 }
 
-void Stage1Scene::Render(HDC hdc)
+void Stage3Scene::Render(HDC hdc)
 {
     // 메인 영역
     for (int i = 0; i < TILE_COUNT_Y; i++)
@@ -44,8 +45,8 @@ void Stage1Scene::Render(HDC hdc)
         for (int j = 0; j < TILE_COUNT_X; j++)
         {
             sampleImage->Render(hdc,
-                tileInfo[i * TILE_COUNT_X + j].rc.left + TILE_SIZE / 2 + WIN_SIZE_X/2 - 8 * TILE_COUNT_X - 16,
-                tileInfo[i * TILE_COUNT_X + j].rc.top + TILE_SIZE / 2 + WIN_SIZE_Y/2 - 8 * TILE_COUNT_Y,
+                tileInfo[i * TILE_COUNT_X + j].rc.left + TILE_SIZE / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
+                tileInfo[i * TILE_COUNT_X + j].rc.top + TILE_SIZE / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y,
                 tileInfo[i * TILE_COUNT_X + j].frameX,
                 tileInfo[i * TILE_COUNT_X + j].frameY);
         }
@@ -54,21 +55,21 @@ void Stage1Scene::Render(HDC hdc)
     for (int i = 0; i < remainSpawnMonster; i++)
     {
         if (i % 2 == 0)
-            spawnMonsterImage->Render(hdc, 472, 35 + 16*(i / 2));
+            spawnMonsterImage->Render(hdc, 472, 35 + 16 * (i / 2));
         else
-            spawnMonsterImage->Render(hdc, 472+16, 35 + 16*(i / 2));
+            spawnMonsterImage->Render(hdc, 472 + 16, 35 + 16 * (i / 2));
     }
 
     lifeImage->Render(hdc, 480, 260);
     stageImage->Render(hdc, 480, 370);
-    stageLevel->Render(hdc, 490, 390, 1, 0);
+    stageLevel->Render(hdc, 490, 390, 3, 0);
 }
 
-void Stage1Scene::Release()
+void Stage3Scene::Release()
 {
 }
 
-void Stage1Scene::Load(int index)
+void Stage3Scene::Load(int index)
 {
 
     string filePath = "Save/saveMapData" + to_string(index) + ".map";

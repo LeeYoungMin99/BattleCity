@@ -3,19 +3,19 @@
 
 #pragma once
 class Image;
-class Stage1Scene : public GameEntity
+class Stage3Scene : public GameEntity
 {
 private:
 	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X];
 	Image* sampleImage;
-	
+
 	//GameBoard ฐüทร
-	Image *spawnMonsterImage;
+	Image* spawnMonsterImage;
 	int remainSpawnMonster;
 	int remainMonster;
 
-	Image *lifeImage;
-	Image *stageImage;
+	Image* lifeImage;
+	Image* stageImage;
 	Image* stageLevel;
 
 public:

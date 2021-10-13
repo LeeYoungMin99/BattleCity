@@ -154,6 +154,8 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScoreScene.cpp" />
     <ClCompile Include="Stage1Scene.cpp" />
+    <ClCompile Include="Stage2Scene.cpp" />
+    <ClCompile Include="Stage3Scene.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="TankFactorial.cpp" />
     <ClCompile Include="TilemapToolScene.cpp" />
@@ -179,6 +181,8 @@
     <ClInclude Include="ScoreScene.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Stage1Scene.h" />
+    <ClInclude Include="Stage2Scene.h" />
+    <ClInclude Include="Stage3Scene.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="TankFactorial.h" />
     <ClInclude Include="TilemapToolScene.h" />
