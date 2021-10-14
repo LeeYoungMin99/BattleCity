@@ -58,10 +58,11 @@ HRESULT Stage1Scene::Init()
 	vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
 
 	tank = vecTankFactorial[0]->CreateTank();
-	tank->Init(tileInfo);
-
 	enemyMgr = new EnemyManager;
-	enemyMgr->Init(tileInfo);
+
+	tank->Init(tileInfo,enemyMgr,tank);
+	enemyMgr->Init(tileInfo,tank);
+
 
 	return S_OK;
 }

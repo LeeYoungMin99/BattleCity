@@ -1,8 +1,9 @@
 #include "Tank.h"
 #include "Image.h"
+#include "EnemyManager.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(TILE_INFO* tile)
+HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
@@ -23,7 +24,8 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
 
 	SetShape();
 
@@ -50,6 +52,7 @@ void PlayerTank::Update()
 	if (bIsAlive == false)	return;
 	ammoPack->Update();
 
+	// 스폰 이미지와 쉴드 이미지 업데이트
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckShieldOn || bCheckSpawnStatus)
 	{
@@ -279,7 +282,7 @@ void PlayerTank::Fire()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
+HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -296,7 +299,9 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->playerTank = playerTank;
+	this->enemyMgr = enemyMgr;
 
 	SetShape();
 
@@ -317,7 +322,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
+HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -334,7 +339,9 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
 
 	SetShape();
 
@@ -355,7 +362,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
+HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -372,7 +379,9 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
 
 	SetShape();
 
@@ -393,7 +402,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
+HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -410,7 +419,9 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
 
 	SetShape();
 
@@ -611,6 +622,28 @@ bool Tank::IsCollided()
 	for (int i = 0; i < TILE_COUNT_Y * TILE_COUNT_X; i++)
 	{
 		if (IntersectRect(&temp, &tileInfo[i].collider, &shape))
+		{
+			return true;
+		}
+	}
+
+	for (itEnemyTanks = enemyMgr->vecEnemys.begin();
+		itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
+	{
+		if ((*itEnemyTanks) == this)
+		{
+			continue;
+		}
+
+		if (IntersectRect(&temp, &((*itEnemyTanks)->shape), &shape))
+		{
+			return true;
+		}
+	}
+
+	if (playerTank != nullptr)
+	{
+		if (IntersectRect(&temp, &(playerTank->shape), &shape))
 		{
 			return true;
 		}

@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Ammo.h"
 
+class EnemyManager;
 class Tank : public GameObject
 {
 public:
@@ -14,7 +15,6 @@ public:
 	bool bReverseSpawnImg = false;
 	bool bCheckSpawnStatus = true;
 
-
 	TankType type = TankType::Player;
 	MoveDir moveDir = MoveDir::Up;
 	int checkMoveCount = 0;
@@ -24,14 +24,18 @@ public:
 	int ammoCount = 0;
 
 	POINTFLOAT BarrelPos;
-	
+
 	TILE_INFO* tileInfo = nullptr;
+	Tank* playerTank = nullptr;
+	EnemyManager* enemyMgr = nullptr;
+	vector<Tank*> enemyTanks = {};
+	vector<Tank*>::iterator itEnemyTanks = {};
 	Ammo* ammoPack = nullptr;
 
 	float delay = RANDOM(1, 3);
 	float elapsedCount = 0.0f;
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
 	virtual void Update();												// 오버라이딩을 한다
 	virtual void Render(HDC hdc);
 	virtual void Release();
@@ -56,11 +60,11 @@ private:
 	float shieldElapsedCount = 0.0f;
 	bool bCheckShieldOn = false;
 	bool bShieldImageChanged = false;
-	
+
 
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo) override;
-	virtual void Update() override;						
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr,Tank* playerTank = nullptr) override;
+	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
 
@@ -74,7 +78,7 @@ public:
 class NormalEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
 
 	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
@@ -83,7 +87,7 @@ public:
 class SpeedEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
 
 	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
@@ -92,7 +96,7 @@ public:
 class RapidEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
 
 	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
@@ -101,7 +105,7 @@ public:
 class DefensiveEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
 
 	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}
