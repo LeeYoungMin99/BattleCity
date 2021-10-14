@@ -7,9 +7,11 @@
 HRESULT TitleScene::Init()
 {
 	ImageManager::GetSingleton()->AddImage("Image/Title.bmp", WIN_SIZE_X, WIN_SIZE_Y);
-	backGround = ImageManager::GetSingleton()->FindImage("Image/Title.bmp");
+	title = ImageManager::GetSingleton()->FindImage("Image/Title.bmp");
 
-
+	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256/*512*/, 128/*256*/, 8, 4, true, RGB(255, 0, 255));
 	tankUi = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
 
@@ -25,7 +27,7 @@ HRESULT TitleScene::Init()
 	arg->loadingSceneName = "로딩씬";
 
 	// 디버깅 용 
-	test = WIN_SIZE_Y*1.5;
+	test = WIN_SIZE_Y*1.5;	//슬라이드 효과
 	titleStart = false;
 
 	selecTitle = selectedTitle::player_1;
@@ -69,9 +71,9 @@ void TitleScene::Update()
 			case player_2:
 				selecTitle = selectedTitle::CONSTRUCTION;
 				break;
-				/*case CONSTRUCTION:
-					selecTitle = selectedTitle::CONSTRUCTION;
-					break;*/
+			case CONSTRUCTION:
+				selecTitle = selectedTitle::CONSTRUCTION;
+				break;
 			}
 		}
 		if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_UP))
@@ -108,17 +110,18 @@ void TitleScene::Update()
 
 void TitleScene::Render(HDC hdc)
 {
-	/*if (backGround)
-		backGround->Render(hdc);*/
+	if (backGround)
+		backGround->Render(hdc);
+
 	if (!titleStart)
 	{
-		if (backGround)
-			backGround->Render(hdc, backGround->GetWidth() / 2, test);
+		if (title)
+			title->Render(hdc, title->GetWidth() / 2, test);
 	}
 	else
 	{
-		if (backGround)
-			backGround->Render(hdc);
+		if (title)
+			title->Render(hdc);
 
 		if (tankUi)
 			tankUi->Render(hdc, pos.x, pos.y, 7, 1);

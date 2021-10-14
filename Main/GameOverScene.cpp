@@ -11,8 +11,11 @@ HRESULT GameOverScene::Init()
 
 	elapsedcount = 0;
 
+	//test_1 = -(backGround->GetHeight())+200;
+	//test_2 = (backGround->GetHeight()*2)-200;//backGround->GetHeight();	//´Ý
+
 	test_1 = 0;
-	test_2 = backGround->GetHeight();
+	test_2 = WIN_SIZE_Y ;	//¿­
 	return S_OK;
 }
 
@@ -23,8 +26,17 @@ void GameOverScene::Update()
 	{
 		SceneManager::GetSingleton()->ChangeScene("TitleScene");
 	}
+	//test_1 += 1;
+	//test_2 -= 1;	//´Ý
+
 	test_1 -= 1;
-	test_2 += 1;
+	test_2 += 1;	//¿­
+
+	/*if (test_1 >= 0)
+	{
+		test_1 = 0;
+	}*/
+
 }
 
 void GameOverScene::Render(HDC hdc)
