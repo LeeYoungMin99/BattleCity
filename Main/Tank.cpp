@@ -1,16 +1,22 @@
 #include "Tank.h"
 #include "Image.h"
-
+#include "EnemyManager.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(TILE_INFO* tile)
+HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Shield.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
+	shieldImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Shield.bmp");
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (shieldImg == nullptr) { cout << "ShieldImg nullptr" << endl;  return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = 200;
 	pos.y = 430;
@@ -18,17 +24,19 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
 
 	SetShape();
 
 	moveDir = MoveDir::Up;
+	elapsedCount = 0.0f;
 
 	bIsAlive = true;
 
 	ammoCount = 1;
 	ammoPack = new Ammo[ammoCount];
-	// �̻��� �ʱ�ȭ
+	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Init(tile);
@@ -44,11 +52,48 @@ void PlayerTank::Update()
 	if (bIsAlive == false)	return;
 	ammoPack->Update();
 
+	// 스폰 이미지와 쉴드 이미지 업데이트
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	if (bCheckShieldOn || bCheckSpawnStatus)
+	{
+		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
+		// 타이머가 3초가 되면 쉴드 해제
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
+		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
+		// 타이머가 0.05초 간격으로 쉴드 이미지 갱신
+		if (bCheckSpawnStatus)
+		{
+			spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+			if (spawnElapsedCount > 0.125f)
+			{
+				spawnElapsedCount -= 0.125f;
+				if (bReverseSpawnImg) { spawnImgFrame--; }
+				else { spawnImgFrame++; }
+				if (spawnImgFrame == 3 || spawnImgFrame == 0)
+				{
+					bReverseSpawnImg = !bReverseSpawnImg;
+				}
+			}
+		}
 
+		if (bCheckShieldOn)
+		{
+			shieldElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+			if (shieldElapsedCount > 0.05f)
+			{
+				bShieldImageChanged = !bShieldImageChanged;
+				shieldElapsedCount -= 0.05f;
+			}
+		}
+	}
 
 	SetShape();
-	Move();
-	Fire();
+	if (!bCheckSpawnStatus)
+	{
+		Move();
+		Fire();
+	}
 }
 
 void PlayerTank::Render(HDC hdc)
@@ -60,8 +105,25 @@ void PlayerTank::Render(HDC hdc)
 		ammoPack[i].Render(hdc);
 	}
 
-	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
-	img->Render(hdc, pos.x - bodySize/4, pos.y - bodySize / 4, moveDir + checkMoveCount, enforceCount, 1.0f);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+
+	if (bCheckSpawnStatus)
+	{
+		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);
+	}
+	else
+	{
+		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, moveDir + checkMoveCount, enforceCount, 1.0f);
+	}
+
+
+	// 쉴드 렌더 
+	// 타이머가 3초가 되면 쉴드 렌더 X
+	if (bCheckShieldOn)
+	{
+		shieldImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, bShieldImageChanged, 0, 1.0f);
+	}
+
 }
 
 void PlayerTank::Release()
@@ -184,7 +246,7 @@ void PlayerTank::Fire()
 	{
 		for (int i = 0; i < ammoCount; i++)
 		{
-			// ��ü �̻����� ��ȸ�ϸ鼭 �߻� �ƴ��� �ȵƴ��� �Ǵ�
+			// 전체 미사일을 순회하면서 발사 됐는지 안됐는지 판단
 			if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
 				continue;
 
@@ -211,8 +273,8 @@ void PlayerTank::Fire()
 			}
 
 			//ammoPack[i].SetIsAlive(true);
-			ammoPack[i].SetPos(BarrelPos);	// �̻��� ��ġ ����
-			ammoPack[i].SetIsFire(true);	// �̻��� ���� ����
+			ammoPack[i].SetPos(BarrelPos);	// 미사일 위치 변경
+			ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
 
 			break;
 		}
@@ -221,15 +283,16 @@ void PlayerTank::Fire()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
+HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -237,7 +300,9 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->playerTank = playerTank;
+	this->enemyMgr = enemyMgr;
 
 	SetShape();
 
@@ -247,7 +312,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// �̻��� �ʱ�ȭ
+	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Init(tile);
@@ -258,15 +323,16 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
+HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -274,7 +340,9 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
 
 	SetShape();
 
@@ -284,7 +352,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// �̻��� �ʱ�ȭ
+	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Init(tile);
@@ -295,15 +363,16 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
+HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -311,7 +380,9 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
 
 	SetShape();
 
@@ -321,7 +392,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// �̻��� �ʱ�ȭ
+	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Init(tile);
@@ -332,15 +403,16 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
+HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -348,7 +420,9 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
-	tileInfo = tile;
+	this->tileInfo = tile;
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
 
 	SetShape();
 
@@ -358,7 +432,7 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// �̻��� �ʱ�ȭ
+	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
 		ammoPack[i].Init(tile);
@@ -372,9 +446,32 @@ void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
-	elapsedCount++;
-	Move();
-	Fire();
+
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	if (bCheckSpawnStatus)
+	{
+		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; }
+
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (spawnElapsedCount > 0.125f)
+		{
+			spawnElapsedCount -= 0.125f;
+			if (bReverseSpawnImg) { spawnImgFrame--; }
+			else { spawnImgFrame++; }
+			if (spawnImgFrame == 3 || spawnImgFrame == 0)
+			{
+				bReverseSpawnImg = !bReverseSpawnImg;
+			}
+		}
+	}
+
+	if (!bCheckSpawnStatus)
+	{
+		Move();
+		Fire();
+	}
 }
 
 void Tank::Render(HDC hdc)
@@ -386,7 +483,15 @@ void Tank::Render(HDC hdc)
 		ammoPack[i].Render(hdc);
 	}
 
-	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	if (bCheckSpawnStatus)
+	{
+		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);
+	}
+	else
+	{
+		img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+	}
 }
 
 void Tank::Release()
@@ -396,10 +501,10 @@ void Tank::Release()
 
 void Tank::Move()
 {
-	if (elapsedCount == delay)
+	if (elapsedCount >= delay)
 	{
 		elapsedCount = 0;
-		delay = RANDOM(10,20);
+		delay = RANDOM(0, 3);
 		moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
 
@@ -518,6 +623,28 @@ bool Tank::IsCollided()
 	for (int i = 0; i < TILE_COUNT_Y * TILE_COUNT_X; i++)
 	{
 		if (IntersectRect(&temp, &tileInfo[i].collider, &shape))
+		{
+			return true;
+		}
+	}
+
+	for (itEnemyTanks = enemyMgr->vecEnemys.begin();
+		itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
+	{
+		if ((*itEnemyTanks) == this)
+		{
+			continue;
+		}
+
+		if (IntersectRect(&temp, &((*itEnemyTanks)->shape), &shape))
+		{
+			return true;
+		}
+	}
+
+	if (playerTank != nullptr)
+	{
+		if (IntersectRect(&temp, &(playerTank->shape), &shape))
 		{
 			return true;
 		}

@@ -6,15 +6,16 @@ class Tank;
 class EnemyManager : public GameEntity
 {
 private:
-	vector<Tank*> vecEnemys;
-	vector<Tank*>::iterator itEnemys;
-
 	int enemyMaxCount;
 
 	TILE_INFO* tileInfo = nullptr;
+	Tank* playerTank = nullptr;
 
 public:
-	HRESULT Init(TILE_INFO* tilemap);
+	vector<Tank*> vecEnemys;
+	vector<Tank*>::iterator itEnemys;
+
+	HRESULT Init(TILE_INFO* tilemap, Tank* playerTank);
 	void Update();
 	void Render(HDC hdc);
 	void Release();

@@ -32,7 +32,6 @@ HRESULT Stage1Scene::Init()
 
 	Load(1);
 
-
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
 		for (int j = 0; j < TILE_COUNT_X; j++)
@@ -46,12 +45,12 @@ HRESULT Stage1Scene::Init()
 		}
 	}
 
-	spawnEnemyPos[0].x = tileInfo[0].rc.right	+ STAGE_SIZE_X +16;
-	spawnEnemyPos[0].y = tileInfo[0].rc.bottom	+ STAGE_SIZE_Y *2;
-	spawnEnemyPos[1].x = tileInfo[12].rc.right	+ STAGE_SIZE_X +16;
-	spawnEnemyPos[1].y = tileInfo[12].rc.bottom + STAGE_SIZE_Y *2;
-	spawnEnemyPos[2].x = tileInfo[24].rc.right	+ STAGE_SIZE_X +16;
-	spawnEnemyPos[2].y = tileInfo[24].rc.bottom + STAGE_SIZE_Y *2;
+	spawnEnemyPos[0].x = tileInfo[0].rc.right + STAGE_SIZE_X + 16;
+	spawnEnemyPos[0].y = tileInfo[0].rc.bottom + STAGE_SIZE_Y * 2;
+	spawnEnemyPos[1].x = tileInfo[12].rc.right + STAGE_SIZE_X + 16;
+	spawnEnemyPos[1].y = tileInfo[12].rc.bottom + STAGE_SIZE_Y * 2;
+	spawnEnemyPos[2].x = tileInfo[24].rc.right + STAGE_SIZE_X + 16;
+	spawnEnemyPos[2].y = tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2;
 
 	vecTankFactorial.resize(5);
 	vecTankFactorial[0] = new PlayerTankFactorial;
@@ -61,10 +60,11 @@ HRESULT Stage1Scene::Init()
 	vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
 
 	tank = vecTankFactorial[0]->CreateTank();
-	tank->Init(tileInfo);
-
 	enemyMgr = new EnemyManager;
-	enemyMgr->Init(tileInfo);
+
+	tank->Init(tileInfo,enemyMgr,tank);
+	enemyMgr->Init(tileInfo,tank);
+
 
 	return S_OK;
 }
@@ -74,10 +74,12 @@ void Stage1Scene::Update()
 	tank->Update();
 	enemyMgr->Update();
 
-	if (currSpawnEnemy < maxSpawnEnemy)
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy)
 	{
 		remainSpawnMonster--;
 		currSpawnEnemy++;
+		elapsedCount -= spawmElapsedCount;
 		SpawnEnemy(TankType::Normal);
 	}
 
@@ -142,13 +144,15 @@ void Stage1Scene::Release()
 
 void Stage1Scene::SpawnEnemy(TankType type)
 {
+	enemyMgr->AddEnemy(vecTankFactorial[(int)type + 1]->CreateTank(), spawnEnemyPos[spawnCount]);
+
 	spawnCount++;
+
 	if (spawnCount >= maxSpawnCount)
 	{
-		spawnCount = 0;
+		spawnCount -= maxSpawnCount;
 	}
 
-	enemyMgr->AddEnemy(vecTankFactorial[(int)type + 1]->CreateTank(), spawnEnemyPos[spawnCount]);
 }
 
 void Stage1Scene::Load(int index)
