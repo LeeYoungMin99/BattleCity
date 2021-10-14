@@ -13,7 +13,7 @@
 #include "GameOverScene.h"
 #include "Tank.h"
 #include "TankFactorial.h"
-
+#include "GameManager.h"
 
 HRESULT MainGame::Init()
 {
@@ -21,7 +21,7 @@ HRESULT MainGame::Init()
 	ImageManager::GetSingleton()->Init();
 	TimerManager::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
-
+	GameManager::GetSingleton()->Init();
 
 	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
 	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());

@@ -7,7 +7,10 @@ HRESULT ScoreScene::Init()
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 	
 	ImageManager::GetSingleton()->AddImage("Image/Text/HISocre.bmp", 235 /*470*/, 25/*50*/, true, RGB(255, 0, 255));
-	hiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocre.bmp");
+	noneHiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocre.bmp");
+
+	ImageManager::GetSingleton()->AddImage("Image/Text/HISocreText.bmp", 133 /*266*/, 25/*50*/, true, RGB(255, 0, 255));
+	hiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocreText.bmp");
 
 	ImageManager::GetSingleton()->AddImage("Image/Text/TotalScore.bmp", 180 /*360*/, 20 /*40*/, true, RGB(255, 0, 255));
 	totalScore = ImageManager::GetSingleton()->FindImage("Image/Text/TotalScore.bmp");
@@ -39,115 +42,60 @@ HRESULT ScoreScene::Init()
 
 	
 	// 디버깅용 
-	KNE = 15;
-	KSE = 14;
-	KRE = 13;
+	KNE = 11;
+	KSE = 11;
+	KRE = 11;
 	KBE = 11;
+	round = 9;
+	
 	CNE = CSE = CRE = CBE = 0;
 	SNE = SSE = SRE = SBE = 0;
 	bSNE = bSSE = bSRE = bSBE = false;
 	bTotalScore = false;
+	gameOver = false;
 	TK = 0;
 	elapsedcount = 0;
-	round = 9;
+	player1Score = 0;
+	hightScore = 0;
 	return S_OK;
 }
 
 void ScoreScene::Update()
 {
-	bSNE = true;
-	if (CNE < KNE)		//일반 탱크
+	if (!bSNE)
 	{
-		elapsedcount++;
-		if (elapsedcount >= elapsedTest)
-		{
-			CNE++;
-			elapsedcount = 0;
-		}
-	}
-
-	if(bSSE && CSE < KSE)	//스피드 탱크
-	{
-		elapsedcount++;
-		if (elapsedcount >= elapsedTest)
-		{
-			CSE++;
-			SSE += 2;
-			elapsedcount = 0;
-		}
-	}
-
-	if (bSRE && CRE < KRE)	//레피드 탱크
-	{
-		elapsedcount++;
-		if (elapsedcount >= elapsedTest)
-		{
-			CRE++;
-			elapsedcount = 0;
-			SRE += 3;
-		}
-	}
-
-	if (bSBE && CBE < KBE)	//보스 탱크
-	{
-		elapsedcount++;
-		if (elapsedcount >= elapsedTest)
-		{
-			CBE++;
-			elapsedcount = 0;
-			SBE += 4;
-		}
-	}
-
-
-	if (CNE == KNE && bSSE == false)	//노말 점수 끝
-	{
-		elapsedcount++;
-		if (elapsedcount >= 50)
-		{
-			bSSE = true;
-			elapsedcount = 0;
-		}
-	}
-	else if (CSE == KSE && bSRE == false)	//두번째 점수 계산끝
-	{
-		elapsedcount++;
-		if (elapsedcount >= 50)
-		{
-			bSRE = true;
-			elapsedcount = 0;
-		}
-	}
-	else if (CRE == KRE && bSBE== false)	//세번째 점수 계산 끝
-	{
-		elapsedcount++;
-		if (elapsedcount >= 50)
-		{
-			bSBE = true;
-			elapsedcount = 0;
-		}
-	}
-	else if (CBE == KBE && bTotalScore==false)
-	{
-		elapsedcount++;
-		if (elapsedcount >= 50)
-		{
-			bTotalScore = true;
-			elapsedcount = 0;
-			TK = KNE + KSE + KRE + KBE;
-		}
+		GameManager::GetSingleton()->ScoreLoad();
+		hightScore = GameManager::GetSingleton()->GetHightScore();		
 		
+		bSNE = true; 
+		player1Score = KNE + (KSE * 2) + (KRE * 3) + (KBE * 4) + GameManager::GetSingleton()->GetScore();
 	}
 
+	if (!bTotalScore)
+		ScoreCalculate();
+
+	if (hightScore < player1Score)
+		hightScore = player1Score;
+	
 	if (bTotalScore)
 	{
+		GameManager::GetSingleton()->SetScore(player1Score);
 		elapsedcount++;
 		if (elapsedcount >= 100)
-		{
-			SceneManager::GetSingleton()->ChangeScene("GameOverScene");
+		{	
+			if (gameOver)
+			{
+				GameManager::GetSingleton()->ScoreSave();
+				player1Score = 0;	
+				GameManager::GetSingleton()->SetScore(player1Score);	//게임이 끝나면 점수초기화
+				SceneManager::GetSingleton()->ChangeScene("GameOverScene");
+			}
+			else
+			{
+				SceneManager::GetSingleton()->ChangeScene("TitleScene");  //다음스테이지씬.
+			}
 		}
 	}
-	
 }
 
 void ScoreScene::Render(HDC hdc)
@@ -155,8 +103,29 @@ void ScoreScene::Render(HDC hdc)
 	if (backGround)
 		backGround->Render(hdc);	//회색화면 백그라운드
 
-	if (hiScore)
-		hiScore->Render(hdc, WIN_SIZE_X/2, WIN_SIZE_Y/7);				//하이스코어 텍스트
+	if (hightScore <= 200)
+	{
+		if (noneHiScore)
+			noneHiScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7);				//하이스코어 텍스트 (디폴트)
+	}
+	else
+	{
+		if (hiScore)																//하이스코어 있을 때.
+			hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y/7);
+
+		playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);		//하이스코어 점수 1,10...10000자리
+		if (hightScore >= 1)
+		{
+			playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
+			playerScore->Render(hdc, WIN_SIZE_X / 2 + 10, WIN_SIZE_Y / 7, (hightScore % 10) % 5, (hightScore % 10) / 5);
+			playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((hightScore % 100) / 10) % 5, ((hightScore % 100) / 10) / 5);
+			if (hightScore >= 100)
+			{
+				playerScore->Render(hdc, WIN_SIZE_X / 2 - 10, WIN_SIZE_Y / 7, (hightScore / 100) % 5, (hightScore / 100) / 5);
+			}
+		}
+	}
+
 
 	if (stage)
 		stage->Render(hdc, WIN_SIZE_X / 2 -30 , WIN_SIZE_Y / 5);		//스테이지 텍스트
@@ -170,10 +139,16 @@ void ScoreScene::Render(HDC hdc)
 	if (playerScore)
 	{
 		playerScore->Render(hdc, WIN_SIZE_X / 4+30, WIN_SIZE_Y / 4 + 15, 0, 0);	//플레이어 누적 점수 1,10...10000자리
-		playerScore->Render(hdc, WIN_SIZE_X / 4+20, WIN_SIZE_Y / 4 + 15, 0, 0);
-		playerScore->Render(hdc, WIN_SIZE_X / 4+10, WIN_SIZE_Y / 4 + 15, 0, 0);
-		playerScore->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 4 + 15, 0, 0);
-		playerScore->Render(hdc, WIN_SIZE_X / 4-10, WIN_SIZE_Y / 4 + 15, 0, 0);
+		if (player1Score >= 1)
+		{
+			playerScore->Render(hdc, WIN_SIZE_X / 4 + 20, WIN_SIZE_Y / 4 + 15, 0, 0);
+			playerScore->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 4 + 15, (player1Score % 10) % 5, (player1Score % 10) / 5);
+			playerScore->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 4 + 15, ((player1Score % 100) / 10) % 5, ((player1Score % 100) / 10) / 5);
+			if (player1Score >= 100)
+			{
+				playerScore->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 4 + 15, (player1Score / 100) % 5, (player1Score / 100) / 5);
+			}
+		}
 	}
 
 	for (int i = 0; i < 4; i++)		// 에너미 탱크 종류별로 랜더
@@ -340,4 +315,83 @@ void ScoreScene::Render(HDC hdc)
 
 void ScoreScene::Release()
 {
+}
+
+void ScoreScene::ScoreCalculate()
+{
+	elapsedcount++;
+	if (CNE < KNE)		//일반 탱크
+	{
+		if (elapsedcount >= elapsedTest)
+		{
+			CNE++;
+			elapsedcount = 0;
+		}
+	}
+
+	if (bSSE && CSE < KSE)	//스피드 탱크
+	{
+		if (elapsedcount >= elapsedTest)
+		{
+			CSE++;
+			SSE += 2;
+			elapsedcount = 0;
+		}
+	}
+
+	if (bSRE && CRE < KRE)	//레피드 탱크
+	{
+		if (elapsedcount >= elapsedTest)
+		{
+			CRE++;
+			elapsedcount = 0;
+			SRE += 3;
+		}
+	}
+
+	if (bSBE && CBE < KBE)	//보스 탱크
+	{
+		if (elapsedcount >= elapsedTest)
+		{
+			CBE++;
+			elapsedcount = 0;
+			SBE += 4;
+		}
+	}
+
+
+	if (CNE == KNE && bSSE == false)	//노말 점수 끝
+	{
+		if (elapsedcount >= elapsedTest * 2)
+		{
+			bSSE = true;
+			elapsedcount = 0;
+		}
+	}
+	else if (CSE == KSE && bSRE == false)	//두번째 점수 계산끝
+	{
+		if (elapsedcount >= elapsedTest * 2)
+		{
+			bSRE = true;
+			elapsedcount = 0;
+		}
+	}
+	else if (CRE == KRE && bSBE == false)	//세번째 점수 계산 끝
+	{
+		if (elapsedcount >= elapsedTest * 2)
+		{
+			bSBE = true;
+			elapsedcount = 0;
+		}
+	}
+	else if (CBE == KBE && bTotalScore == false)
+	{
+		if (elapsedcount >= elapsedTest * 2)
+		{
+			bTotalScore = true;
+			elapsedcount = 0;
+			TK = KNE + KSE + KRE + KBE;
+		}
+
+	}
 }

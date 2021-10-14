@@ -8,6 +8,7 @@ class Image;
 class TitleScene : public GameEntity
 {
 private:
+	Image* title;
 	Image* backGround;
 	Image* tankUi;
 

@@ -114,6 +114,9 @@
     <ClCompile Include="MainGame.cpp">
       <Filter>MainGame</Filter>
     </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>2D Framework\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -193,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="GameOverScene.h">
       <Filter>MainGame\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>2D Framework\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
