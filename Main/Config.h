@@ -58,7 +58,7 @@ extern POINT g_ptMouse;
 
 enum class Terrain { Earth, Wall, Water, Grass, BreakableWall, End };
 
-enum class TileType {Ground, Wall, Water, Grass, Brick};
+enum class TileType {Ground, Wall, Water, Iced, Grass, Brick};
 typedef struct tagSampleTile
 {
 	RECT rc;
@@ -67,7 +67,7 @@ typedef struct tagSampleTile
 
 typedef struct tagTile
 {
-	Terrain terrain;
+	TileType tileType;
 	RECT rc;				// bullet Hit Collider
 	//image
 	// sample tile의 아이디 (프레임 X, 프레임 Y)
@@ -75,6 +75,10 @@ typedef struct tagTile
 
 	RECT collider;		// walkable, noneWalkable 일때 
 
+	int leftHit;
+	int rightHit;
+	int topHit;
+	int bottomHit;
 } TILE_INFO;
 
 typedef struct ArgumentFuncPtr

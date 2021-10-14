@@ -36,10 +36,10 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 
 	ammoCount = 1;
 	ammoPack = new Ammo[ammoCount];
-	// πÃªÁ¿œ √ ±‚»≠
+	// ÎØ∏ÏÇ¨Ïùº Ï¥àÍ∏∞Ìôî
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	BarrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
@@ -52,16 +52,16 @@ void PlayerTank::Update()
 	if (bIsAlive == false)	return;
 	ammoPack->Update();
 
-	// Ω∫∆˘ ¿ÃπÃ¡ˆøÕ ΩØµÂ ¿ÃπÃ¡ˆ æ˜µ•¿Ã∆Æ
+	// Ïä§Ìè∞ Ïù¥ÎØ∏ÏßÄÏôÄ Ïâ¥Îìú Ïù¥ÎØ∏ÏßÄ ÏóÖÎç∞Ïù¥Ìä∏
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckShieldOn || bCheckSpawnStatus)
 	{
-		// ≈∏¿Ã∏”∞° 2√ ∞° µ«∏È ∏ÆΩ∫∆˘ ªÛ≈¬ «ÿ¡¶, ∞Ê∞˙Ω√∞£ √ ±‚»≠
-		// ≈∏¿Ã∏”∞° 3√ ∞° µ«∏È ΩØµÂ «ÿ¡¶
+		// ÌÉÄÏù¥Î®∏Í∞Ä 2Ï¥àÍ∞Ä ÎêòÎ©¥ Î¶¨Ïä§Ìè∞ ÏÉÅÌÉú Ìï¥Ï†ú, Í≤ΩÍ≥ºÏãúÍ∞Ñ Ï¥àÍ∏∞Ìôî
+		// ÌÉÄÏù¥Î®∏Í∞Ä 3Ï¥àÍ∞Ä ÎêòÎ©¥ Ïâ¥Îìú Ìï¥Ï†ú
 		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
 		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
-		// ≈∏¿Ã∏”∞° 0.05√  ∞£∞›¿∏∑Œ ΩØµÂ ¿ÃπÃ¡ˆ ∞ªΩ≈
+		// ÌÉÄÏù¥Î®∏Í∞Ä 0.05Ï¥à Í∞ÑÍ≤©ÏúºÎ°ú Ïâ¥Îìú Ïù¥ÎØ∏ÏßÄ Í∞±Ïã†
 		if (bCheckSpawnStatus)
 		{
 			spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
@@ -117,12 +117,13 @@ void PlayerTank::Render(HDC hdc)
 	}
 
 
-	// ΩØµÂ ∑ª¥ı 
-	// ≈∏¿Ã∏”∞° 3√ ∞° µ«∏È ΩØµÂ ∑ª¥ı X
+	// Ïâ¥Îìú Î†åÎçî 
+	// ÌÉÄÏù¥Î®∏Í∞Ä 3Ï¥àÍ∞Ä ÎêòÎ©¥ Ïâ¥Îìú Î†åÎçî X
 	if (bCheckShieldOn)
 	{
 		shieldImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, bShieldImageChanged, 0, 1.0f);
 	}
+
 }
 
 void PlayerTank::Release()
@@ -245,14 +246,14 @@ void PlayerTank::Fire()
 	{
 		for (int i = 0; i < ammoCount; i++)
 		{
-			// ¿¸√º πÃªÁ¿œ¿ª º¯»∏«œ∏Èº≠ πﬂªÁ µ∆¥¬¡ˆ æ»µ∆¥¬¡ˆ ∆«¥‹
+			// Ï†ÑÏ≤¥ ÎØ∏ÏÇ¨ÏùºÏùÑ ÏàúÌöåÌïòÎ©¥ÏÑú Î∞úÏÇ¨ ÎêêÎäîÏßÄ ÏïàÎêêÎäîÏßÄ ÌåêÎã®
 			if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
 				continue;
 
 			switch (moveDir)
 			{
 			case Left:
-				BarrelPos = { pos.x - bodySize / 2, pos.y - bodySize / 4 };
+				BarrelPos = { pos.x - bodySize / 2 + 3, pos.y - bodySize / 4 };
 				ammoPack[i].SetMoveDir("Left");
 				break;
 			case Right:
@@ -272,8 +273,8 @@ void PlayerTank::Fire()
 			}
 
 			//ammoPack[i].SetIsAlive(true);
-			ammoPack[i].SetPos(BarrelPos);	// πÃªÁ¿œ ¿ßƒ° ∫Ø∞Ê
-			ammoPack[i].SetIsFire(true);	// πÃªÁ¿œ ªÛ≈¬ ∫Ø∞Ê
+			ammoPack[i].SetPos(BarrelPos);	// ÎØ∏ÏÇ¨Ïùº ÏúÑÏπò Î≥ÄÍ≤Ω
+			ammoPack[i].SetIsFire(true);	// ÎØ∏ÏÇ¨Ïùº ÏÉÅÌÉú Î≥ÄÍ≤Ω
 
 			break;
 		}
@@ -311,10 +312,10 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// πÃªÁ¿œ √ ±‚»≠
+	// ÎØ∏ÏÇ¨Ïùº Ï¥àÍ∏∞Ìôî
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -351,10 +352,10 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// πÃªÁ¿œ √ ±‚»≠
+	// ÎØ∏ÏÇ¨Ïùº Ï¥àÍ∏∞Ìôî
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -391,10 +392,10 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// πÃªÁ¿œ √ ±‚»≠
+	// ÎØ∏ÏÇ¨Ïùº Ï¥àÍ∏∞Ìôî
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -431,10 +432,10 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 
 	ammoCount = 30;
 	ammoPack = new Ammo[ammoCount];
-	// πÃªÁ¿œ √ ±‚»≠
+	// ÎØ∏ÏÇ¨Ïùº Ï¥àÍ∏∞Ìôî
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -449,7 +450,7 @@ void Tank::Update()
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
 	{
-		// ≈∏¿Ã∏”∞° 2√ ∞° µ«∏È ∏ÆΩ∫∆˘ ªÛ≈¬ «ÿ¡¶, ∞Ê∞˙Ω√∞£ √ ±‚»≠
+		// ÌÉÄÏù¥Î®∏Í∞Ä 2Ï¥àÍ∞Ä ÎêòÎ©¥ Î¶¨Ïä§Ìè∞ ÏÉÅÌÉú Ìï¥Ï†ú, Í≤ΩÍ≥ºÏãúÍ∞Ñ Ï¥àÍ∏∞Ìôî
 		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; }
 

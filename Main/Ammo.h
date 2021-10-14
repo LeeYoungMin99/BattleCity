@@ -25,12 +25,18 @@ private:
 	float moveSpeed;
 
 	BulletDir bulletDir;
+
+	RECT collision; // 충돌 콜리션
+
+	TILE_INFO *tile = nullptr;
 public:
-	HRESULT Init();		
+	HRESULT Init(TILE_INFO* tile);
 	//void Init(Tank* tank);		// 1. Tank객체의 포인터를 전달
 	void Update();
 	void Render(HDC hdc);
 	void Release();
+
+	bool CheckCollision(int idX, int idY);
 
 	bool CheckCollision();
 
