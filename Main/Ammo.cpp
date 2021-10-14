@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
-HRESULT Ammo::Init()
+HRESULT Ammo::Init(TILE_INFO *tile)
 {
 	//float x = 10.0f, y = 20.0f, h = 0.0f;
 	//h = (float)sqrtf((x * x) + (y * y));
@@ -12,8 +12,7 @@ HRESULT Ammo::Init()
 	pos.x = 0.0f;
 	pos.y = 0.0f;
 
-	bodySize = 21;
-
+	bodySize = 10;
 	shape.left = 0;
 	shape.top = 0;
 	shape.right = 0;
@@ -37,9 +36,14 @@ HRESULT Ammo::Init()
 		return E_FAIL;
 	}
 
-
+	collision.left = pos.x - (bodySize / 2.0f);
+	collision.top = pos.y - (bodySize / 2.0f);
+	collision.right = pos.x + (bodySize / 2.0f);
+	collision.bottom = pos.y + (bodySize / 2.0f);
 
 	bulletDir = BulletDir::Up;
+
+	this->tile = tile;
 
 	return S_OK;
 }
@@ -50,28 +54,39 @@ void Ammo::Update()
 
 	if (isFire)
 	{	
-		cout << moveAngle << endl;
 
 		pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// 프레임당 이동거리 -> 시간 당 이동거리
 		pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 
 
-		shape.left = pos.x - (bodySize / 2.0f);
-		shape.top = pos.y - (bodySize / 2.0f);
-		shape.right = pos.x + (bodySize / 2.0f);
-		shape.bottom = pos.y + (bodySize / 2.0f);
+		collision.left = pos.x - (bodySize / 2.0f);
+		collision.top = pos.y - (bodySize / 2.0f);
+		collision.right = pos.x + (bodySize / 2.0f);
+		collision.bottom = pos.y + (bodySize / 2.0f);
 
+		int posIdX = (pos.x- STAGE_SIZE_X) / 16;
+		int posIdY = (pos.y- STAGE_SIZE_Y) / 16;
+
+		cout << "1X : " <<posIdX << endl;
+		cout << "1Y : " << posIdY << endl;
+		cout << "2X : " << posIdX-1 << endl;
+		cout << "2Y : " << posIdY+1 << endl;
 		// 타겟과의 충돌확인
-		if (CheckCollision())
+		if (CheckCollision(posIdX, posIdY))
 		{
 			isFire = false;
-			target->SetIsAlive(false);
 		}
 
 		// 화면을 벗어났는지 확인
-		if (shape.left > WIN_SIZE_X || shape.right < 0 ||
-			shape.top > WIN_SIZE_Y || shape.bottom < 0)
+		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
+			collision.top > STAGE_SIZE_Y  + 416 || collision.bottom < STAGE_SIZE_Y)
 		{
+			collision.left = -10;
+			collision.top = -10;
+			collision.right = -10;
+			collision.bottom = -10;
+			pos.x = -10;
+			pos.y = -10;
 			isFire = false;
 		}
 	}
@@ -90,6 +105,7 @@ void Ammo::Render(HDC hdc)
 
 	if (isFire)
 	{
+		Rectangle(hdc, collision.left, collision.top, collision.right, collision.bottom);
 		img->Render(hdc, pos.x, pos.y);
 		//Ellipse(hdc, shape.left, shape.top, shape.right, shape.bottom);
 	}
@@ -99,35 +115,139 @@ void Ammo::Release()
 {
 }
 
-bool Ammo::CheckCollision()
+bool Ammo::CheckCollision(int idX, int idY)
 {
-	// 어떻게 미사일과 적 탱크가 충돌했는지 판단할까?
+	RECT rc;
+	int check = false;
 
-	if (!target)	return false;
+	if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
+	{
+		if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)))
+		{
+			// 벽 없애기
+			check = true;
+			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+			{
+				tile[26 * (idY)+idX - 1].collider.top += 8;
+				tile[26 * (idY)+idX - 1].topHit++;
+			}
+			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+			{
+				tile[26 * (idY)+idX - 1].collider.bottom -= 8;
+				tile[26 * (idY)+idX - 1].bottomHit++;
+			}
+		}
 
-	// 두 원의 좌표로 거리 계산
-	POINTFLOAT ammoPos = pos;
-	POINTFLOAT targetPos = target->GetPos();
 
-	float distance = sqrtf((ammoPos.x - targetPos.x) * (ammoPos.x - targetPos.x)
-		+ (ammoPos.y - targetPos.y) * (ammoPos.y - targetPos.y));
 
-	// 반지름의 합 계산
-	float ammoRadius = bodySize / 2.0f;
-	float targetRadius = target->GetBodySize() / 2.0f;
 
-	float sum = ammoRadius + targetRadius;
 
-	// 비교 (반지름의 합이 더 크면 충돌)
-	if (distance < sum)
+		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+		{
+			// 벽 없애기
+			cout << "벽 2 부딪혔다" << endl;
+			check = true;
+			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY)+idX].collider.top += 8;
+				tile[26 * (idY)+idX].topHit++;
+			}
+			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY)+idX].collider.bottom -= 8;
+				tile[26 * (idY)+idX].bottomHit++;
+			}
+		}
+
+
+
+		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX + 1)].collider)))
+		{
+			// 벽 없애기
+			cout << "벽 3 부딪혔다" << endl;
+			check = true;
+			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX + 1].tileType == TileType::Brick)
+			{
+				tile[26 * (idY)+idX + 1].collider.top += 8;
+				tile[26 * (idY)+idX + 1].topHit++;
+			}
+			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX + 1].tileType == TileType::Brick)
+			{
+				tile[26 * (idY)+idX + 1].collider.bottom -= 8;
+				tile[26 * (idY)+idX + 1].bottomHit++;
+			}
+		}
+	}
+	else if(bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
+	{
+		if (IntersectRect(&rc, &collision, &(tile[26 * (idY-1) + idX].collider)) )
+		{
+			// 벽 없애기
+			cout << "벽 1 부딪혔다" << endl;
+			check = true;
+			if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY - 1) + idX].collider.right -= 8;
+				tile[26 * (idY - 1) + idX].rightHit++;
+			}
+			else if (bulletDir == BulletDir::Right && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY - 1) + idX].collider.left += 8;
+				tile[26 * (idY - 1) + idX].leftHit++;
+			}
+		}
+		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+		{
+			// 벽 없애기
+			cout << "벽 2 부딪혔다" << endl;
+			check = true;
+			if (bulletDir == BulletDir::Left && tile[26 * (idY) + idX].tileType == TileType::Brick )
+			{
+				tile[26 * (idY) + idX].collider.right -= 8;
+				tile[26 * (idY) + idX].rightHit++;
+			}
+			else if (bulletDir == BulletDir::Right && tile[26 * (idY) + idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY) + idX].collider.left += 8;
+				tile[26 * (idY) + idX].leftHit++;
+			}
+		}
+		if (IntersectRect(&rc, &collision, &(tile[26 * (idY+1)+(idX)].collider)))
+		{
+			// 벽 없애기
+			cout << "벽 3 부딪혔다" << endl;
+			check = true;
+			if (bulletDir == BulletDir::Left && tile[26 * (idY + 1) + idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY + 1)+idX].collider.right -= 8;
+				tile[26 * (idY + 1) + idX].rightHit++;
+			}
+			else if (bulletDir == BulletDir::Right && tile[26 * (idY + 1) + idX].tileType == TileType::Brick)
+			{
+				tile[26 * (idY + 1) + idX].collider.left += 8;
+				tile[26 * (idY + 1) + idX].leftHit++;
+			}
+		}
+		
+	}
+	
+	
+	if (check)
+	{
+		collision.left = -10;
+		collision.top = -10;
+		collision.right = -10;
+		collision.bottom = -10;
+		pos.x = -10;
+		pos.y = -10;
 		return true;
+	}
 
 	return false;
 }
 
 void Ammo::SetMoveDir(string dir)
 {
-	cout << dir;
 	if (dir._Equal("Left"))
 	{
 		bulletDir = BulletDir::Left;

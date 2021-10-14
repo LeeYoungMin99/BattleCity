@@ -41,6 +41,8 @@ HRESULT Stage1Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.right += STAGE_SIZE_X;
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
+
+			cout << i * TILE_COUNT_X + j << ": " << tileInfo[i * TILE_COUNT_X + j].rc.left << endl;
 		}
 	}
 
@@ -102,7 +104,8 @@ void Stage1Scene::Render(HDC hdc)
 				tileInfo[i * TILE_COUNT_X + j].rc.left + TILE_SIZE / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
 				tileInfo[i * TILE_COUNT_X + j].rc.top + TILE_SIZE / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y,
 				tileInfo[i * TILE_COUNT_X + j].frameX,
-				tileInfo[i * TILE_COUNT_X + j].frameY);
+				tileInfo[i * TILE_COUNT_X + j].frameY, tileInfo[i * TILE_COUNT_X + j].leftHit, tileInfo[i * TILE_COUNT_X + j].rightHit,
+				tileInfo[i * TILE_COUNT_X + j].topHit, tileInfo[i * TILE_COUNT_X + j].bottomHit);
 
 			if (check)
 			{

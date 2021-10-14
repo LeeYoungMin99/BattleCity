@@ -29,6 +29,7 @@ private:
 	int selectedIdX, selectedIdY;
 	int posX, posY;
 	State state;
+	TileType tileType;
 
 	bool bShowNoneWalkable;
 public:

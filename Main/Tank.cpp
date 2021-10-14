@@ -31,7 +31,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	BarrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
@@ -61,7 +61,7 @@ void PlayerTank::Render(HDC hdc)
 	}
 
 	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
-	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, enforceCount, 0.5f);
+	img->Render(hdc, pos.x - bodySize/4, pos.y - bodySize / 4, moveDir + checkMoveCount, enforceCount, 1.0f);
 }
 
 void PlayerTank::Release()
@@ -191,7 +191,7 @@ void PlayerTank::Fire()
 			switch (moveDir)
 			{
 			case Left:
-				BarrelPos = { pos.x - bodySize / 2, pos.y - bodySize / 4 };
+				BarrelPos = { pos.x - bodySize / 2 + 3, pos.y - bodySize / 4 };
 				ammoPack[i].SetMoveDir("Left");
 				break;
 			case Right:
@@ -250,7 +250,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -287,7 +287,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -324,7 +324,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
@@ -361,7 +361,7 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init();
+		ammoPack[i].Init(tile);
 	}
 
 	return S_OK;
