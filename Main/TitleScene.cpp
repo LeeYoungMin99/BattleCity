@@ -10,11 +10,14 @@ HRESULT TitleScene::Init()
 	backGround = ImageManager::GetSingleton()->FindImage("Image/Title.bmp");
 
 
-	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256/*512*/, 128/*256*/, 8, 4, true, RGB(255, 0, 255));
 	tankUi = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
 
 	pos.x = 150;
 	pos.y = 470;
+
+	pos.x = WIN_SIZE_X * 0.3;
+	pos.y = WIN_SIZE_Y * 0.59;
 
 	// 매개변수 (어떤 씬으로, 어떤 로딩씬을)
 	arg = new ArgumentFuncPtr;
@@ -39,10 +42,11 @@ void TitleScene::Update()
 			{
 			case player_1:
 				selecTitle = selectedTitle::player_1;
-				SceneManager::GetSingleton()->ChangeScene("Stage1", "LoadingScene");
+				SceneManager::GetSingleton()->ChangeScene("Stage1");
 				break;
 			case player_2:
 				selecTitle = selectedTitle::player_1;
+				SceneManager::GetSingleton()->ChangeScene("ScoreScene");
 				break;
 			case CONSTRUCTION:
 				selecTitle = selectedTitle::player_2;
@@ -54,8 +58,8 @@ void TitleScene::Update()
 
 		if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_DOWN))
 		{
-			if (pos.y < 580)
-				pos.y += 60;
+			if (pos.y < WIN_SIZE_Y * 0.7)
+				pos.y += 32;
 
 			switch (selecTitle)
 			{
@@ -72,8 +76,8 @@ void TitleScene::Update()
 		}
 		if (KeyManager::GetSingleton()->IsOnceKeyDown(VK_UP))
 		{
-			if (pos.y > 470)
-				pos.y -= 60;
+			if (pos.y > WIN_SIZE_Y * 0.59)
+				pos.y -= 32;
 
 			switch (selecTitle)
 			{

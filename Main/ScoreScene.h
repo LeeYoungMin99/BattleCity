@@ -27,13 +27,13 @@ private:
 	bool bScoreNormalEnemy, bScoreSpeedEnemy, bScoreRapidEnemy, bScoreBossEnemy;
 
 	//디버깅용 편하게
-	int KNE, KSE, KRE, KBE;				//종류별 죽인 몬스터수
-	int CNE, CSE, CRE, CBE;				//죽인 몬스터를 1씩 카운트하기위한 변수
+	int KNE, KSE, KRE, KBE;				//종류별 죽인 탱크수
+	int CNE, CSE, CRE, CBE;				//죽인 탱크를 1씩 카운트하기위한 변수
 	int SNE, SSE, SRE, SBE;				//스코어 점수
 	int bSNE, bSSE, bSRE, bSBE;			//순서대로 점수계산을 위한 불타입
-	int TK_1, TK_10;					//토탈 킬수 1의자리, 10의자리
+	int TK;								//토탈 킬수
 	int bTotalScore;					// 점수계산 끝나고 토탈점수 
-	int round;
+	int round;							// 현제 라운드
 
 
 
