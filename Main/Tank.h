@@ -6,10 +6,19 @@
 class Tank : public GameObject
 {
 public:
+	Image* spawnImg = nullptr;
+	float spawnTime = 2.0f;
+	float spawnElapsedCount = 0.0f;
+	int spawnImgFrame = 0;
+	int maxSpawnImgFrame = 3;
+	bool bReverseSpawnImg = false;
+	bool bCheckSpawnStatus = true;
+
+
 	TankType type = TankType::Player;
 	MoveDir moveDir = MoveDir::Up;
 	int checkMoveCount = 0;
-	int enforceCount = 2;
+	int enforceCount = 0;
 	bool bIsAlive = true;
 
 	int ammoCount = 0;
@@ -19,8 +28,8 @@ public:
 	TILE_INFO* tileInfo = nullptr;
 	Ammo* ammoPack = nullptr;
 
-	int delay = RANDOM(10, 20);
-	int elapsedCount = 0;
+	float delay = RANDOM(1, 3);
+	float elapsedCount = 0.0f;
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
 	virtual void Update();												// 오버라이딩을 한다
@@ -41,6 +50,14 @@ public:
 
 class PlayerTank : public Tank
 {
+private:
+	Image* shieldImg = nullptr;
+	float shieldTime = 3.0f;
+	float shieldElapsedCount = 0.0f;
+	bool bCheckShieldOn = false;
+	bool bShieldImageChanged = false;
+	
+
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo) override;
 	virtual void Update() override;						

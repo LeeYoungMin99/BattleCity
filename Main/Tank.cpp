@@ -1,16 +1,21 @@
 #include "Tank.h"
 #include "Image.h"
 
-
 #pragma region PlyaerTank
 HRESULT PlayerTank::Init(TILE_INFO* tile)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Shield.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
+	shieldImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Shield.bmp");
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (shieldImg == nullptr) { cout << "ShieldImg nullptr" << endl;  return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = 200;
 	pos.y = 430;
@@ -23,6 +28,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile)
 	SetShape();
 
 	moveDir = MoveDir::Up;
+	elapsedCount = 0.0f;
 
 	bIsAlive = true;
 
@@ -44,11 +50,47 @@ void PlayerTank::Update()
 	if (bIsAlive == false)	return;
 	ammoPack->Update();
 
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	if (bCheckShieldOn || bCheckSpawnStatus)
+	{
+		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
+		// 타이머가 3초가 되면 쉴드 해제
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
+		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
+		// 타이머가 0.05초 간격으로 쉴드 이미지 갱신
+		if (bCheckSpawnStatus)
+		{
+			spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+			if (spawnElapsedCount > 0.125f)
+			{
+				spawnElapsedCount -= 0.125f;
+				if (bReverseSpawnImg) { spawnImgFrame--; }
+				else { spawnImgFrame++; }
+				if (spawnImgFrame == 3 || spawnImgFrame == 0)
+				{
+					bReverseSpawnImg = !bReverseSpawnImg;
+				}
+			}
+		}
 
+		if (bCheckShieldOn)
+		{
+			shieldElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+			if (shieldElapsedCount > 0.05f)
+			{
+				bShieldImageChanged = !bShieldImageChanged;
+				shieldElapsedCount -= 0.05f;
+			}
+		}
+	}
 
 	SetShape();
-	Move();
-	Fire();
+	if (!bCheckSpawnStatus)
+	{
+		Move();
+		Fire();
+	}
 }
 
 void PlayerTank::Render(HDC hdc)
@@ -60,8 +102,24 @@ void PlayerTank::Render(HDC hdc)
 		ammoPack[i].Render(hdc);
 	}
 
-	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
-	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, enforceCount, 0.5f);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+
+	if (bCheckSpawnStatus)
+	{
+		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);
+	}
+	else
+	{
+		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, moveDir + checkMoveCount, enforceCount, 1.0f);
+	}
+
+
+	// 쉴드 렌더 
+	// 타이머가 3초가 되면 쉴드 렌더 X
+	if (bCheckShieldOn)
+	{
+		shieldImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, bShieldImageChanged, 0, 1.0f);
+	}
 }
 
 void PlayerTank::Release()
@@ -223,13 +281,14 @@ void PlayerTank::Fire()
 #pragma region NormalEnemyTank
 HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -260,13 +319,14 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile)
 #pragma region SpeedEnemyTank
 HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -297,13 +357,14 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile)
 #pragma region RapidEnemyTank
 HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -334,13 +395,14 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile)
 #pragma region DefensiveEnemyTank
 HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (img == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+
+	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
+	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
 	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
@@ -372,9 +434,32 @@ void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
-	elapsedCount++;
-	Move();
-	Fire();
+
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	if (bCheckSpawnStatus)
+	{
+		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; }
+
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (spawnElapsedCount > 0.125f)
+		{
+			spawnElapsedCount -= 0.125f;
+			if (bReverseSpawnImg) { spawnImgFrame--; }
+			else { spawnImgFrame++; }
+			if (spawnImgFrame == 3 || spawnImgFrame == 0)
+			{
+				bReverseSpawnImg = !bReverseSpawnImg;
+			}
+		}
+	}
+
+	if (!bCheckSpawnStatus)
+	{
+		Move();
+		Fire();
+	}
 }
 
 void Tank::Render(HDC hdc)
@@ -386,7 +471,15 @@ void Tank::Render(HDC hdc)
 		ammoPack[i].Render(hdc);
 	}
 
-	img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	if (bCheckSpawnStatus)
+	{
+		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);
+	}
+	else
+	{
+		img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+	}
 }
 
 void Tank::Release()
@@ -396,10 +489,10 @@ void Tank::Release()
 
 void Tank::Move()
 {
-	if (elapsedCount == delay)
+	if (elapsedCount >= delay)
 	{
 		elapsedCount = 0;
-		delay = RANDOM(10,20);
+		delay = RANDOM(0, 3);
 		moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
 

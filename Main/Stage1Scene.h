@@ -26,6 +26,8 @@ private:
 	Tank* tank = nullptr;
 	vector<TankFactorial*> vecTankFactorial = {};
 
+	float elapsedCount = 0.0f;
+	float spawmElapsedCount = 5.0f;
 	int spawnCount = 0;
 	int maxSpawnCount = 3;
 	int currSpawnEnemy = 0;
