@@ -13,7 +13,7 @@ private:
 	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X];
 	Image* sampleImage;
 	
-	//GameBoard °ü·Ã
+	//GameBoard Â°Ã¼Â·Ãƒ
 	Image *spawnMonsterImage;
 	int remainSpawnMonster;
 	int remainMonster;
@@ -33,6 +33,8 @@ private:
 	POINTFLOAT spawnEnemyPos[3] = {};
 	EnemyManager* enemyMgr = nullptr;
 
+	POINTFLOAT spawnPos[3];
+
 	bool check = false;
 public:
 	void Load(int index);
@@ -40,7 +42,6 @@ public:
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
-
 	void SpawnEnemy(TankType type);
 };
 

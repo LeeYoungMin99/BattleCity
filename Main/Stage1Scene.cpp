@@ -41,9 +41,7 @@ HRESULT Stage1Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.right += STAGE_SIZE_X;
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
-
 		}
-
 	}
 
 	spawnEnemyPos[0].x = tileInfo[0].rc.right	+ STAGE_SIZE_X +16;
