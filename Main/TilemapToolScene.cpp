@@ -37,7 +37,16 @@ HRESULT TilemapToolScene::Init()
             tileInfo[i * TILE_COUNT_X + j].frameX = 7;
             tileInfo[i * TILE_COUNT_X + j].frameY = 0;
 
-            tileInfo[i * TILE_COUNT_X + j].terrain = Terrain::Grass;
+            tileInfo[i].collider.left = 0;
+            tileInfo[i].collider.top = 0;
+            tileInfo[i].collider.right = 0;
+            tileInfo[i].collider.bottom = 0;
+
+            tileInfo[i * TILE_COUNT_X + j].tileType = TileType::Ground;
+            tileInfo[i * TILE_COUNT_X + j].leftHit = 0;
+            tileInfo[i * TILE_COUNT_X + j].rightHit = 0;
+            tileInfo[i * TILE_COUNT_X + j].bottomHit = 0;
+            tileInfo[i * TILE_COUNT_X + j].topHit = 0;
         }
     }
 
@@ -94,17 +103,43 @@ void TilemapToolScene::Update()
 
             cout << selectedIdX << "  " << selectedIdY << endl;
         
-            if (selectedIdX == 2 || selectedIdX ==7)
+            switch(selectedIdX)
             {
-                state = State::Walkable;
-                cout << "걸을 수 있는 타일이야!" << endl;
+                case 0:
+                    state = State::NoneWalkable;
+                    tileType = TileType::Brick;
+                    break;
+                case 1:
+                    state = State::NoneWalkable;
+                    tileType = TileType::Wall;
+                    break;
+                case 2:
+                    state = State::Walkable;
+                    tileType = TileType::Grass;
+                    break;
+                case 3:
+                    state = State::NoneWalkable;
+                    tileType = TileType::Iced;
+                    break;
+                case 4:
+                    state = State::Walkable;
+                    tileType = TileType::Water;
+                    break;
+                case 5:
+                    state = State::NoneWalkable;
+                    tileType = TileType::Water;
+                    break;
+                case 6:
+                    state = State::NoneWalkable;
+                    tileType = TileType::Water;
+                    break;
+                case 7:
+                    state = State::Walkable;
+                    tileType = TileType::Ground;
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                state = State::NoneWalkable;
-                cout << "못 걷는 타일이야!" << endl;
-            }
-        
         }
     }
 
@@ -120,6 +155,7 @@ void TilemapToolScene::Update()
                 if (state == State::NoneWalkable)
                 {
                     tileInfo[i].collider = tileInfo[i].rc;
+                    tileInfo[i].tileType = tileType;
                 }
                 else if (state == State::Walkable)
                 {

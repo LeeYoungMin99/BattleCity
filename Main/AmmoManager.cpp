@@ -17,7 +17,7 @@ HRESULT AmmoManager::Init()
 		itAmmos != vecAmmos.end(); itAmmos++)
 	{
 		(*itAmmos) = new Ammo;
-		(*itAmmos)->Init();
+		//(*itAmmos)->Init();
 	}
 
 	return S_OK;
