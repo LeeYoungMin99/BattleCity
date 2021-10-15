@@ -119,7 +119,7 @@ void PlayerTank::Render(HDC hdc)
 	}
 	else
 	{
-		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, moveDir + checkMoveCount, enforceCount, 1.0f);
+		img->Render(hdc, pos.x /*- bodySize * 0.25f*/, pos.y /*- bodySize * 0.25f*/, moveDir + checkMoveCount, enforceCount, 0.5f);
 	}
 
 
@@ -377,15 +377,68 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 
 	bIsAlive = true;
 
-	ammoCount = 30;
+	ammoCount = 1;
 	ammoPack = new Ammo[ammoCount];
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init(tile);
+		ammoPack[i].Init(this->tileInfo);
 	}
+	cout << "@@" << endl;
 
 	return S_OK;
+}
+void NormalEnemyTank::Fire()
+{
+	testIlapsed++;
+	if (testIlapsed >= delay_2)
+	{
+		testIlapsed = 0;
+		delay_2 = RANDOM_2(10, 15);
+
+		for (int i = 0; i < ammoCount; i++)
+		{
+			// 전체 미사일을 순회하면서 발사 됐는지 안됐는지 판단
+			if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
+				continue;
+
+			switch (moveDir)
+			{
+			case Left:
+				BarrelPos = { pos.x - bodySize / 2 + 3, pos.y - bodySize / 4 };
+				ammoPack[i].SetMoveDir("Left");
+				break;
+			case Right:
+				BarrelPos = { pos.x, pos.y - bodySize / 4 };
+				ammoPack[i].SetMoveDir("Right");
+				break;
+			case Up:
+				BarrelPos = { pos.x - bodySize / 4, pos.y - bodySize / 2 };
+				ammoPack[i].SetMoveDir("Up");
+				break;
+			case Down:
+				BarrelPos = { pos.x - bodySize / 4, pos.y };
+				ammoPack[i].SetMoveDir("Down");
+				break;
+			default:
+				break;
+			}
+
+			//ammoPack[i].SetIsAlive(true);
+			ammoPack[i].SetPos(BarrelPos);	// 미사일 위치 변경
+			ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
+
+			break;
+		}
+
+		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
+	}
+
+	
+	
+	
+
+
 }
 #pragma endregion
 
@@ -425,6 +478,9 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 
 	return S_OK;
 }
+void SpeedEnemyTank::Fire()
+{
+}
 #pragma endregion
 
 #pragma region RapidEnemyTank
@@ -462,6 +518,9 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	}
 
 	return S_OK;
+}
+void RapidEnemyTank::Fire()
+{
 }
 #pragma endregion
 
@@ -501,12 +560,16 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 
 	return S_OK;
 }
+void DefensiveEnemyTank::Fire()
+{
+}
 #pragma endregion
 
 void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
+	ammoPack->Update();
 
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
@@ -743,6 +806,10 @@ void Tank::Move()
 	default:
 		break;
 	}
+}
+
+void Tank::Fire()
+{
 }
 
 bool Tank::IsCollided()

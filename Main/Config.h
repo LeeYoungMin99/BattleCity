@@ -54,6 +54,7 @@ extern POINT g_ptMouse;
 #define STAGE_SIZE_Y (WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y)
 
 #define RANDOM(min, max) (rand() % ((max) - (min) + 1) + (min))
+#define RANDOM_2(min, max) (rand() % ((max) - (min) + 1) + (min))
 #define CORRECTION_POS_MIN 6
 #define CORRECTION_POS_MAX 10
 

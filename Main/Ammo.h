@@ -30,7 +30,7 @@ private:
 
 	TILE_INFO *tile = nullptr;
 public:
-	HRESULT Init(TILE_INFO* tile);
+	HRESULT Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/);
 	//void Init(Tank* tank);		// 1. Tank객체의 포인터를 전달
 	void Update();
 	void Render(HDC hdc);
