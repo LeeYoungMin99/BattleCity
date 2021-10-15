@@ -5,7 +5,7 @@
 #pragma region PlyaerTank
 HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
 
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Shield.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
@@ -119,7 +119,7 @@ void PlayerTank::Render(HDC hdc)
 	}
 	else
 	{
-		img->Render(hdc, pos.x /*- bodySize * 0.25f*/, pos.y /*- bodySize * 0.25f*/, moveDir + checkMoveCount, enforceCount, 0.5f);
+		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, moveDir + checkMoveCount, enforceCount, 1.0f);
 	}
 
 

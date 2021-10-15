@@ -197,6 +197,26 @@ bool Ammo::CheckCollision(int idX, int idY)
 		
 	}
 	
+	// 넥서스 충돌 처리
+	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+	{
+		check=true;
+		if (tile[26 * (idY)+(idX)].tileType == TileType::Nexus)
+		{
+			int index = 4;
+			for (int i = 0; i < TILE_COUNT_X * TILE_COUNT_Y; i++)
+			{
+				if (tile[i].tileType == TileType::Nexus)
+				{
+					tile[i].frameX = index++;
+					tile[i].frameY = 1;
+
+				}
+			}
+
+			//조건 처리
+		}
+	}
 	
 	
 	if (check)
