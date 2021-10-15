@@ -7,6 +7,8 @@ class EnemyManager;
 class Tank : public GameObject
 {
 public:
+	int HP = 0;
+
 	Image* spawnImg = nullptr;
 	Image* itemTank = nullptr;
 	float spawnTime = 2.0f;

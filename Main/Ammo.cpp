@@ -1,13 +1,13 @@
 #include "Ammo.h"
 #include "Tank.h"
 #include "Image.h"
+#include "EnemyManager.h"
 #include "CommonFunction.h"
 
-HRESULT Ammo::Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/)
+HRESULT Ammo::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* ownerTank, Tank* playerTank)
 {
 	//float x = 10.0f, y = 20.0f, h = 0.0f;
 	//h = (float)sqrtf((x * x) + (y * y));
-
 
 	pos.x = 0.0f;
 	pos.y = 0.0f;
@@ -21,8 +21,6 @@ HRESULT Ammo::Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/
 	moveSpeed = 200.0f;		// 초당 15픽셀 이동
 	moveAngle = 0.0f;
 
-	target = nullptr;
-
 	isFire = false;
 	//isAlive = true;
 
@@ -31,7 +29,7 @@ HRESULT Ammo::Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Right.bmp", 6, 8, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
-	 
+
 	if (img == nullptr)
 	{
 		return E_FAIL;
@@ -45,9 +43,9 @@ HRESULT Ammo::Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/
 	bulletDir = BulletDir::Up;
 
 	this->tile = tile;
-	//this->tile = enemyMgr;
-	//this->target = playerTank;
-
+	this->enemyMgr = enemyMgr;
+	this->playerTank = playerTank;
+	this->ownerTank = ownerTank;
 	return S_OK;
 }
 
@@ -56,8 +54,7 @@ void Ammo::Update()
 	//if (isAlive == false)	return;
 
 	if (isFire)
-	{	
-
+	{
 		pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// 프레임당 이동거리 -> 시간 당 이동거리
 		pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 
@@ -67,8 +64,8 @@ void Ammo::Update()
 		collision.right = pos.x + (bodySize / 2.0f);
 		collision.bottom = pos.y + (bodySize / 2.0f);
 
-		int posIdX = (pos.x- STAGE_SIZE_X) / 16;
-		int posIdY = (pos.y- STAGE_SIZE_Y) / 16;
+		int posIdX = (pos.x - STAGE_SIZE_X) / 16;
+		int posIdY = (pos.y - STAGE_SIZE_Y) / 16;
 
 		// 타겟과의 충돌확인
 		if (CheckCollision(posIdX, posIdY))
@@ -78,7 +75,7 @@ void Ammo::Update()
 
 		// 화면을 벗어났는지 확인
 		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
-			collision.top > STAGE_SIZE_Y  + 416 || collision.bottom < STAGE_SIZE_Y)
+			collision.top > STAGE_SIZE_Y + 416 || collision.bottom < STAGE_SIZE_Y)
 		{
 			collision.left = -10;
 			collision.top = -10;
@@ -172,9 +169,9 @@ bool Ammo::CheckCollision(int idX, int idY)
 		
 
 	}
-	else if(bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
+	else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
 	{
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY-1) + idX].collider)) )
+		if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 		{
 			// 벽 없애기
 			check = true;
@@ -198,15 +195,15 @@ bool Ammo::CheckCollision(int idX, int idY)
 		{
 			// 벽 없애기
 			check = true;
-			if (bulletDir == BulletDir::Left && tile[26 * (idY) + idX].tileType == TileType::Brick )
+			if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
 			{
-				tile[26 * (idY) + idX].collider.right -= 8;
-				tile[26 * (idY) + idX].rightHit++;
+				tile[26 * (idY)+idX].collider.right -= 8;
+				tile[26 * (idY)+idX].rightHit++;
 			}
-			else if (bulletDir == BulletDir::Right && tile[26 * (idY) + idX].tileType == TileType::Brick)
+			else if (bulletDir == BulletDir::Right && tile[26 * (idY)+idX].tileType == TileType::Brick)
 			{
-				tile[26 * (idY) + idX].collider.left += 8;
-				tile[26 * (idY) + idX].leftHit++;
+				tile[26 * (idY)+idX].collider.left += 8;
+				tile[26 * (idY)+idX].leftHit++;
 			}
 			if (tile[26 * (idY) + idX].leftHit + tile[26 * (idY) + idX].rightHit >= 2)
 			{
@@ -214,13 +211,13 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY) + idX].bodyCollider.right = 0;
 			}
 		}
-		
+
 	}
-	
+
 	// 넥서스 충돌 처리
 	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 	{
-		check=true;
+		check = true;
 		if (tile[26 * (idY)+(idX)].tileType == TileType::Nexus)
 		{
 			int index = 4;
@@ -235,6 +232,46 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 
 			//조건 처리
+		}
+	}
+
+	if (playerTank == nullptr)
+	{
+		for (itEnemyTanks = enemyMgr->vecEnemys.begin();
+			itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
+		{
+			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
+			{
+				(*itEnemyTanks)->HP--;
+				check = true;
+			}
+		}
+	}
+	else
+	{
+		for (itEnemyTanks = enemyMgr->vecEnemys.begin();
+			itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
+		{
+			if ((*itEnemyTanks) == ownerTank)
+			{
+				continue;
+			}
+
+			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
+			{
+				check = true;
+			}
+		}
+	}
+
+	if (playerTank != nullptr && !(playerTank->bCheckSpawnStatus))
+	{
+
+
+		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
+		{
+			playerTank->HP--;
+			check = true;
 		}
 	}
 
