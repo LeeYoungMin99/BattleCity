@@ -28,6 +28,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 	this->enemyMgr = enemyMgr;
 
 	SetShape();
+	if (IsCollided()) { bCheckSpawnCollided = true; }
 
 	moveDir = MoveDir::Up;
 	elapsedCount = 0.0f;
@@ -88,6 +89,11 @@ void PlayerTank::Update()
 		}
 	}
 
+	if (bCheckSpawnCollided)
+	{
+		if (!IsCollided()) { bCheckSpawnCollided = false; }
+	}
+
 	SetShape();
 	if (!bCheckSpawnStatus)
 	{
@@ -137,13 +143,28 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
+			int tempPos = 0;
 			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.y -= (int)pos.y % 16;
+				tempPos = (int)pos.y % 16;
+				pos.y -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.y += 16 - (int)pos.y % 16;
+				tempPos = 16 - (int)pos.y % 16;
+				pos.y += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Left;
@@ -163,13 +184,28 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
+			int tempPos = 0;
 			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.y -= (int)pos.y % 16;
+				tempPos = (int)pos.y % 16;
+				pos.y -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.y += 16 - (int)pos.y % 16;
+				tempPos = 16 - (int)pos.y % 16;
+				pos.y += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Right;
@@ -190,13 +226,28 @@ void PlayerTank::Move()
 	{
 		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
 		{
+			int tempPos = 0;
 			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.x -= (int)pos.x % 16;
+				tempPos = (int)pos.x % 16;
+				pos.x -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.x += 16 - (int)pos.x % 16;
+				tempPos = 16 - (int)pos.x % 16;
+				pos.x += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Up;
@@ -214,15 +265,30 @@ void PlayerTank::Move()
 	}
 	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
 	{
-		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
+		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
+			int tempPos = 0;
 			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.x -= (int)pos.x % 16;
+				tempPos = (int)pos.x % 16;
+				pos.x -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y += tempPos;
+					SetShape();
+				}
 			}
-			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
+			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.x += 16 - (int)pos.x % 16;
+				tempPos = 16 - (int)pos.x % 16;
+				pos.x += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Down;
@@ -294,9 +360,6 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
-	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
-	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
-
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
@@ -305,6 +368,10 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	this->enemyMgr = enemyMgr;
 
 	SetShape();
+	if (IsCollided())
+	{
+		bCheckSpawnCollided = true;
+	}
 
 	moveDir = MoveDir::Down;
 
@@ -334,9 +401,6 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
-	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
-	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
-
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
@@ -345,6 +409,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	this->playerTank = playerTank;
 
 	SetShape();
+	if (IsCollided()) { bCheckSpawnCollided = true; }
 
 	moveDir = MoveDir::Down;
 
@@ -374,9 +439,6 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
-	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
-	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
-
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
@@ -385,6 +447,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	this->playerTank = playerTank;
 
 	SetShape();
+	if (IsCollided()) { bCheckSpawnCollided = true; }
 
 	moveDir = MoveDir::Down;
 
@@ -414,9 +477,6 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
-	pos.x = TILEMAPTOOL_SIZE_X / 2.0f;
-	pos.y = TILEMAPTOOL_SIZE_Y / 2.0f;
-
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
@@ -425,6 +485,7 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 	this->playerTank = playerTank;
 
 	SetShape();
+	if (IsCollided()) { bCheckSpawnCollided = true; }
 
 	moveDir = MoveDir::Down;
 
@@ -465,6 +526,11 @@ void Tank::Update()
 				bReverseSpawnImg = !bReverseSpawnImg;
 			}
 		}
+	}
+
+	if (bCheckSpawnCollided)
+	{
+		if (!IsCollided()) { bCheckSpawnCollided = false; }
 	}
 
 	if (!bCheckSpawnStatus)
@@ -513,13 +579,28 @@ void Tank::Move()
 	case MoveDir::Left:
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
+			int tempPos = 0;
 			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.y -= (int)pos.y % 16;
+				tempPos = (int)pos.y % 16;
+				pos.y -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.y += 16 - (int)pos.y % 16;
+				tempPos = 16 - (int)pos.y % 16;
+				pos.y += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y -= tempPos;
+					SetShape();
+				}
 			}
 		}
 
@@ -538,13 +619,28 @@ void Tank::Move()
 	case MoveDir::Right:
 		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
 		{
+			int tempPos = 0;
 			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.y -= (int)pos.y % 16;
+				tempPos = (int)pos.y % 16;
+				pos.y -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.y += 16 - (int)pos.y % 16;
+				tempPos = 16 - (int)pos.y % 16;
+				pos.y += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.y -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Right;
@@ -564,13 +660,28 @@ void Tank::Move()
 	case MoveDir::Up:
 		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
 		{
+			int tempPos = 0;
 			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.x -= (int)pos.x % 16;
+				tempPos = (int)pos.x % 16;
+				pos.x -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.x += 16 - (int)pos.x % 16;
+				tempPos = 16 - (int)pos.x % 16;
+				pos.x += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Up;
@@ -589,13 +700,28 @@ void Tank::Move()
 	case MoveDir::Down:
 		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
 		{
+			int tempPos = 0;
 			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
 			{
-				pos.x -= (int)pos.x % 16;
+				tempPos = (int)pos.x % 16;
+				pos.x -= tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x += tempPos;
+					SetShape();
+				}
 			}
 			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
 			{
-				pos.x += 16 - (int)pos.x % 16;
+				tempPos = 16 - (int)pos.x % 16;
+				pos.x += tempPos;
+				SetShape();
+				if (IsCollided())
+				{
+					pos.x -= tempPos;
+					SetShape();
+				}
 			}
 		}
 		moveDir = MoveDir::Down;
@@ -604,8 +730,11 @@ void Tank::Move()
 		SetShape();
 		if (IsCollided() || shape.bottom > 416 + STAGE_SIZE_Y)
 		{
-			pos.y -= moveSpeed;
-			SetShape();
+			if (!bCheckSpawnCollided)
+			{
+				pos.y -= moveSpeed;
+				SetShape();
+			}
 		}
 
 		if (checkMoveCount > 0) { checkMoveCount = 0; }
@@ -638,14 +767,21 @@ bool Tank::IsCollided()
 
 		if (IntersectRect(&temp, &((*itEnemyTanks)->shape), &shape))
 		{
+			if ((*itEnemyTanks)->bCheckSpawnCollided && ((*itEnemyTanks)->moveDir != moveDir || (*itEnemyTanks)->bCheckSpawnStatus))
+			{
+				return false;
+			}
 			return true;
 		}
 	}
-
 	if (playerTank != nullptr)
 	{
 		if (IntersectRect(&temp, &(playerTank->shape), &shape))
 		{
+			if (playerTank->bCheckSpawnCollided && playerTank->moveDir != moveDir)
+			{
+				return false;
+			}
 			return true;
 		}
 	}
