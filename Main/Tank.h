@@ -14,6 +14,7 @@ public:
 	int maxSpawnImgFrame = 3;
 	bool bReverseSpawnImg = false;
 	bool bCheckSpawnStatus = true;
+	bool bCheckSpawnCollided = false;
 
 	TankType type = TankType::Player;
 	MoveDir moveDir = MoveDir::Up;

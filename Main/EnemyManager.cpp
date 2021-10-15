@@ -45,7 +45,7 @@ void EnemyManager::Release()
 
 void EnemyManager::AddEnemy(Tank* tank,POINTFLOAT pos)
 {
-	tank->Init(tileInfo,this,playerTank);
 	tank->SetPos(pos);
+	tank->Init(tileInfo,this,playerTank);
 	vecEnemys.push_back(tank);
 }
