@@ -205,14 +205,14 @@ void Image::Render(HDC hdc, int destX, int destY, int frameX, int frameY, int le
 			hdc,
 			destX - (imageInfo->frameWidth / 2) + 8*leftHit ,
 			destY - (imageInfo->frameHeight / 2) + 8 * topHit ,
-			(imageInfo->frameWidth) * (2 - rightHit) / 2 - 8*leftHit ,
+			(imageInfo->frameWidth) * (2 - rightHit) / 2 - 8 * leftHit,
 			(imageInfo->frameHeight) * (2 - topHit) / 2 - 8*(bottomHit),
 
 			imageInfo->hMemDc,
 			imageInfo->frameWidth * frameX + 8*leftHit,
 			imageInfo->frameHeight * frameY + 8 * topHit,
-			imageInfo->frameWidth* (2 - rightHit) / 2,
-			imageInfo->frameHeight * (2-topHit) / 2,
+			imageInfo->frameWidth* (2 - rightHit) / 2 - 8 * leftHit,
+			imageInfo->frameHeight * (2-topHit) / 2 - 8 * (bottomHit),
 			transColor
 		);
 	}

@@ -49,7 +49,7 @@ extern POINT g_ptMouse;
 #define TILE_COUNT_X	26
 #define TILE_COUNT_Y	26
 #define SAMPLE_TILE_COUNT_X 8
-#define SAMPLE_TILE_COUNT_Y	1
+#define SAMPLE_TILE_COUNT_Y	2
 #define STAGE_SIZE_X (WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16)
 #define STAGE_SIZE_Y (WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y)
 
@@ -59,7 +59,7 @@ extern POINT g_ptMouse;
 
 enum class Terrain { Earth, Wall, Water, Grass, BreakableWall, End };
 
-enum class TileType {Ground, Wall, Water, Iced, Grass, Brick};
+enum class TileType {Ground, Wall, Water, Iced, Grass, Brick, Nexus};
 typedef struct tagSampleTile
 {
 	RECT rc;

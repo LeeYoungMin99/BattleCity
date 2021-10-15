@@ -11,7 +11,7 @@ HRESULT Stage1Scene::Init()
 {
 	SetWindowSize(20, 20, WIN_SIZE_X, WIN_SIZE_Y);
 	sampleImage = ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
-		128, 16, 8, 1, true, RGB(255, 0, 255));
+		128, 32, 8, 2, true, RGB(255, 0, 255));
 	if (sampleImage == nullptr)
 	{
 		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
@@ -66,6 +66,14 @@ HRESULT Stage1Scene::Init()
 	enemyMgr->Init(tileInfo,tank);
 
 
+	backGroundRect.left = STAGE_SIZE_X;
+	backGroundRect.top = STAGE_SIZE_Y;
+	backGroundRect.right = STAGE_SIZE_X + 416;
+	backGroundRect.bottom = STAGE_SIZE_Y+ 416;
+
+
+
+
 	return S_OK;
 }
 
@@ -96,6 +104,13 @@ void Stage1Scene::Render(HDC hdc)
 {
 	// 배경
 	backGround->Render(hdc);
+	HBRUSH myBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
+	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
+
+	FillRect(hdc, &backGroundRect, myBrush);
+
+	SelectObject(hdc, oldBrush);
+	DeleteObject(myBrush);
 
 	// 메인 영역
 	for (int i = 0; i < TILE_COUNT_Y; i++)
