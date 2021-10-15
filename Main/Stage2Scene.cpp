@@ -41,10 +41,6 @@ HRESULT Stage2Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.right += STAGE_SIZE_X;
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
-			if (tileInfo[i * TILE_COUNT_X + j].tileType == TileType::Grass)
-			{
-				cout << i * TILE_COUNT_X + j << endl;
-			}
 		}
 	}
 

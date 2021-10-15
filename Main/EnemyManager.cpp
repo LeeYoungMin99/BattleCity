@@ -6,7 +6,7 @@ HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank)
 {
 	enemyMaxCount = 6;
 	vecEnemys.reserve(enemyMaxCount);
-	
+
 	tileInfo = tile;
 	this->playerTank = playerTank;
 
@@ -21,9 +21,20 @@ HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank)
 void EnemyManager::Update()
 {
 	for (itEnemys = vecEnemys.begin();
-		itEnemys != vecEnemys.end(); itEnemys++)
+		itEnemys != vecEnemys.end();)
 	{
 		(*itEnemys)->Update();
+
+		if ((*itEnemys)->HP <= 0)
+		{
+			Tank* temp = (*itEnemys);
+			itEnemys = vecEnemys.erase(itEnemys);
+			delete temp;
+		}
+		else
+		{
+			itEnemys++;
+		}
 	}
 }
 
@@ -47,9 +58,9 @@ void EnemyManager::Release()
 	vecEnemys.clear();
 }
 
-void EnemyManager::AddEnemy(Tank* tank,POINTFLOAT pos)
+void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 {
 	tank->SetPos(pos);
-	tank->Init(tileInfo,this,playerTank);
+	tank->Init(tileInfo, this, playerTank);
 	vecEnemys.push_back(tank);
 }

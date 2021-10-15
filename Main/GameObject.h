@@ -37,6 +37,7 @@ public:
 	inline void SetMoveSpeed(float speed) { this->moveSpeed = speed; }
 	inline int GetBodySize() { return this->bodySize; }
 	inline RECT GetShape() { return this->shape; }
+	inline RECT* GetShapeAddress() { return &this->shape; }
 
 	GameObject();
 	~GameObject();

@@ -6,42 +6,37 @@ enum class BulletDir { Left, Right, Up, Down };
 
 class Image;
 class Tank;		// 전방선언 (Tank라는 클래스가 있다)
+class EnemyManager;
 class Ammo : public GameObject
 {
 private:
-	//Tank* owner;					// 3. Ammo객체의 소유자를 포인터로 
-									// 멤버변수 할당
-
-	//POINTFLOAT enemyPos;			// 1. 적 좌표를 직접 멤버변수로 가지고 있는다.
-	Tank* target;					// 2. 적 객체의 메모리주소를 멤버변수로 가지고 있는다.
-
-	bool isFire;
+	bool isFire = false;
 	//bool isAlive;
 
-	float moveAngle;
+	float moveAngle = 0.0f;
 
-	Image* img;
+	Image* img = nullptr;
 
-	float moveSpeed;
+	float moveSpeed = 0.0f;
 
-	BulletDir bulletDir;
+	BulletDir bulletDir = BulletDir::Down;
 
-	RECT collision; // 충돌 콜리션
+	RECT collision = {}; // 충돌 콜리션
 
-	TILE_INFO *tile = nullptr;
+	TILE_INFO* tile = nullptr;
+	Tank* ownerTank = nullptr;
+	Tank* playerTank = nullptr;
+	EnemyManager* enemyMgr = nullptr;
+	vector<Tank*>::iterator itEnemyTanks = {};
 public:
-	HRESULT Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/);
-	//void Init(Tank* tank);		// 1. Tank객체의 포인터를 전달
+	HRESULT Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* ownerTank = nullptr, Tank* playerTank = nullptr);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 
 	bool CheckCollision(int idX, int idY);
 
-	bool CheckCollision();
-
 	void SetMoveDir(string dir);
-
 
 	// 2. Setter를 설정
 	// this : this가 호출된 함수를 호출한 인스턴스(의 메모리주소)
@@ -49,7 +44,7 @@ public:
 	inline bool GetIsFire() { return this->isFire; }
 
 	inline void SetMoveAngle(float angle) { this->moveAngle = angle; }
-	inline void SetTarget(Tank* target) { this->target = target; }
+	inline void SetTarget(Tank* target) { this->playerTank = target; }
 
 	//inline void SetIsAlive(bool alive) { this->isAlive = alive; }
 	//inline bool GetIsAlive() { return this->isAlive; }

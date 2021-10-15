@@ -20,6 +20,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 
 	pos.x = 200;
 	pos.y = 430;
+	HP = 1;
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
@@ -40,7 +41,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init(tile);
+		ammoPack[i].Init(this->tileInfo, this->enemyMgr);
 	}
 
 	BarrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
@@ -362,6 +363,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+	HP = 1;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
@@ -382,9 +384,8 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init(this->tileInfo);
+		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
 	}
-	cout << "@@" << endl;
 
 	return S_OK;
 }
@@ -434,9 +435,9 @@ void NormalEnemyTank::Fire()
 		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
 
-	
-	
-	
+
+
+
 
 
 }
@@ -456,6 +457,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+	HP = 1;
 
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
@@ -473,7 +475,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init(tile);
+		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
 	}
 
 	return S_OK;
@@ -497,6 +499,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+	HP = 1;
 
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
@@ -514,7 +517,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init(tile);
+		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
 	}
 
 	return S_OK;
@@ -538,6 +541,7 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
+	HP = 4;
 
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
@@ -555,7 +559,7 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 	// 미사일 초기화
 	for (int i = 0; i < ammoCount; i++)
 	{
-		ammoPack[i].Init(tile);
+		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
 	}
 
 	return S_OK;
@@ -601,6 +605,7 @@ void Tank::Update()
 		Move();
 		Fire();
 	}
+	cout << HP << endl;
 }
 
 void Tank::Render(HDC hdc)
