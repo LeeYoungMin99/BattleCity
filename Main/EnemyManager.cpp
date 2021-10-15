@@ -51,5 +51,10 @@ void EnemyManager::AddEnemy(Tank* tank,POINTFLOAT pos)
 {
 	tank->SetPos(pos);
 	tank->Init(tileInfo,this,playerTank);
+	elapsedcount++;
+	if (elapsedcount == 1/*RANDOM_2(0, 16)*/)
+	{
+		tank->bItem = true;
+	}
 	vecEnemys.push_back(tank);
 }
