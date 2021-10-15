@@ -28,7 +28,8 @@ HRESULT Stage1Scene::Init()
 	stageImage = ImageManager::GetSingleton()->AddImage("Image/Icon/StageFlag.bmp",
 		35, 40, 1, 1, true, RGB(255, 0, 255));
 	stageLevel = ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
-	backGround = ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
+	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 
 	Load(1);
 
@@ -41,7 +42,6 @@ HRESULT Stage1Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
 
-			cout << i * TILE_COUNT_X + j << ": " << tileInfo[i * TILE_COUNT_X + j].rc.left << endl;
 		}
 	}
 
