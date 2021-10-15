@@ -41,9 +41,15 @@ HRESULT Stage2Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.right += STAGE_SIZE_X;
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
-			if (tileInfo[i * TILE_COUNT_X + j].tileType == TileType::Grass)
+
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.left += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.right += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.top += STAGE_SIZE_Y;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.bottom += STAGE_SIZE_Y;
+
+			if (tileInfo[i * TILE_COUNT_X + j].tileType == TileType::Water)
 			{
-				cout << i * TILE_COUNT_X + j << endl;
+				waterTilePos.push_back(make_pair(i, j));
 			}
 		}
 	}
@@ -75,7 +81,7 @@ HRESULT Stage2Scene::Init()
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
 
-
+	elapsedCount = 0;
 
 	return S_OK;
 }
@@ -101,6 +107,31 @@ void Stage2Scene::Update()
 		else
 			check = true;
 	}
+
+	if (KeyManager::GetSingleton()->IsOnceKeyUp('E'))
+	{
+		if (bShowBodyCollider)
+		{
+			bShowBodyCollider = false;
+		}
+		else
+		{
+			bShowBodyCollider = true;
+		}
+	}
+
+	waterElapsedCount++;
+	if (waterElapsedCount == 50)
+	{
+		for (int i = 0; i < waterTilePos.size(); i++)
+		{
+			if (tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX + 1 == 7)
+				tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX = 3;
+			(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX)+=1;
+		}
+		waterElapsedCount = 0;
+	}
+
 }
 
 void Stage2Scene::Render(HDC hdc)
@@ -133,6 +164,13 @@ void Stage2Scene::Render(HDC hdc)
 					tileInfo[i * TILE_COUNT_X + j].collider.top,
 					tileInfo[i * TILE_COUNT_X + j].collider.right,
 					tileInfo[i * TILE_COUNT_X + j].collider.bottom);
+			}
+			if (bShowBodyCollider)
+			{
+				Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].bodyCollider.left,
+					tileInfo[i * TILE_COUNT_X + j].bodyCollider.top,
+					tileInfo[i * TILE_COUNT_X + j].bodyCollider.right,
+					tileInfo[i * TILE_COUNT_X + j].bodyCollider.bottom);
 			}
 		}
 
