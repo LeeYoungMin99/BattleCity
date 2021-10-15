@@ -357,6 +357,9 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
 	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
 
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
@@ -390,10 +393,10 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 }
 void NormalEnemyTank::Fire()
 {
-	testIlapsed++;
-	if (testIlapsed >= delay_2)
+	testelapsed++;
+	if (testelapsed >= delay_2)
 	{
-		testIlapsed = 0;
+		testelapsed = 0;
 		delay_2 = RANDOM_2(10, 15);
 
 		for (int i = 0; i < ammoCount; i++)
@@ -601,6 +604,15 @@ void Tank::Update()
 		Move();
 		Fire();
 	}
+	testelapsed_2++;  //아이템 탱크 깜빡깜빡
+	if (testelapsed_2 >= 10)
+	{
+		testelapsed_2 = 0;
+		if (checkMoveCount_2 == 0)
+			checkMoveCount_2 = 1;
+		else
+			checkMoveCount_2 = 0;
+	}
 }
 
 void Tank::Render(HDC hdc)
@@ -619,7 +631,14 @@ void Tank::Render(HDC hdc)
 	}
 	else
 	{
-		img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+		if (bItem)
+		{
+			itemTank->Render(hdc, pos.x - bodySize * 0.33f, pos.y - bodySize * 0.33f, moveDir + checkMoveCount, ((int)type*2)+ checkMoveCount_2, 2.0f);
+		}
+		else
+		{
+			img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+		}
 	}
 }
 
