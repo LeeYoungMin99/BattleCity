@@ -119,7 +119,7 @@ void TilemapToolScene::Update()
                     cout << "현재 타입 Grass" << endl;
                     break;
                 case 3:
-                    state = State::NoneWalkable;
+                    state = State::Walkable;
                     tileType = TileType::Iced;
                     cout << "현재 타입 Iced" << endl;
                     break;

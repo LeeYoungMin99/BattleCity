@@ -142,7 +142,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 
 
-			if (tile[26 * (idY)+idX - 1].topHit == 2 || tile[26 * (idY)+idX - 1].bottomHit == 2)
+			if (tile[26 * (idY)+idX-1].topHit + tile[26 * (idY)+idX-1].bottomHit >= 2)
 			{
 				tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
 				tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
@@ -163,7 +163,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY)+idX].collider.bottom -= 8;
 				tile[26 * (idY)+idX].bottomHit++;
 			}
-			if (tile[26 * (idY)+idX].topHit == 2 || tile[26 * (idY)+idX].bottomHit == 2)
+			if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2 )
 			{
 				tile[26 * (idY)+idX].bodyCollider.left = 0;
 				tile[26 * (idY)+idX].bodyCollider.right = 0;
@@ -188,7 +188,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY - 1) + idX].collider.left += 8;
 				tile[26 * (idY - 1) + idX].leftHit++;
 			}
-			if (tile[26 * (idY-1)+idX ].rightHit == 2 || tile[26 * (idY-1)+idX].leftHit == 2)
+			if (tile[26 * (idY-1)+idX].leftHit + tile[26 * (idY-1)+idX].rightHit >= 2 )
 			{
 				tile[26 * (idY-1)+idX ].bodyCollider.left = 0;
 				tile[26 * (idY-1)+idX ].bodyCollider.right = 0;
@@ -208,7 +208,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY) + idX].collider.left += 8;
 				tile[26 * (idY) + idX].leftHit++;
 			}
-			if (tile[26 * (idY) + idX].rightHit == 2 || tile[26 * (idY) + idX].leftHit == 2)
+			if (tile[26 * (idY) + idX].leftHit + tile[26 * (idY) + idX].rightHit >= 2)
 			{
 				tile[26 * (idY) + idX].bodyCollider.left = 0;
 				tile[26 * (idY) + idX].bodyCollider.right = 0;

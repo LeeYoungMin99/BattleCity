@@ -127,7 +127,7 @@ void Stage2Scene::Update()
 		{
 			if (tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX + 1 == 7)
 				tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX = 3;
-			(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX)+=1;
+			(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX) += 1;
 		}
 		waterElapsedCount = 0;
 	}
