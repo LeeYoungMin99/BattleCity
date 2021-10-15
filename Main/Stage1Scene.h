@@ -3,12 +3,7 @@
 #include <vector>
 
 
-class Nexus
-{
-public:
-	Image* img;
-	RECT rc;
-};
+
 
 
 #pragma once
@@ -50,7 +45,6 @@ private:
 
 	bool check = false;
 
-	Nexus nexus;
 	
 public:
 	void Load(int index);

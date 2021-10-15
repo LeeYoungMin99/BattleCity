@@ -100,34 +100,42 @@ void TilemapToolScene::Update()
                 case 0:
                     state = State::NoneWalkable;
                     tileType = TileType::Brick;
+                    cout << "현재 타입 Brick" << endl;
                     break;
                 case 1:
                     state = State::NoneWalkable;
                     tileType = TileType::Wall;
+                    cout << "현재 타입 Wall" << endl;
                     break;
                 case 2:
                     state = State::Walkable;
                     tileType = TileType::Grass;
+                    cout << "현재 타입 Grass" << endl;
                     break;
                 case 3:
                     state = State::NoneWalkable;
                     tileType = TileType::Iced;
+                    cout << "현재 타입 Iced" << endl;
                     break;
                 case 4:
                     state = State::Walkable;
                     tileType = TileType::Water;
+                    cout << "현재 타입 Water" << endl;
                     break;
                 case 5:
                     state = State::NoneWalkable;
                     tileType = TileType::Water;
+                    cout << "현재 타입 Water" << endl;
                     break;
                 case 6:
                     state = State::NoneWalkable;
                     tileType = TileType::Water;
+                    cout << "현재 타입 Water" << endl;
                     break;
                 case 7:
                     state = State::Walkable;
                     tileType = TileType::Ground;
+                    cout << "현재 타입 Ground" << endl;
                     break;
                 default:
                     break;
@@ -136,7 +144,7 @@ void TilemapToolScene::Update()
             {
                 state = State::NoneWalkable;
                 tileType = TileType::Nexus;
-                cout << "Nexus" << endl;
+                cout << "현재 타입 Nexus" << endl;
             }
         }
     }
@@ -161,6 +169,7 @@ void TilemapToolScene::Update()
                     tileInfo[i].collider.top = 0;
                     tileInfo[i].collider.right = 0;
                     tileInfo[i].collider.bottom= 0;
+                    tileInfo[i].tileType = tileType;
                 }
                 break;
             }

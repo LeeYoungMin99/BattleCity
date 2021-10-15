@@ -217,8 +217,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 			//조건 처리
 		}
 	}
-	
-	
+
 	if (check)
 	{
 		collision.left = -10;
