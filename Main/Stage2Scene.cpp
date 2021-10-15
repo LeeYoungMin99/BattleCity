@@ -14,7 +14,7 @@ HRESULT Stage2Scene::Init()
 		128, 32, 8, 2, true, RGB(255, 0, 255));
 	if (sampleImage == nullptr)
 	{
-		cout << "Image/Tile2.bmp ∑ŒµÂ Ω«∆–!!" << endl;
+		cout << "Image/Tile2.bmp Î°úÎìú Ïã§Ìå®!!" << endl;
 		return E_FAIL;
 	}
 
@@ -41,6 +41,17 @@ HRESULT Stage2Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.right += STAGE_SIZE_X;
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
+
+
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.left += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.right += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.top += STAGE_SIZE_Y;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.bottom += STAGE_SIZE_Y;
+
+			if (tileInfo[i * TILE_COUNT_X + j].tileType == TileType::Water)
+			{
+				waterTilePos.push_back(make_pair(i, j));
+			}
 		}
 	}
 
@@ -71,7 +82,7 @@ HRESULT Stage2Scene::Init()
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
 
-
+	elapsedCount = 0;
 
 	return S_OK;
 }
@@ -97,11 +108,36 @@ void Stage2Scene::Update()
 		else
 			check = true;
 	}
+
+	if (KeyManager::GetSingleton()->IsOnceKeyUp('E'))
+	{
+		if (bShowBodyCollider)
+		{
+			bShowBodyCollider = false;
+		}
+		else
+		{
+			bShowBodyCollider = true;
+		}
+	}
+
+	waterElapsedCount++;
+	if (waterElapsedCount == 50)
+	{
+		for (int i = 0; i < waterTilePos.size(); i++)
+		{
+			if (tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX + 1 == 7)
+				tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX = 3;
+			(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX) += 1;
+		}
+		waterElapsedCount = 0;
+	}
+
 }
 
 void Stage2Scene::Render(HDC hdc)
 {
-	// πË∞Ê
+	// Î∞∞Í≤Ω
 	backGround->Render(hdc);
 	HBRUSH myBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
@@ -111,7 +147,7 @@ void Stage2Scene::Render(HDC hdc)
 	SelectObject(hdc, oldBrush);
 	DeleteObject(myBrush);
 
-	// ∏ﬁ¿Œ øµø™
+	// Î©îÏù∏ ÏòÅÏó≠
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
 		for (int j = 0; j < TILE_COUNT_X; j++)
@@ -129,6 +165,13 @@ void Stage2Scene::Render(HDC hdc)
 					tileInfo[i * TILE_COUNT_X + j].collider.top,
 					tileInfo[i * TILE_COUNT_X + j].collider.right,
 					tileInfo[i * TILE_COUNT_X + j].collider.bottom);
+			}
+			if (bShowBodyCollider)
+			{
+				Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].bodyCollider.left,
+					tileInfo[i * TILE_COUNT_X + j].bodyCollider.top,
+					tileInfo[i * TILE_COUNT_X + j].bodyCollider.right,
+					tileInfo[i * TILE_COUNT_X + j].bodyCollider.bottom);
 			}
 		}
 
@@ -190,18 +233,18 @@ void Stage2Scene::Load(int index)
 	string filePath = "Save/saveMapData" + to_string(index) + ".map";
 
 	HANDLE hFile = CreateFile(filePath.c_str(),
-		GENERIC_READ,                  //¿–±‚, æ≤±‚ ≈∏¿‘
-		0, NULL,                        //∞¯¿Ø, ∫∏æ» ∏µÂ
-		OPEN_EXISTING,                  //∆ƒ¿œ¿ª ∏∏µÈ∞≈≥™ ¿–¿ª ∂ß ø…º«
-		FILE_ATTRIBUTE_NORMAL,          //∆ƒ¿œ º”º∫(¿–±‚ ¿¸øÎ, º˚±Ë µÓµÓ)
+		GENERIC_READ,                  //ÏùΩÍ∏∞, Ïì∞Í∏∞ ÌÉÄÏûÖ
+		0, NULL,                        //Í≥µÏú†, Î≥¥Ïïà Î™®Îìú
+		OPEN_EXISTING,                  //ÌååÏùºÏùÑ ÎßåÎì§Í±∞ÎÇò ÏùΩÏùÑ Îïå ÏòµÏÖò
+		FILE_ATTRIBUTE_NORMAL,          //ÌååÏùº ÏÜçÏÑ±(ÏùΩÍ∏∞ Ï†ÑÏö©, Ïà®ÍπÄ Îì±Îì±)
 		NULL);                          //
 
-	//¿–±‚
+	//ÏùΩÍ∏∞
 
 	DWORD readByte;
 	if (ReadFile(hFile, tileInfo, sizeof(tagTile) * TILE_COUNT_X * TILE_COUNT_Y, &readByte, NULL) == false)
 	{
-		MessageBox(g_hWnd, "∏  µ•¿Ã≈Õ ∑ŒµÂø° Ω«∆–«ﬂΩ¿¥œ¥Ÿ.", "ø°∑Ø", MB_OK);
+		MessageBox(g_hWnd, "Îßµ Îç∞Ïù¥ÌÑ∞ Î°úÎìúÏóê Ïã§Ìå®ÌñàÏäµÎãàÎã§.", "ÏóêÎü¨", MB_OK);
 	}
 
 	CloseHandle(hFile);

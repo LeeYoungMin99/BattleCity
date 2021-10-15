@@ -151,6 +151,7 @@ void Stage1Scene::Render(HDC hdc)
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
 
+
 }
 
 void Stage1Scene::Release()

@@ -121,8 +121,10 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 	{
-		if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)))
+		
+		if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 		{
+
 			// 벽 없애기
 			check = true;
 			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
@@ -136,11 +138,13 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY)+idX - 1].bottomHit++;
 			}
 
+
+			if (tile[26 * (idY)+idX-1].topHit + tile[26 * (idY)+idX-1].bottomHit >= 2)
+			{
+				tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
+				tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+			}
 		}
-
-
-
-
 
 		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 		{
@@ -156,7 +160,13 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY)+idX].collider.bottom -= 8;
 				tile[26 * (idY)+idX].bottomHit++;
 			}
+			if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2 )
+			{
+				tile[26 * (idY)+idX].bodyCollider.left = 0;
+				tile[26 * (idY)+idX].bodyCollider.right = 0;
+			}
 		}
+		
 
 	}
 	else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
@@ -175,6 +185,11 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY - 1) + idX].collider.left += 8;
 				tile[26 * (idY - 1) + idX].leftHit++;
 			}
+			if (tile[26 * (idY-1)+idX].leftHit + tile[26 * (idY-1)+idX].rightHit >= 2 )
+			{
+				tile[26 * (idY-1)+idX ].bodyCollider.left = 0;
+				tile[26 * (idY-1)+idX ].bodyCollider.right = 0;
+			}
 		}
 		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 		{
@@ -189,6 +204,11 @@ bool Ammo::CheckCollision(int idX, int idY)
 			{
 				tile[26 * (idY)+idX].collider.left += 8;
 				tile[26 * (idY)+idX].leftHit++;
+			}
+			if (tile[26 * (idY) + idX].leftHit + tile[26 * (idY) + idX].rightHit >= 2)
+			{
+				tile[26 * (idY) + idX].bodyCollider.left = 0;
+				tile[26 * (idY) + idX].bodyCollider.right = 0;
 			}
 		}
 

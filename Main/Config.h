@@ -75,12 +75,14 @@ typedef struct tagTile
 	// sample tile의 아이디 (프레임 X, 프레임 Y)
 	int frameX, frameY;
 
-	RECT collider;		// walkable, noneWalkable 일때 
+	RECT collider;		// HitCollider 일때 
+	RECT bodyCollider;
 
 	int leftHit;
 	int rightHit;
 	int topHit;
 	int bottomHit;
+
 } TILE_INFO;
 
 typedef struct ArgumentFuncPtr

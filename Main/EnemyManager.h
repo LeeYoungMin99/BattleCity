@@ -7,6 +7,7 @@ class EnemyManager : public GameEntity
 {
 private:
 	int enemyMaxCount;
+	int elapsedcount;
 
 	TILE_INFO* tileInfo = nullptr;
 	Tank* playerTank = nullptr;

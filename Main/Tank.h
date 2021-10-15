@@ -10,6 +10,7 @@ public:
 	int HP = 0;
 
 	Image* spawnImg = nullptr;
+	Image* itemTank = nullptr;
 	float spawnTime = 2.0f;
 	float spawnElapsedCount = 0.0f;
 	int spawnImgFrame = 0;
@@ -41,7 +42,11 @@ public:
 	float elapsedCount = 0.0f;
 
 	float delay_2 = RANDOM(10,15);
-	int testIlapsed;
+	int testelapsed;
+	int testelapsed_2;
+	int checkMoveCount_2;
+	bool bItem = false;
+
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
 	virtual void Update();												// 오버라이딩을 한다
