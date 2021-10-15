@@ -818,7 +818,7 @@ bool Tank::IsCollided()
 
 	for (int i = 0; i < TILE_COUNT_Y * TILE_COUNT_X; i++)
 	{
-		if (IntersectRect(&temp, &tileInfo[i].collider, &shape))
+		if (IntersectRect(&temp, &tileInfo[i].bodyCollider, &shape))
 		{
 			return true;
 		}

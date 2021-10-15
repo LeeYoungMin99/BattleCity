@@ -33,7 +33,7 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->AddLoadingScene("LoadingScene", new LoadingScene());
 
 
-	SceneManager::GetSingleton()->ChangeScene("Stage2");
+	SceneManager::GetSingleton()->ChangeScene("TilemapToolScene");
 
 
 	srand((unsigned int) time(nullptr));
