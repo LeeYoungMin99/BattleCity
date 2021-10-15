@@ -34,6 +34,11 @@ HRESULT TilemapToolScene::Init()
             tileInfo[i].collider.right = 0;
             tileInfo[i].collider.bottom = 0;
 
+            tileInfo[i].bodyCollider.left = 0;
+            tileInfo[i].bodyCollider.top = 0;
+            tileInfo[i].bodyCollider.right = 0;
+            tileInfo[i].bodyCollider.bottom = 0;
+
             tileInfo[i * TILE_COUNT_X + j].tileType = TileType::Ground;
             tileInfo[i * TILE_COUNT_X + j].leftHit = 0;
             tileInfo[i * TILE_COUNT_X + j].rightHit = 0;
@@ -60,6 +65,7 @@ HRESULT TilemapToolScene::Init()
     }
 
     bShowNoneWalkable = false;
+    bShowBodyCollider = false;
 
     // 선택된 타일
     selectedSampleTile.frameX = 0;
@@ -113,7 +119,7 @@ void TilemapToolScene::Update()
                     cout << "현재 타입 Grass" << endl;
                     break;
                 case 3:
-                    state = State::NoneWalkable;
+                    state = State::Walkable;
                     tileType = TileType::Iced;
                     cout << "현재 타입 Iced" << endl;
                     break;
@@ -162,6 +168,15 @@ void TilemapToolScene::Update()
                 {
                     tileInfo[i].collider = tileInfo[i].rc;
                     tileInfo[i].tileType = tileType;
+
+                    tileInfo[i].bodyCollider = tileInfo[i].rc;
+                    if (tileType == TileType::Water)
+                    {
+                        tileInfo[i].collider.left = 0;
+                        tileInfo[i].collider.top = 0;
+                        tileInfo[i].collider.right = 0;
+                        tileInfo[i].collider.bottom = 0;
+                    }
                 }
                 else if (state == State::Walkable)
                 {
@@ -169,6 +184,11 @@ void TilemapToolScene::Update()
                     tileInfo[i].collider.top = 0;
                     tileInfo[i].collider.right = 0;
                     tileInfo[i].collider.bottom= 0;
+
+                    tileInfo[i].bodyCollider.left = 0;
+                    tileInfo[i].bodyCollider.top = 0;
+                    tileInfo[i].bodyCollider.right = 0;
+                    tileInfo[i].bodyCollider.bottom = 0;
                     tileInfo[i].tileType = tileType;
                 }
                 break;
@@ -195,6 +215,17 @@ void TilemapToolScene::Update()
             bShowNoneWalkable = true;
         }
     }
+    if (KeyManager::GetSingleton()->IsOnceKeyUp('E'))
+    {
+        if (bShowBodyCollider)
+        {
+            bShowBodyCollider = false;
+        }
+        else
+        {
+            bShowBodyCollider = true;
+        }
+    }
 }
 
 void TilemapToolScene::Render(HDC hdc)
@@ -215,7 +246,9 @@ void TilemapToolScene::Render(HDC hdc)
 
             if(bShowNoneWalkable)
                 Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].collider.left, tileInfo[i * TILE_COUNT_X + j].collider.top, tileInfo[i * TILE_COUNT_X + j].collider.right, tileInfo[i * TILE_COUNT_X + j].collider.bottom);
-          
+            if (bShowBodyCollider)
+                Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].bodyCollider.left, tileInfo[i * TILE_COUNT_X + j].bodyCollider.top, tileInfo[i * TILE_COUNT_X + j].bodyCollider.right, tileInfo[i * TILE_COUNT_X + j].bodyCollider.bottom);
+
 
             //Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].rc.left,
             //    tileInfo[i * TILE_COUNT_X + j].rc.top,

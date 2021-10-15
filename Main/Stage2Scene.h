@@ -43,7 +43,12 @@ private:
 	RECT backGroundRect;
 
 	bool check = false;
+	bool bShowBodyCollider = false;
+	
 
+	//물 타일 이미지
+	vector<pair<int, int>> waterTilePos;
+	int waterElapsedCount;
 public:
 	void Load(int index);
 	virtual HRESULT Init() override;

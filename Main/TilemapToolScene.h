@@ -32,6 +32,7 @@ private:
 	TileType tileType;
 
 	bool bShowNoneWalkable;
+	bool bShowBodyCollider;
 public:
 	virtual HRESULT Init() override;
 	virtual void Update() override;
