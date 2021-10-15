@@ -20,6 +20,8 @@ public:
 	int checkMoveCount = 0;
 	int enforceCount = 0;
 	bool bIsAlive = true;
+	
+
 
 	int ammoCount = 0;
 
@@ -34,6 +36,9 @@ public:
 
 	float delay = RANDOM(1, 3);
 	float elapsedCount = 0.0f;
+
+	float delay_2 = RANDOM(10,15);
+	int testIlapsed;
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
 	virtual void Update();												// 오버라이딩을 한다
@@ -41,7 +46,7 @@ public:
 	virtual void Release();
 
 	virtual void Move();
-	virtual void Fire() {};
+	virtual void Fire();
 
 	virtual bool IsCollided();
 	virtual void SetShape();
@@ -79,6 +84,8 @@ class NormalEnemyTank : public Tank
 {
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
+	
+	virtual void Fire() override;
 
 	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
@@ -89,6 +96,8 @@ class SpeedEnemyTank : public Tank
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
 
+	virtual void Fire() override;
+
 	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
 };
@@ -98,6 +107,8 @@ class RapidEnemyTank : public Tank
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
 
+	virtual void Fire() override;
+
 	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
 };
@@ -106,6 +117,8 @@ class DefensiveEnemyTank : public Tank
 {
 public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
+
+	virtual void Fire() override;
 
 	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}

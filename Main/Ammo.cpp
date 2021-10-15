@@ -3,7 +3,7 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
-HRESULT Ammo::Init(TILE_INFO *tile)
+HRESULT Ammo::Init(TILE_INFO* tile/*, EnemyManager* enemyMgr, Tank* playerTank*/)
 {
 	//float x = 10.0f, y = 20.0f, h = 0.0f;
 	//h = (float)sqrtf((x * x) + (y * y));
@@ -29,7 +29,8 @@ HRESULT Ammo::Init(TILE_INFO *tile)
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Down.bmp", 6, 8, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Left.bmp", 6, 8, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Right.bmp", 6, 8, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
+	img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
 	 
 	if (img == nullptr)
 	{
@@ -44,6 +45,8 @@ HRESULT Ammo::Init(TILE_INFO *tile)
 	bulletDir = BulletDir::Up;
 
 	this->tile = tile;
+	//this->tile = enemyMgr;
+	//this->target = playerTank;
 
 	return S_OK;
 }
@@ -119,6 +122,9 @@ bool Ammo::CheckCollision(int idX, int idY)
 {
 	RECT rc;
 	int check = false;
+
+	/*if (IntersectRect(&rc, &collision, &target->GetShape()))
+		return true;*/
 
 	if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 	{

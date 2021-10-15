@@ -24,7 +24,7 @@ void GameOverScene::Update()
 	elapsedcount++;
 	if (elapsedcount >= 200)
 	{
-		SceneManager::GetSingleton()->ChangeScene("TitleScene");
+		SceneManager::GetSingleton()->ChangeScene("Stage1");
 	}
 	//test_1 += 1;
 	//test_2 -= 1;	//´Ý
