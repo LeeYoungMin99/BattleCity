@@ -6,22 +6,14 @@
 
 HRESULT TilemapToolScene::Init()
 {
-
-    ImageManager::GetSingleton()->AddImage("Image/button.bmp", 122, 62, 1, 2);
-
-
-
-    btnFunction = new ButtonFunction();
-
-
     SetWindowSize(20, 20, TILEMAPTOOL_SIZE_X, TILEMAPTOOL_SIZE_Y);
 
     sampleImage = ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
-        128, 16, 8, 1, true, RGB(255, 0, 255));
+        128, 32, 8, 2, true, RGB(255, 0, 255));
 
     if (sampleImage == nullptr)
     {
-        cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+        cout << "Image/Tile3.bmp 로드 실패!!" << endl; 
         return E_FAIL;
     }
 
@@ -140,6 +132,12 @@ void TilemapToolScene::Update()
                 default:
                     break;
             }
+            if (selectedIdY == 1)
+            {
+                state = State::NoneWalkable;
+                tileType = TileType::Nexus;
+                cout << "Nexus" << endl;
+            }
         }
     }
 
@@ -233,7 +231,7 @@ void TilemapToolScene::Render(HDC hdc)
 
 
 
-    PatBlt(hdc, TILEMAPTOOL_SIZE_X - sampleImage->GetWidth() + sampleImage->GetFrameWidth() / 2 -32, sampleImage->GetHeight() + sampleImage->GetFrameHeight() / 2 + 148, 112,112, WHITENESS);
+    PatBlt(hdc, TILEMAPTOOL_SIZE_X - sampleImage->GetWidth() + sampleImage->GetFrameWidth() / 2 - 32, sampleImage->GetHeight() + sampleImage->GetFrameHeight() / 2 + 148, 112,112, WHITENESS);
     // 선택된 타일
     sampleImage->Render(hdc, TILEMAPTOOL_SIZE_X - sampleImage->GetWidth() + sampleImage->GetFrameWidth() / 2,
         sampleImage->GetHeight() + sampleImage->GetFrameHeight() / 2 + 180,

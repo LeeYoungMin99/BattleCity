@@ -45,6 +45,7 @@ public:
 
 	virtual bool IsCollided();
 	virtual void SetShape();
+	
 
 	inline void SetIsAlive(bool alive) { this->bIsAlive = alive; }
 

@@ -2,6 +2,15 @@
 #include "Config.h"
 #include <vector>
 
+
+class Nexus
+{
+public:
+	Image* img;
+	RECT rc;
+};
+
+
 #pragma once
 class Image;
 class EnemyManager;
@@ -37,7 +46,12 @@ private:
 
 	POINTFLOAT spawnPos[3];
 
+	RECT backGroundRect;
+
 	bool check = false;
+
+	Nexus nexus;
+	
 public:
 	void Load(int index);
 	virtual HRESULT Init() override;

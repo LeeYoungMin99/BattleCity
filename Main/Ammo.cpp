@@ -67,10 +67,6 @@ void Ammo::Update()
 		int posIdX = (pos.x- STAGE_SIZE_X) / 16;
 		int posIdY = (pos.y- STAGE_SIZE_Y) / 16;
 
-		cout << "1X : " <<posIdX << endl;
-		cout << "1Y : " << posIdY << endl;
-		cout << "2X : " << posIdX-1 << endl;
-		cout << "2Y : " << posIdY+1 << endl;
 		// Å¸°Ù°úÀÇ Ãæµ¹È®ÀÎ
 		if (CheckCollision(posIdX, posIdY))
 		{
@@ -136,6 +132,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY)+idX - 1].collider.bottom -= 8;
 				tile[26 * (idY)+idX - 1].bottomHit++;
 			}
+
 		}
 
 
@@ -145,7 +142,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 		{
 			// º® ¾ø¾Ö±â
-			cout << "º® 2 ºÎµúÇû´Ù" << endl;
 			check = true;
 			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
 			{
@@ -159,31 +155,12 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 		}
 
-
-
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX + 1)].collider)))
-		{
-			// º® ¾ø¾Ö±â
-			cout << "º® 3 ºÎµúÇû´Ù" << endl;
-			check = true;
-			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX + 1].tileType == TileType::Brick)
-			{
-				tile[26 * (idY)+idX + 1].collider.top += 8;
-				tile[26 * (idY)+idX + 1].topHit++;
-			}
-			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX + 1].tileType == TileType::Brick)
-			{
-				tile[26 * (idY)+idX + 1].collider.bottom -= 8;
-				tile[26 * (idY)+idX + 1].bottomHit++;
-			}
-		}
 	}
 	else if(bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
 	{
 		if (IntersectRect(&rc, &collision, &(tile[26 * (idY-1) + idX].collider)) )
 		{
 			// º® ¾ø¾Ö±â
-			cout << "º® 1 ºÎµúÇû´Ù" << endl;
 			check = true;
 			if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
 			{
@@ -199,7 +176,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 		{
 			// º® ¾ø¾Ö±â
-			cout << "º® 2 ºÎµúÇû´Ù" << endl;
 			check = true;
 			if (bulletDir == BulletDir::Left && tile[26 * (idY) + idX].tileType == TileType::Brick )
 			{
@@ -212,24 +188,9 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY) + idX].leftHit++;
 			}
 		}
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY+1)+(idX)].collider)))
-		{
-			// º® ¾ø¾Ö±â
-			cout << "º® 3 ºÎµúÇû´Ù" << endl;
-			check = true;
-			if (bulletDir == BulletDir::Left && tile[26 * (idY + 1) + idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY + 1)+idX].collider.right -= 8;
-				tile[26 * (idY + 1) + idX].rightHit++;
-			}
-			else if (bulletDir == BulletDir::Right && tile[26 * (idY + 1) + idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY + 1) + idX].collider.left += 8;
-				tile[26 * (idY + 1) + idX].leftHit++;
-			}
-		}
 		
 	}
+	
 	
 	
 	if (check)
