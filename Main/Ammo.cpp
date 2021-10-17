@@ -121,10 +121,9 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 	{
-		
+
 		if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 		{
-
 			// 벽 없애기
 			check = true;
 			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
@@ -139,7 +138,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 
 
-			if (tile[26 * (idY)+idX-1].topHit + tile[26 * (idY)+idX-1].bottomHit >= 2)
+			if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
 			{
 				tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
 				tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
@@ -160,13 +159,13 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY)+idX].collider.bottom -= 8;
 				tile[26 * (idY)+idX].bottomHit++;
 			}
-			if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2 )
+			if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
 			{
 				tile[26 * (idY)+idX].bodyCollider.left = 0;
 				tile[26 * (idY)+idX].bodyCollider.right = 0;
 			}
 		}
-		
+
 
 	}
 	else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
@@ -185,10 +184,10 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY - 1) + idX].collider.left += 8;
 				tile[26 * (idY - 1) + idX].leftHit++;
 			}
-			if (tile[26 * (idY-1)+idX].leftHit + tile[26 * (idY-1)+idX].rightHit >= 2 )
+			if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
 			{
-				tile[26 * (idY-1)+idX ].bodyCollider.left = 0;
-				tile[26 * (idY-1)+idX ].bodyCollider.right = 0;
+				tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
+				tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
 			}
 		}
 		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
@@ -205,10 +204,10 @@ bool Ammo::CheckCollision(int idX, int idY)
 				tile[26 * (idY)+idX].collider.left += 8;
 				tile[26 * (idY)+idX].leftHit++;
 			}
-			if (tile[26 * (idY) + idX].leftHit + tile[26 * (idY) + idX].rightHit >= 2)
+			if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
 			{
-				tile[26 * (idY) + idX].bodyCollider.left = 0;
-				tile[26 * (idY) + idX].bodyCollider.right = 0;
+				tile[26 * (idY)+idX].bodyCollider.left = 0;
+				tile[26 * (idY)+idX].bodyCollider.right = 0;
 			}
 		}
 
@@ -235,42 +234,63 @@ bool Ammo::CheckCollision(int idX, int idY)
 		}
 	}
 
+
 	if (playerTank == nullptr)
-	{
+	{	// 플레이어 탱크면
 		for (itEnemyTanks = enemyMgr->vecEnemys.begin();
 			itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
-		{
+		{	// Enemy가 Spawn상태가 아니라면 충돌 처리
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
 				(*itEnemyTanks)->HP--;
 				check = true;
 			}
-		}
-	}
-	else
-	{
-		for (itEnemyTanks = enemyMgr->vecEnemys.begin();
-			itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
-		{
-			if ((*itEnemyTanks) == ownerTank)
+			// Enemy의 ammo와 충돌 처리
+			else if (IntersectRect(&rc, &((*itEnemyTanks)->ammoPack->collision), &collision))
 			{
-				continue;
-			}
-
-			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
-			{
+				isFire = false;
+				collision.left = -10;
+				collision.top = -10;
+				collision.right = -10;
+				collision.bottom = -10;
+				pos.x = -10;
+				pos.y = -10;
+				(*itEnemyTanks)->ammoPack->isFire = false;
+				(*itEnemyTanks)->ammoPack->collision.left = -10;
+				(*itEnemyTanks)->ammoPack->collision.top = -10;
+				(*itEnemyTanks)->ammoPack->collision.right = -10;
+				(*itEnemyTanks)->ammoPack->collision.bottom = -10;
+				(*itEnemyTanks)->ammoPack->pos.x = -10;
+				(*itEnemyTanks)->ammoPack->pos.y = -10;
 				check = true;
 			}
 		}
 	}
 
 	if (playerTank != nullptr && !(playerTank->bCheckSpawnStatus))
-	{
-
-
+	{	// Player를 타겟으로 잡고있고 Player가 Spawn상태가 아니라면 충돌처리 
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
 			playerTank->HP--;
+			check = true;
+		}
+
+		if (IntersectRect(&rc, &(playerTank->ammoPack->collision), &collision))
+		{
+			isFire = false;
+			collision.left = -10;
+			collision.top = -10;
+			collision.right = -10;
+			collision.bottom = -10;
+			pos.x = -10;
+			pos.y = -10;
+			playerTank->ammoPack->isFire = false;
+			playerTank->ammoPack->collision.left = -10;
+			playerTank->ammoPack->collision.top = -10;
+			playerTank->ammoPack->collision.right = -10;
+			playerTank->ammoPack->collision.bottom = -10;
+			playerTank->ammoPack->pos.x = -10;
+			playerTank->ammoPack->pos.y = -10;
 			check = true;
 		}
 	}

@@ -42,6 +42,10 @@ HRESULT Stage1Scene::Init()
 			tileInfo[i * TILE_COUNT_X + j].collider.top += STAGE_SIZE_Y;
 			tileInfo[i * TILE_COUNT_X + j].collider.bottom += STAGE_SIZE_Y;
 
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.left += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.right += STAGE_SIZE_X;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.top += STAGE_SIZE_Y;
+			tileInfo[i * TILE_COUNT_X + j].bodyCollider.bottom += STAGE_SIZE_Y;
 		}
 	}
 
@@ -62,14 +66,14 @@ HRESULT Stage1Scene::Init()
 	tank = vecTankFactorial[0]->CreateTank();
 	enemyMgr = new EnemyManager;
 
-	tank->Init(tileInfo,enemyMgr,tank);
-	enemyMgr->Init(tileInfo,tank);
+	tank->Init(tileInfo, enemyMgr, tank);
+	enemyMgr->Init(tileInfo, tank, this);
 
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
 	backGroundRect.right = STAGE_SIZE_X + 416;
-	backGroundRect.bottom = STAGE_SIZE_Y+ 416;
+	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
 
 

@@ -39,12 +39,9 @@ private:
 	POINTFLOAT spawnEnemyPos[3] = {};
 	EnemyManager* enemyMgr = nullptr;
 
-	POINTFLOAT spawnPos[3];
-
 	RECT backGroundRect;
 
 	bool check = false;
-
 	
 public:
 	void Load(int index);
@@ -53,5 +50,7 @@ public:
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
 	void SpawnEnemy(TankType type);
+
+	inline void SubCurrSpawnEnemy() { this->currSpawnEnemy--; }
 };
 
