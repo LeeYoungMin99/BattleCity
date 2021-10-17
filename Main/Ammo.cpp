@@ -30,6 +30,9 @@ HRESULT Ammo::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* ownerTank, Tan
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
 
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Boom_Effect.bmp", 96, 32, 3, 1, true, RGB(255, 0, 255));
+	boomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Boom_Effect.bmp");
+
 	if (img == nullptr)
 	{
 		return E_FAIL;
@@ -55,9 +58,11 @@ void Ammo::Update()
 
 	if (isFire)
 	{
-		pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// 프레임당 이동거리 -> 시간 당 이동거리
-		pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
-
+		if (!bRenderBoomImg)
+		{
+			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// 프레임당 이동거리 -> 시간 당 이동거리
+			pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
+		}
 
 		collision.left = pos.x - (bodySize / 2.0f);
 		collision.top = pos.y - (bodySize / 2.0f);
@@ -70,25 +75,42 @@ void Ammo::Update()
 		// 타겟과의 충돌확인
 		if (CheckCollision(posIdX, posIdY))
 		{
-			isFire = false;
+			bRenderBoomImg = true;
 		}
 
 		// 화면을 벗어났는지 확인
 		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
 			collision.top > STAGE_SIZE_Y + 416 || collision.bottom < STAGE_SIZE_Y)
 		{
-			collision.left = -10;
-			collision.top = -10;
-			collision.right = -10;
-			collision.bottom = -10;
-			pos.x = -10;
-			pos.y = -10;
-			isFire = false;
+			bRenderBoomImg = true;
+		}
+
+		if (bRenderBoomImg)
+		{
+			currElapsedCount++;
+			
+			if (currElapsedCount >= addImgFrameCount)
+			{
+				boomImgCurrFrame++;
+				currElapsedCount = 0;
+
+				if (boomImgCurrFrame == boomImgMaxFrame)
+				{
+					collision.left = -10;
+					collision.top = -10;
+					collision.right = -10;
+					collision.bottom = -10;
+					pos.x = -10;
+					pos.y = -10;
+
+					boomImgCurrFrame = 0;
+					bRenderBoomImg = false;
+					isFire = false;
+				}
+			}
 		}
 	}
-
 }
-
 
 void Ammo::SetIsFire(bool fire)
 {
@@ -104,6 +126,10 @@ void Ammo::Render(HDC hdc)
 		Rectangle(hdc, collision.left, collision.top, collision.right, collision.bottom);
 		img->Render(hdc, pos.x, pos.y);
 		//Ellipse(hdc, shape.left, shape.top, shape.right, shape.bottom);
+		if (bRenderBoomImg)
+		{
+			boomImg->Render(hdc, pos.x, pos.y, boomImgCurrFrame, 0);
+		}
 	}
 }
 
@@ -262,7 +288,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 				(*itEnemyTanks)->ammoPack->collision.bottom = -10;
 				(*itEnemyTanks)->ammoPack->pos.x = -10;
 				(*itEnemyTanks)->ammoPack->pos.y = -10;
-				check = true;
 			}
 		}
 	}
@@ -291,18 +316,17 @@ bool Ammo::CheckCollision(int idX, int idY)
 			playerTank->ammoPack->collision.bottom = -10;
 			playerTank->ammoPack->pos.x = -10;
 			playerTank->ammoPack->pos.y = -10;
-			check = true;
 		}
 	}
 
 	if (check)
 	{
-		collision.left = -10;
-		collision.top = -10;
-		collision.right = -10;
-		collision.bottom = -10;
-		pos.x = -10;
-		pos.y = -10;
+		//collision.left = -10;
+		//collision.top = -10;
+		//collision.right = -10;
+		//collision.bottom = -10;
+		//pos.x = -10;
+		//pos.y = -10;
 		return true;
 	}
 

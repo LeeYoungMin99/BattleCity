@@ -8,12 +8,16 @@ class Tank;
 typedef struct BoomImageInfo
 {
 	POINTFLOAT imgPos = {};
-	bool bImgRender = false;
-	Image* boomImg = nullptr;
+	bool bRenderSmallBoomImg = false;
+	bool bRenderBigBoomImg = false;
+	Image* bigBoomImg = nullptr;
+	Image* smallBoomImg = nullptr;
 	int elapsedCount = 0;
-	int addImgFrameCount = 15;
-	int boomImgCurrFrame = 0;
-	int boomImgMaxFrame = 2;
+	int addImgFrameCount = 5;
+	int bigBoomImgCurrFrame = 0;
+	int bigBoomImgMaxFrame = 2;
+	int smallBoomImgCurrFrame = 0;
+	int smallBoomImgMaxFrame = 3;
 }BOOM_IMAGE_INFO;
 
 class EnemyManager : public GameEntity

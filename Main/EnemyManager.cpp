@@ -13,10 +13,11 @@ HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank, GameEntity* stageI
 	this->playerTank = playerTank;
 
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Big_Boom_Effect.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Big_Boom_Effect.bmp", 128, 64, 2, 1, true, RGB(255, 0, 255));
 	for (int i = 0; i < 3; i++)
 	{
-		boomImg[i].boomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Big_Boom_Effect.bmp");
+		boomImg[i].bigBoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Big_Boom_Effect.bmp");
+		boomImg[i].smallBoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Boom_Effect.bmp");
 	}
 
 	this->tileInfo = tile;
@@ -37,11 +38,12 @@ void EnemyManager::Update()
 		{
 			for (int i = 0; i < 3; i++)
 			{
-				if (boomImg[i].bImgRender == false)
+				if (boomImg[i].bRenderSmallBoomImg == false)
 				{
-					boomImg[i].bImgRender = true;
+					boomImg[i].bRenderSmallBoomImg = true;
 					boomImg[i].imgPos = (*itEnemys)->GetPos();
-					boomImg[i].boomImgCurrFrame = 0;
+					boomImg[i].smallBoomImgCurrFrame = 0;
+					boomImg[i].bigBoomImgCurrFrame = 0;
 					break;
 				}
 			}
@@ -58,18 +60,33 @@ void EnemyManager::Update()
 
 	for (int i = 0; i < 3; i++)
 	{
-		if (boomImg[i].bImgRender)
+		if (boomImg[i].bRenderSmallBoomImg)
 		{
 			boomImg[i].elapsedCount++;
 
 			if (boomImg[i].elapsedCount > boomImg[i].addImgFrameCount)
 			{
-				boomImg[i].boomImgCurrFrame++;
+				boomImg[i].smallBoomImgCurrFrame++;
 				boomImg[i].elapsedCount = 0;
 
-				if (boomImg[i].boomImgCurrFrame == boomImg[i].boomImgMaxFrame)
+				if (boomImg[i].smallBoomImgCurrFrame == boomImg[i].smallBoomImgMaxFrame)
 				{
-					boomImg[i].bImgRender = false;
+					boomImg[i].bRenderSmallBoomImg = false;
+					boomImg[i].bRenderBigBoomImg = true;
+				}
+			}
+		}
+		else if (boomImg[i].bRenderBigBoomImg)
+		{
+			boomImg[i].elapsedCount++;
+			if (boomImg[i].elapsedCount > boomImg[i].addImgFrameCount)
+			{
+				boomImg[i].bigBoomImgCurrFrame++;
+				boomImg[i].elapsedCount = 0;
+
+				if (boomImg[i].bigBoomImgCurrFrame == boomImg[i].bigBoomImgMaxFrame)
+				{
+					boomImg[i].bRenderBigBoomImg = false;
 				}
 			}
 		}
@@ -87,9 +104,13 @@ void EnemyManager::Render(HDC hdc)
 
 	for (int i = 0; i < 3; i++)
 	{
-		if (boomImg[i].bImgRender)
+		if (boomImg[i].bRenderSmallBoomImg)
 		{
-			boomImg[i].boomImg->Render(hdc, boomImg[i].imgPos.x - STAGE_SIZE_X / 2, boomImg[i].imgPos.y - STAGE_SIZE_Y, boomImg[i].boomImgCurrFrame, 0);
+			boomImg[i].smallBoomImg->Render(hdc, boomImg[i].imgPos.x - STAGE_SIZE_X / 2, boomImg[i].imgPos.y - STAGE_SIZE_Y, boomImg[i].smallBoomImgCurrFrame, 0);
+		}
+		else if (boomImg[i].bRenderBigBoomImg)
+		{
+			boomImg[i].bigBoomImg->Render(hdc, boomImg[i].imgPos.x - STAGE_SIZE_X / 2, boomImg[i].imgPos.y - STAGE_SIZE_Y, boomImg[i].bigBoomImgCurrFrame, 0);
 		}
 	}
 }
