@@ -5,7 +5,7 @@
 
 class Image;
 class Tank;
-
+class ItemManager;
 class EnemyManager : public GameEntity
 {
 private:
