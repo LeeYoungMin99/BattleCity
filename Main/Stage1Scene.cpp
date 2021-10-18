@@ -7,29 +7,81 @@
 #include "TankFactorial.h"
 #include "EnemyManager.h"
 
+#include "Stage2Scene.h"
+#include "ScoreScene.h"
 HRESULT Stage1Scene::Init()
 {
 	SetWindowSize(20, 20, WIN_SIZE_X, WIN_SIZE_Y);
-	sampleImage = ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
+	ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
 		128, 32, 8, 2, true, RGB(255, 0, 255));
+	sampleImage = ImageManager::GetSingleton()->FindImage("Image/Tile3.bmp");
 	if (sampleImage == nullptr)
 	{
 		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
 		return E_FAIL;
 	}
 
-	remainMonster = 18;
-	remainSpawnMonster = 18;
+	remainMonster = 2;
+	remainSpawnMonster = 2;
 
-	spawnMonsterImage = ImageManager::GetSingleton()->AddImage("Image/Icon/Icon_Enemy.bmp",
+	ImageManager::GetSingleton()->AddImage("Image/Icon/Icon_Enemy.bmp",
 		16, 16, 1, 1, true, RGB(255, 0, 255));
-	lifeImage = ImageManager::GetSingleton()->AddImage("Image/Icon/player1Life.bmp",
+	spawnMonsterImage = ImageManager::GetSingleton()->FindImage("Image/Icon/Icon_Enemy.bmp");
+	if (spawnMonsterImage == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
+
+
+	ImageManager::GetSingleton()->AddImage("Image/Icon/player1Life.bmp",
 		35, 40, 1, 1, true, RGB(255, 0, 255));
-	stageImage = ImageManager::GetSingleton()->AddImage("Image/Icon/StageFlag.bmp",
+	lifeImage = ImageManager::GetSingleton()->FindImage("Image/Icon/player1Life.bmp");
+
+	if (lifeImage == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Icon/StageFlag.bmp",
 		35, 40, 1, 1, true, RGB(255, 0, 255));
-	stageLevel = ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
+	stageImage = ImageManager::GetSingleton()->FindImage("Image/Icon/StageFlag.bmp");
+	if (stageImage == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
+
+
+	ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
+	stageLevel = ImageManager::GetSingleton()->FindImage("Image/Text/Number.bmp");
+	if (stageLevel == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
+
+	cout << stageLevel->GetFrameHeight() << endl;
+	cout << stageLevel->GetFrameWidth() << endl;
+
 	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	if (backGround == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
+
+
+	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	slate1 = -(backGround->GetHeight())+200;
+	slate2 = backGround->GetHeight()+200;	//닫
+	if (slate == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
 
 	Load(1);
 
@@ -76,38 +128,74 @@ HRESULT Stage1Scene::Init()
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
 
-
+	GameManager::GetSingleton()->remainSpawnMonster = 2;
+	GameManager::GetSingleton()->remainMonster = 2;
 
 	return S_OK;
 }
 
 void Stage1Scene::Update()
 {
-	tank->Update();
-	enemyMgr->Update();
-
-	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-	if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy)
+	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
-		remainSpawnMonster--;
-		currSpawnEnemy++;
-		elapsedCount -= spawmElapsedCount;
-		SpawnEnemy(TankType::Normal);
+		slate1 += 10;
+		slate2 -= 10;	//닫
+		
+		if (slate1 >= 0)
+		{
+			GameManager::GetSingleton()->state = GameState::Playing;
+			GameManager::GetSingleton()->stageLevel++;
+
+			SceneManager::GetSingleton()->ChangeScene("LoadingScene");
+
+			slate1 = -(backGround->GetHeight()) + 200;
+			slate2 = backGround->GetHeight() + 200;	//닫
+			return;
+		}
+
 	}
-
-	if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
+	else
 	{
-		if (check)
-			check = false;
-		else
-			check = true;
+		tank->Update();
+		enemyMgr->Update();
+
+		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
+		{
+			GameManager::GetSingleton()->remainSpawnMonster--;
+			currSpawnEnemy++;
+			elapsedCount -= spawmElapsedCount;
+			SpawnEnemy(TankType::Normal);
+		}
+
+		if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
+		{
+			if (check)
+				check = false;
+			else
+				check = true;
+		}
+
+		if (GameManager::GetSingleton()->remainMonster <= 0)
+		{
+			elapsedCount++;
+			if (elapsedCount > 200) {
+				elapsedCount = 0;
+				GameManager::GetSingleton()->state = GameState::Done;
+				GameManager::GetSingleton()->spawnCount = 0;
+				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
+				SceneManager::GetSingleton()->ChangeScene("scoreScene");
+			}
+		}
 	}
 }
 
 void Stage1Scene::Render(HDC hdc)
 {
+
 	// 배경
-	backGround->Render(hdc);
+ 	backGround->Render(hdc);
+
 	HBRUSH myBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
 
@@ -139,7 +227,7 @@ void Stage1Scene::Render(HDC hdc)
 
 	}
 
-	for (int i = 0; i < remainSpawnMonster; i++)
+	for (int i = 0; i < GameManager::GetSingleton()->remainSpawnMonster; i++)
 	{
 		if (i % 2 == 0)
 			spawnMonsterImage->Render(hdc, 472, 35 + 16 * (i / 2));
@@ -155,7 +243,9 @@ void Stage1Scene::Render(HDC hdc)
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
 
-
+	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
+	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
+	
 }
 
 void Stage1Scene::Release()
@@ -164,13 +254,12 @@ void Stage1Scene::Release()
 
 void Stage1Scene::SpawnEnemy(TankType type)
 {
-	enemyMgr->AddEnemy(vecTankFactorial[(int)type + 1]->CreateTank(), spawnEnemyPos[spawnCount]);
+	enemyMgr->AddEnemy(vecTankFactorial[(int)type + 1]->CreateTank(), spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
 
-	spawnCount++;
 
-	if (spawnCount >= maxSpawnCount)
+	if (GameManager::GetSingleton()->spawnCount >= maxSpawnCount)
 	{
-		spawnCount -= maxSpawnCount;
+		GameManager::GetSingleton()->spawnCount -= maxSpawnCount;
 	}
 
 }
