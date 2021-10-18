@@ -65,8 +65,10 @@ public:
 	virtual bool IsCollided();
 	virtual void SetShape();
 	
+	inline virtual void increaseScore() = 0;
 
 	inline void SetIsAlive(bool alive) { this->bIsAlive = alive; }
+
 
 	Tank() {}
 	virtual ~Tank() {}
@@ -89,6 +91,7 @@ public:
 
 	virtual void Move() override;
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { };
 
 	PlayerTank() {}
 	virtual ~PlayerTank() {}
@@ -100,6 +103,7 @@ public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 	
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; } ;
 
 	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
@@ -112,6 +116,7 @@ public:
 
 	virtual void Fire() override;
 
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
 };
@@ -122,6 +127,7 @@ public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 
 	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
@@ -133,6 +139,7 @@ public:
 	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 
 	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}

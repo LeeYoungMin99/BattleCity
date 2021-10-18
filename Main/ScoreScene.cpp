@@ -83,6 +83,12 @@ void ScoreScene::Update()
 		elapsedcount++;
 		if (elapsedcount >= 100)
 		{	
+			if (GameManager::GetSingleton()->player1Life > 0)
+			{
+				SceneManager::GetSingleton()->ChangeScene("Stage1");
+				return;
+			}
+
 			if (gameOver)
 			{
 				GameManager::GetSingleton()->ScoreSave();

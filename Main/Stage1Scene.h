@@ -29,6 +29,10 @@ private:
 	Image* stageLevel;
 	Image* backGround;
 
+	Image* slate;
+	int slate1;
+	int slate2;
+
 	Tank* tank = nullptr;
 	vector<TankFactorial*> vecTankFactorial = {};
 
