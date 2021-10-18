@@ -11,6 +11,8 @@ class Image;
 class EnemyManager;
 class Tank;
 class TankFactorial;
+class ItemManager;
+class Item;
 class Stage1Scene : public GameEntity
 {
 private:
@@ -30,6 +32,7 @@ private:
 	Tank* tank = nullptr;
 	vector<TankFactorial*> vecTankFactorial = {};
 
+
 	float elapsedCount = 0.0f;
 	float spawmElapsedCount = 5.0f;
 	int spawnCount = 0;
@@ -42,6 +45,9 @@ private:
 	RECT backGroundRect;
 
 	bool check = false;
+	vector<ItemManager*> vecItems;
+	ItemManager* itemManager;
+	Item* item;
 	
 public:
 	void Load(int index);
@@ -52,5 +58,7 @@ public:
 	void SpawnEnemy(TankType type);
 
 	inline void SubCurrSpawnEnemy() { this->currSpawnEnemy--; }
+	inline TileType GetTileType(int i) { return this->tileInfo[i].tileType; }
+	void CreateItem();
 };
 

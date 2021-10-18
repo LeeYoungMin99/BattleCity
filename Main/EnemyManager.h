@@ -4,7 +4,7 @@
 
 class Image;
 class Tank;
-
+class ItemManager;
 typedef struct BoomImageInfo
 {
 	POINTFLOAT imgPos = {};
@@ -31,6 +31,7 @@ private:
 	TILE_INFO* tileInfo = nullptr;
 	Tank* playerTank = nullptr;
 	GameEntity* stageInfo = nullptr;
+	ItemManager* itemManager = nullptr;
 
 public:
 	vector<Tank*> vecEnemys;

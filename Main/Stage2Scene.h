@@ -56,5 +56,7 @@ public:
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
 	void SpawnEnemy(TankType type);
+	 
+
 };
 
