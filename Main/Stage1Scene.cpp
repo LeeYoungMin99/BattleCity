@@ -6,6 +6,8 @@
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
+#include "ItemManager.h"
+#include "Item.h"
 
 #include "Stage2Scene.h"
 #include "ScoreScene.h"
@@ -118,7 +120,10 @@ HRESULT Stage1Scene::Init()
 	tank = vecTankFactorial[0]->CreateTank();
 	enemyMgr = new EnemyManager;
 
-	tank->Init(tileInfo, enemyMgr, tank);
+	itemManager = new ItemManager;
+	item = new Item;
+
+	tank->Init(tileInfo, enemyMgr, tank, itemManager->vecItems);
 	enemyMgr->Init(tileInfo, tank, this);
 
 
@@ -216,6 +221,7 @@ void Stage1Scene::Render(HDC hdc)
 				tileInfo[i * TILE_COUNT_X + j].frameY, tileInfo[i * TILE_COUNT_X + j].leftHit, tileInfo[i * TILE_COUNT_X + j].rightHit,
 				tileInfo[i * TILE_COUNT_X + j].topHit, tileInfo[i * TILE_COUNT_X + j].bottomHit);
 
+
 			if (check)
 			{
 				Rectangle(hdc, tileInfo[i * TILE_COUNT_X + j].collider.left,
@@ -242,6 +248,8 @@ void Stage1Scene::Render(HDC hdc)
 	stageLevel->Render(hdc, 490, 390, 1, 0);
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
+	itemManager->Render(hdc);
+
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
@@ -262,6 +270,22 @@ void Stage1Scene::SpawnEnemy(TankType type)
 		GameManager::GetSingleton()->spawnCount -= maxSpawnCount;
 	}
 
+}
+
+void Stage1Scene::CreateItem()
+{
+	for (int i = 0; i < 1; )
+	{
+		int randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
+
+		if (tileInfo[randtile].tileType == TileType::Ground)
+		{
+			int itemtype = 3;//rand() % 7;
+			itemManager->Init(itemtype, randtile);
+			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
+			break;
+		}
+	}
 }
 
 void Stage1Scene::Load(int index)
