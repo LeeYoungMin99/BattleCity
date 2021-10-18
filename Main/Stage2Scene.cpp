@@ -168,76 +168,79 @@ void Stage2Scene::Update()
 			}
 		}
 
-	if (tank->HP <= 0)
-	{
-		boomImg[0].bRenderBoomImg = true;
-		boomImg[0].imgPos = tank->GetPos();
-		delete tank;
-		tank = vecTankFactorial[0]->CreateTank();
-		tank->Init(tileInfo, enemyMgr, tank);
-		tank->SetPos({ -50.0f,-50.0f });
-	}
-
-	if (tileInfo[636].frameX == 4)
-	{
-		boomImg[1].bRenderBoomImg = true;
-		POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
-		boomImg[1].imgPos = temp;
-	}
-
-	if (boomImg[0].bRenderBoomImg)
-	{
-		boomImg[0].elapsedCount++;
-
-		if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+		if (tank->HP <= 0)
 		{
-			boomImg[0].elapsedCount = 0;
-			boomImg[0].BoomImgCurrFrame++;
-
-			if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
-			{
-				boomImg[0].bRenderBoomImg = false;
-				boomImg[0].BoomImgCurrFrame = 0;
-				tank->Init(tileInfo, enemyMgr, tank);
-			}
-		}
-	}
-
-	if (boomImg[1].bRenderBoomImg)
-	{
-		boomImg[1].elapsedCount++;
-
-		if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
-		{
-			boomImg[1].elapsedCount = 0;
-			boomImg[1].BoomImgCurrFrame++;
-
-			if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
-			{
-				boomImg[1].bRenderBoomImg = false;
-				boomImg[1].BoomImgCurrFrame = 0;
-        
-		waterElapsedCount++;
-		if (waterElapsedCount == 50)
-		{
-			for (int i = 0; i < waterTilePos.size(); i++)
-			{
-				if (tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX + 1 == 7)
-					tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX = 3;
-				(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX) += 1;
-			}
-			waterElapsedCount = 0;
+			boomImg[0].bRenderBoomImg = true;
+			boomImg[0].imgPos = tank->GetPos();
+			delete tank;
+			tank = vecTankFactorial[0]->CreateTank();
+			tank->Init(tileInfo, enemyMgr, tank);
+			tank->SetPos({ -50.0f,-50.0f });
 		}
 
-		if (GameManager::GetSingleton()->remainMonster <= 0)
+		if (tileInfo[636].frameX == 4)
 		{
-			elapsedCount++;
-			if (elapsedCount > 200) {
-				elapsedCount = 0;
-				GameManager::GetSingleton()->state = GameState::Done;
-				GameManager::GetSingleton()->spawnCount = 0;
-				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
-				SceneManager::GetSingleton()->ChangeScene("scoreScene");
+			boomImg[1].bRenderBoomImg = true;
+			POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
+			boomImg[1].imgPos = temp;
+		}
+
+		if (boomImg[0].bRenderBoomImg)
+		{
+			boomImg[0].elapsedCount++;
+
+			if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+			{
+				boomImg[0].elapsedCount = 0;
+				boomImg[0].BoomImgCurrFrame++;
+
+				if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
+				{
+					boomImg[0].bRenderBoomImg = false;
+					boomImg[0].BoomImgCurrFrame = 0;
+					tank->Init(tileInfo, enemyMgr, tank);
+				}
+			}
+		}
+
+		if (boomImg[1].bRenderBoomImg)
+		{
+			boomImg[1].elapsedCount++;
+
+			if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
+			{
+				boomImg[1].elapsedCount = 0;
+				boomImg[1].BoomImgCurrFrame++;
+
+				if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
+				{
+					boomImg[1].bRenderBoomImg = false;
+					boomImg[1].BoomImgCurrFrame = 0;
+
+					waterElapsedCount++;
+					if (waterElapsedCount == 50)
+					{
+						for (int i = 0; i < waterTilePos.size(); i++)
+						{
+							if (tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX + 1 == 7)
+								tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX = 3;
+							(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX) += 1;
+						}
+						waterElapsedCount = 0;
+					}
+
+					if (GameManager::GetSingleton()->remainMonster <= 0)
+					{
+						elapsedCount++;
+						if (elapsedCount > 200) {
+							elapsedCount = 0;
+							GameManager::GetSingleton()->state = GameState::Done;
+							GameManager::GetSingleton()->spawnCount = 0;
+							SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
+							SceneManager::GetSingleton()->ChangeScene("scoreScene");
+						}
+					}
+				}
 			}
 		}
 	}
