@@ -93,7 +93,7 @@ public:
 	virtual void Fire() override;
 	inline virtual void increaseScore() override { };
 
-	PlayerTank() {}
+	PlayerTank();
 	virtual ~PlayerTank() {}
 };
 

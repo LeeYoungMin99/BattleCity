@@ -98,6 +98,11 @@ HRESULT Stage2Scene::Init()
 	backGroundRect.right = STAGE_SIZE_X + 416;
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
+	for (int i = 0; i < 2; i++)
+	{
+		boomImg[i].BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
+	}
 
 	elapsedCount = 0;
 
@@ -163,6 +168,55 @@ void Stage2Scene::Update()
 			}
 		}
 
+	if (tank->HP <= 0)
+	{
+		boomImg[0].bRenderBoomImg = true;
+		boomImg[0].imgPos = tank->GetPos();
+		delete tank;
+		tank = vecTankFactorial[0]->CreateTank();
+		tank->Init(tileInfo, enemyMgr, tank);
+		tank->SetPos({ -50.0f,-50.0f });
+	}
+
+	if (tileInfo[636].frameX == 4)
+	{
+		boomImg[1].bRenderBoomImg = true;
+		POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
+		boomImg[1].imgPos = temp;
+	}
+
+	if (boomImg[0].bRenderBoomImg)
+	{
+		boomImg[0].elapsedCount++;
+
+		if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+		{
+			boomImg[0].elapsedCount = 0;
+			boomImg[0].BoomImgCurrFrame++;
+
+			if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
+			{
+				boomImg[0].bRenderBoomImg = false;
+				boomImg[0].BoomImgCurrFrame = 0;
+				tank->Init(tileInfo, enemyMgr, tank);
+			}
+		}
+	}
+
+	if (boomImg[1].bRenderBoomImg)
+	{
+		boomImg[1].elapsedCount++;
+
+		if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
+		{
+			boomImg[1].elapsedCount = 0;
+			boomImg[1].BoomImgCurrFrame++;
+
+			if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
+			{
+				boomImg[1].bRenderBoomImg = false;
+				boomImg[1].BoomImgCurrFrame = 0;
+        
 		waterElapsedCount++;
 		if (waterElapsedCount == 50)
 		{
@@ -262,6 +316,16 @@ void Stage2Scene::Render(HDC hdc)
 	lifeImage->Render(hdc, 480, 260);
 	stageImage->Render(hdc, 480, 370);
 	stageLevel->Render(hdc, 490, 390, 1, 0);
+
+	if (boomImg[0].bRenderBoomImg)
+	{
+		boomImg[0].BoomImg->Render(hdc, boomImg[0].imgPos.x - STAGE_SIZE_X / 2, boomImg[0].imgPos.y - STAGE_SIZE_Y, boomImg[0].BoomImgCurrFrame, 0);
+	}
+
+	if (boomImg[1].bRenderBoomImg)
+	{
+		boomImg[1].BoomImg->Render(hdc, boomImg[1].imgPos.x, boomImg[1].imgPos.y, boomImg[1].BoomImgCurrFrame, 0);
+	}
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);

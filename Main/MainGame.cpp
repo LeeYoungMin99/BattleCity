@@ -34,6 +34,7 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
 
 
+
 	SceneManager::GetSingleton()->ChangeScene("TitleScene");
 
 

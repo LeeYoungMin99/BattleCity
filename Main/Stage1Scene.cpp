@@ -6,6 +6,7 @@
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
+#include "BoomImage.h"
 #include "ItemManager.h"
 #include "Item.h"
 
@@ -133,6 +134,13 @@ HRESULT Stage1Scene::Init()
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
 
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
+	for (int i = 0; i < 2; i++)
+	{
+		boomImg[i].BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
+	}
+
+
 	GameManager::GetSingleton()->remainSpawnMonster = 2;
 	GameManager::GetSingleton()->remainMonster = 2;
 
@@ -193,6 +201,52 @@ void Stage1Scene::Update()
 			}
 		}
 	}
+
+	if (tank->HP <= 0)
+	{
+		boomImg[0].bRenderBoomImg = true;
+		boomImg[0].imgPos = tank->GetPos();
+		delete tank;
+		tank = vecTankFactorial[0]->CreateTank();
+		tank->Init(tileInfo, enemyMgr, tank);
+		tank->SetPos({ -50.0f,-50.0f });
+	}
+
+
+	if (boomImg[0].bRenderBoomImg)
+	{
+		boomImg[0].elapsedCount++;
+
+		if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+		{
+			boomImg[0].elapsedCount = 0;
+			boomImg[0].BoomImgCurrFrame++;
+
+			if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
+			{
+				boomImg[0].bRenderBoomImg = false;
+				boomImg[0].BoomImgCurrFrame = 0;
+				tank->Init(tileInfo, enemyMgr, tank);
+			}
+		}
+	}
+
+	if (boomImg[1].bRenderBoomImg)
+	{
+		boomImg[1].elapsedCount++;
+
+		if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
+		{
+			boomImg[1].elapsedCount = 0;
+			boomImg[1].BoomImgCurrFrame++;
+
+			if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
+			{
+				boomImg[1].bRenderBoomImg = false;
+				boomImg[1].BoomImgCurrFrame = 0;
+			}
+		}
+	}
 }
 
 void Stage1Scene::Render(HDC hdc)
@@ -249,6 +303,11 @@ void Stage1Scene::Render(HDC hdc)
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
 	itemManager->Render(hdc);
+
+	if (boomImg[0].bRenderBoomImg)
+	{
+		boomImg[0].BoomImg->Render(hdc, boomImg[0].imgPos.x - STAGE_SIZE_X / 2, boomImg[0].imgPos.y - STAGE_SIZE_Y, boomImg[0].BoomImgCurrFrame, 0);
+	}
 
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);

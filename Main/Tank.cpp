@@ -38,6 +38,9 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 	elapsedCount = 0.0f;
 
 	bIsAlive = true;
+	bCheckSpawnStatus = true;
+	bCheckShieldOn = false;
+
 
 	ammoCount = 1;
 	ammoPack = new Ammo[ammoCount];
@@ -349,6 +352,12 @@ void PlayerTank::Fire()
 			break;
 		}
 	}
+}
+PlayerTank::PlayerTank()
+{
+	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
+	shieldImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Shield.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
 }
 #pragma endregion
 
