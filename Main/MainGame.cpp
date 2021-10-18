@@ -14,6 +14,7 @@
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "GameManager.h"
+#include "LoadingScene.h"
 
 HRESULT MainGame::Init()
 {
@@ -30,10 +31,10 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->AddScene("Stage2", new Stage2Scene());
 	SceneManager::GetSingleton()->AddScene("Stage3", new Stage3Scene());
 	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
-	SceneManager::GetSingleton()->AddLoadingScene("LoadingScene", new LoadingScene());
+	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
 
 
-	SceneManager::GetSingleton()->ChangeScene("Stage1");
+	SceneManager::GetSingleton()->ChangeScene("TitleScene");
 
 
 

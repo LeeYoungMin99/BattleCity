@@ -4,6 +4,16 @@ void GameManager::Init()
 {
     player1Score = 0;
     hightScore = 0;
+
+    remainSpawnMonster=0;
+    remainMonster=0;
+    spawnCount = 0;
+    defeatNormalTank = 0;
+    player1Life = 2;
+
+    state = GameState::Playing;
+
+    stageLevel = 1;
 }
 
 void GameManager::ScoreSave()

@@ -44,7 +44,7 @@ void TitleScene::Update()
 			{
 			case player_1:
 				selecTitle = selectedTitle::player_1;
-				SceneManager::GetSingleton()->ChangeScene("Stage1");
+				SceneManager::GetSingleton()->ChangeScene("LoadingScene");
 				break;
 			case player_2:
 				selecTitle = selectedTitle::player_1;
