@@ -73,7 +73,7 @@ HRESULT Stage2Scene::Init()
 	enemyMgr = new EnemyManager;
 
 	tank->Init(tileInfo, enemyMgr, tank);
-	enemyMgr->Init(tileInfo, tank);
+	enemyMgr->Init(tileInfo, tank, this);
 
 
 	backGroundRect.left = STAGE_SIZE_X;

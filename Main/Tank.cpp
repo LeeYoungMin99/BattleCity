@@ -392,6 +392,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 
 	return S_OK;
 }
+
 void NormalEnemyTank::Fire()
 {
 	testelapsed++;

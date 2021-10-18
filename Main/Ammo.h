@@ -16,6 +16,12 @@ private:
 	float moveAngle = 0.0f;
 
 	Image* img = nullptr;
+	Image* boomImg = nullptr;
+	int boomImgCurrFrame = 0;
+	int boomImgMaxFrame = 3;
+	bool bRenderBoomImg = false;
+	int currElapsedCount = 0;
+	int addImgFrameCount = 5;
 
 	float moveSpeed = 0.0f;
 
