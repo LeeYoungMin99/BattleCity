@@ -1,12 +1,9 @@
+#pragma once
 #include "GameEntity.h"
 #include "Config.h"
+#include "BoomImage.h"
 #include <vector>
 
-
-
-
-
-#pragma once
 class Image;
 class EnemyManager;
 class Tank;
@@ -21,6 +18,8 @@ private:
 	Image *spawnMonsterImage;
 	int remainSpawnMonster;
 	int remainMonster;
+
+	BOOM_IMAGE_INFO boomImg[2];
 
 	Image *lifeImage;
 	Image *stageImage;

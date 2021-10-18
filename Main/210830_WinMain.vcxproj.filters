@@ -200,5 +200,8 @@
     <ClInclude Include="GameManager.h">
       <Filter>2D Framework\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="BoomImage.h">
+      <Filter>2D Framework</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

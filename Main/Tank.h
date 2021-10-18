@@ -85,7 +85,7 @@ public:
 	virtual void Move() override;
 	virtual void Fire() override;
 
-	PlayerTank() {}
+	PlayerTank();
 	virtual ~PlayerTank() {}
 };
 
