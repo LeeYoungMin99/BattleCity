@@ -3,6 +3,7 @@
 #include "Tank.h"
 #include "Image.h"
 #include "Stage1Scene.h"
+#include "ItemManager.h"
 
 HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank, GameEntity* stageInfo)
 {
@@ -22,11 +23,14 @@ HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank, GameEntity* stageI
 	this->tileInfo = tile;
 	this->stageInfo = stageInfo;
 
+	itemManager = new ItemManager;
+
 	return S_OK;
 }
 
 void EnemyManager::Update()
 {
+
 	for (itEnemys = vecEnemys.begin();
 		itEnemys != vecEnemys.end();)
 	{
@@ -44,6 +48,11 @@ void EnemyManager::Update()
 					break;
 				}
 			}
+			if ((*itEnemys)->bItem)
+			{
+				((Stage1Scene*)stageInfo)->CreateItem();
+			}
+
 			Tank* temp = (*itEnemys);
 			itEnemys = vecEnemys.erase(itEnemys);
 			delete temp;
@@ -109,7 +118,7 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 
 	tank->Init(tileInfo, this, playerTank);
 	elapsedcount++;
-	if (elapsedcount == 1/*RANDOM_2(0, 16)*/)
+	if (elapsedcount%2  == 0/*RANDOM_2(0, 16)*/)
 	{
 		tank->bItem = true;
 	}

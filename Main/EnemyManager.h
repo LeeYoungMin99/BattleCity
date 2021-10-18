@@ -17,6 +17,7 @@ private:
 	TILE_INFO* tileInfo = nullptr;
 	Tank* playerTank = nullptr;
 	GameEntity* stageInfo = nullptr;
+	ItemManager* itemManager = nullptr;
 
 public:
 	vector<Tank*> vecEnemys;

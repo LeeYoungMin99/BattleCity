@@ -269,12 +269,17 @@ bool Ammo::CheckCollision(int idX, int idY)
 		{	// Enemy가 Spawn상태가 아니라면 충돌 처리
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
+				GameManager::GetSingleton()->remainMonster--;
+				(*itEnemyTanks)->increaseScore();
+				cout << GameManager::GetSingleton()->defeatNormalTank << endl;
 				(*itEnemyTanks)->HP--;
 				check = true;
 			}
 			// Enemy의 ammo와 충돌 처리
 			else if (IntersectRect(&rc, &((*itEnemyTanks)->ammoPack->collision), &collision))
 			{
+
+
 				isFire = false;
 				collision.left = -10;
 				collision.top = -10;

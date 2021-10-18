@@ -1,9 +1,11 @@
 #include "Tank.h"
 #include "Image.h"
 #include "EnemyManager.h"
+#include "ItemManager.h"
+#include "Item.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
+HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
@@ -27,6 +29,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
+	this->itemList = item;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -359,7 +362,7 @@ PlayerTank::PlayerTank()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
+HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -457,7 +460,7 @@ void NormalEnemyTank::Fire()
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
+HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -499,7 +502,7 @@ void SpeedEnemyTank::Fire()
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
+HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -541,7 +544,7 @@ void RapidEnemyTank::Fire()
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank)
+HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -856,6 +859,15 @@ bool Tank::IsCollided()
 		{
 			return true;
 		}
+
+		for (itItemList = itemList.begin(); itItemList != itemList.end(); itItemList++)
+		{
+			if (IntersectRect(&temp, &((*itItemList)->rc), &shape))
+			{
+				cout << "item get" << endl;
+			}
+		}
+
 	}
 
 	for (itEnemyTanks = enemyMgr->vecEnemys.begin();

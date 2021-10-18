@@ -4,6 +4,8 @@
 #include "Ammo.h"
 
 class EnemyManager;
+class ItemManager;
+class Item;
 class Tank : public GameObject
 {
 public:
@@ -25,7 +27,8 @@ public:
 	int enforceCount = 0;
 	bool bIsAlive = true;
 	
-
+	vector<Item*> itemList = {};
+	vector<Item*>::iterator itItemList = {};
 
 	int ammoCount = 0;
 
@@ -38,17 +41,20 @@ public:
 	vector<Tank*>::iterator itEnemyTanks = {};
 	Ammo* ammoPack = nullptr;
 
+	ItemManager* itemManager;
+	Item* item;
+
 	float delay = RANDOM(1, 3);
 	float elapsedCount = 0.0f;
 
-	float delay_2 = RANDOM(10,15);
-	int testelapsed;
-	int testelapsed_2;
-	int checkMoveCount_2;
-	bool bItem = false;
+	float delay_2 = RANDOM(10,15);	//노말탱크 공격딜레이
+	int testelapsed;				//노말탱크 공격딜레이
+	int testelapsed_2;		//아이템탱크 번쩍번쩍
+	int checkMoveCount_2;	//아이템탱크 번쩍번쩍
+	bool bItem = false;		//아이템 여부
 
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
 	virtual void Update();												// 오버라이딩을 한다
 	virtual void Render(HDC hdc);
 	virtual void Release();
@@ -59,8 +65,10 @@ public:
 	virtual bool IsCollided();
 	virtual void SetShape();
 	
+	inline virtual void increaseScore() = 0;
 
 	inline void SetIsAlive(bool alive) { this->bIsAlive = alive; }
+
 
 	Tank() {}
 	virtual ~Tank() {}
@@ -75,15 +83,15 @@ private:
 	bool bCheckShieldOn = false;
 	bool bShieldImageChanged = false;
 
-
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr,Tank* playerTank = nullptr) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
 
 	virtual void Move() override;
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { };
 
 	PlayerTank();
 	virtual ~PlayerTank() {}
@@ -92,9 +100,10 @@ public:
 class NormalEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 	
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; } ;
 
 	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
@@ -103,10 +112,11 @@ public:
 class SpeedEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 
 	virtual void Fire() override;
 
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
 };
@@ -114,9 +124,10 @@ public:
 class RapidEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 
 	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
@@ -125,9 +136,10 @@ public:
 class DefensiveEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr) override;
+	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, vector<Item*> item = {}) override;
 
 	virtual void Fire() override;
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 
 	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}
