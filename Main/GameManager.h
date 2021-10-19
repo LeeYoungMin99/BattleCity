@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Singleton.h"
 
-static enum class GameState{Playing, Done, GameOver};
+static enum class GameState{Playing, Done, DestoryNexus, GameOver};
 
 class GameManager : public Singleton<GameManager>
 {
@@ -33,5 +33,6 @@ public:
 	inline void SetScore(int player1Score) { this->player1Score = player1Score; }
 	inline int GetScore() { return this->player1Score; }
 	inline int GetHightScore() { return this->hightScore; }
+	void GameInit();
 };
 

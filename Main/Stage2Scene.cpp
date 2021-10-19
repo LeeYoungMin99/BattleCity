@@ -47,6 +47,10 @@ HRESULT Stage2Scene::Init()
 	slate1 = -(backGround->GetHeight()) + 200;
 	slate2 = backGround->GetHeight() + 210;	//닫
 
+	ImageManager::GetSingleton()->AddImage("Image/Text/Game_Over.bmp", 64, 30, 1, 1, true, RGB(255, 0, 255));
+	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
+	gameOverPosY = WIN_SIZE_Y + 30;
+
 	Load(2);
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
@@ -112,7 +116,7 @@ HRESULT Stage2Scene::Init()
 	GameManager::GetSingleton()->remainSpawnMonster = 2;
 	GameManager::GetSingleton()->remainMonster = 2;
 
-
+	stateElapsedCount = 0;
 	return S_OK;
 }
 
@@ -120,25 +124,12 @@ void Stage2Scene::Update()
 {
 	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
-		slate1 += 10;
-		slate2 -= 10;	//닫
-
-		if (slate1 >= 0)
-		{
-			GameManager::GetSingleton()->state = GameState::Playing;
-			GameManager::GetSingleton()->stageLevel++;
-
-			SceneManager::GetSingleton()->ChangeScene("LoadingScene");
-
-			slate1 = -(backGround->GetHeight()) + 200;
-			slate2 = backGround->GetHeight() + 200;	//닫
-		}
+		CloseSlate(); // 게임 종료시 슬레이트 닫기
 
 	}
-	else
+	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
-		enemyMgr->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -199,7 +190,8 @@ void Stage2Scene::Update()
 				{
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
-					tank->Init(tileInfo, enemyMgr, tank, itemManager);
+					if (GameManager::GetSingleton()->player1Life >= 0)
+						tank->Init(tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
 		}
@@ -245,7 +237,23 @@ void Stage2Scene::Update()
 				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}
 		}
+
+		if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::DestoryNexus)
+		{
+			stateElapsedCount++;
+			if (stateElapsedCount >= 120)
+			{
+				stateElapsedCount = 0;
+				GameManager::GetSingleton()->state = GameState::GameOver;
+			}
+		}
 	}
+	else if (GameManager::GetSingleton()->state == GameState::GameOver)
+	{
+	RotateGameOverScene();
+	}
+
+	enemyMgr->Update();
 }
 
 void Stage2Scene::Render(HDC hdc)
@@ -320,6 +328,8 @@ void Stage2Scene::Render(HDC hdc)
 
 
 	lifeImage->Render(hdc, 480, 260);
+	stageLevel->Render(hdc, 494, 270, GameManager::GetSingleton()->player1Life % 5, GameManager::GetSingleton()->player1Life / 5);
+
 	stageImage->Render(hdc, 480, 370);
 
 	if (GameManager::GetSingleton()->stageLevel < 10)
@@ -344,6 +354,9 @@ void Stage2Scene::Render(HDC hdc)
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
+
+
+	gameOver->Render(hdc, STAGE_SIZE_X + 208, gameOverPosY);
 }
 
 void Stage2Scene::Release()
@@ -376,6 +389,41 @@ void Stage2Scene::CreateItem()
 		}
 	}
 }
+
+
+void Stage2Scene::CloseSlate()
+{
+	slate1 += 10;
+	slate2 -= 10;	//닫
+
+	if (slate1 >= 0)
+	{
+		GameManager::GetSingleton()->state = GameState::Playing;
+		GameManager::GetSingleton()->stageLevel++;
+
+		SceneManager::GetSingleton()->ChangeScene("LoadingScene");
+
+		slate1 = -(backGround->GetHeight()) + 200;
+		slate2 = backGround->GetHeight() + 200;	//닫
+	}
+}
+
+void Stage2Scene::RotateGameOverScene()
+{
+	if (gameOverPosY > WIN_SIZE_Y / 2)
+	{
+		gameOverPosY -= 2;
+	}
+	else
+	{
+		stateElapsedCount++;
+		if (stateElapsedCount > 100)
+		{
+			SceneManager::GetSingleton()->ChangeScene("ScoreScene");
+		}
+	}
+}
+
 void Stage2Scene::Load(int index)
 {
 	string filePath = "Save/saveMapData" + to_string(index) + ".map";

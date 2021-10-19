@@ -49,6 +49,13 @@ private:
 
 	bool check = false;
 	ItemManager* itemManager;
+
+	//Item* item;
+
+	//GameOver
+	Image* gameOver;
+	int gameOverPosY;
+	int stateElapsedCount;
 	
 public:
 	void Load(int index);
@@ -62,5 +69,9 @@ public:
 	inline TileType GetTileType(int i) { return this->tileInfo[i].tileType; }
 	void CreateItem();
 	void UseItem(int type);
+	
+	void CloseSlate();
+	void RotateGameOverScene();
+	void ShowHitCollider();
 };
 

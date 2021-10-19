@@ -82,7 +82,7 @@ void ScoreScene::Update()
 		elapsedcount++;
 		if (elapsedcount >= 100)
 		{	
-			if (GameManager::GetSingleton()->player1Life > 0)
+			if (GameManager::GetSingleton()->player1Life >= 0 && GameManager::GetSingleton()->state != GameState::GameOver)
 			{
 
 				GameManager::GetSingleton()->player1Score = player1Score;
@@ -97,6 +97,9 @@ void ScoreScene::Update()
 				SceneManager::GetSingleton()->ChangeScene(nextStage);
 				return;
 			}
+
+			if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::GameOver)
+				gameOver = true;
 
 			if (gameOver)
 			{
