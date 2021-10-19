@@ -139,8 +139,8 @@ HRESULT Stage1Scene::Init()
 	}
 
 
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster = 2;
+	GameManager::GetSingleton()->remainSpawnMonster = 0;
+	GameManager::GetSingleton()->remainMonster = 0;
 
 	return S_OK;
 }
@@ -206,7 +206,7 @@ void Stage1Scene::Update()
 		boomImg[0].imgPos = tank->GetPos();
 		delete tank;
 		tank = vecTankFactorial[0]->CreateTank();
-		tank->Init(tileInfo, enemyMgr, tank);
+		tank->Init(tileInfo, enemyMgr, tank,itemManager);
 		tank->SetPos({ -50.0f,-50.0f });
 	}
 
@@ -224,7 +224,7 @@ void Stage1Scene::Update()
 			{
 				boomImg[0].bRenderBoomImg = false;
 				boomImg[0].BoomImgCurrFrame = 0;
-				tank->Init(tileInfo, enemyMgr, tank);
+				tank->Init(tileInfo, enemyMgr, tank, itemManager);
 			}
 		}
 	}

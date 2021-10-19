@@ -109,8 +109,8 @@ HRESULT Stage2Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster = 2;
+	GameManager::GetSingleton()->remainSpawnMonster = 0;
+	GameManager::GetSingleton()->remainMonster = 0;
 
 
 	return S_OK;
@@ -175,7 +175,7 @@ void Stage2Scene::Update()
 			boomImg[0].imgPos = tank->GetPos();
 			delete tank;
 			tank = vecTankFactorial[0]->CreateTank();
-			tank->Init(tileInfo, enemyMgr, tank);
+			tank->Init(tileInfo, enemyMgr, tank, itemManager);
 			tank->SetPos({ -50.0f,-50.0f });
 		}
 
@@ -199,7 +199,7 @@ void Stage2Scene::Update()
 				{
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
-					tank->Init(tileInfo, enemyMgr, tank);
+					tank->Init(tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
 		}
@@ -230,18 +230,19 @@ void Stage2Scene::Update()
 						waterElapsedCount = 0;
 					}
 
-					if (GameManager::GetSingleton()->remainMonster <= 0)
-					{
-						elapsedCount++;
-						if (elapsedCount > 200) {
-							elapsedCount = 0;
-							GameManager::GetSingleton()->state = GameState::Done;
-							GameManager::GetSingleton()->spawnCount = 0;
-							SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
-							SceneManager::GetSingleton()->ChangeScene("scoreScene");
-						}
-					}
 				}
+			}
+		}
+
+		if (GameManager::GetSingleton()->remainMonster <= 0)
+		{
+			elapsedCount++;
+			if (elapsedCount > 200) {
+				elapsedCount = 0;
+				GameManager::GetSingleton()->state = GameState::Done;
+				GameManager::GetSingleton()->spawnCount = 0;
+				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
+				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}
 		}
 	}

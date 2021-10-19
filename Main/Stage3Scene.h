@@ -1,5 +1,6 @@
 #include "GameEntity.h"
 #include "Config.h"
+#include "BoomImage.h"
 #include <vector>
 
 
@@ -21,6 +22,8 @@ private:
 	Image* spawnMonsterImage;
 	int remainSpawnMonster;
 	int remainMonster;
+
+	BOOM_IMAGE_INFO boomImg[2];
 
 	Image* lifeImage;
 	Image* stageImage;
