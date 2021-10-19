@@ -3,9 +3,12 @@
 #include "EnemyManager.h"
 #include "ItemManager.h"
 #include "Item.h"
+#include "Stage1Scene.h"
+#include "Stage2Scene.h"
+#include "Stage3Scene.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
@@ -30,6 +33,7 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
 	this->itemManager = item;
+	this->stageInfo = stageInfo;
 	
 
 	SetShape();
@@ -367,7 +371,7 @@ PlayerTank::PlayerTank()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -388,6 +392,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
 	this->enemyMgr = enemyMgr;
+	this->stageInfo = stageInfo;
 
 	SetShape();
 	if (IsCollided())
@@ -412,7 +417,8 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 
 void NormalEnemyTank::Fire()
 {
-	testelapsed++;
+		testelapsed++;
+
 	if (testelapsed >= delay_2)
 	{
 		testelapsed = 0;
@@ -465,7 +471,7 @@ void NormalEnemyTank::Fire()
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager*  item)
+HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager*  item, GameEntity* stageInfo)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -483,6 +489,7 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	this->stageInfo = stageInfo;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -507,7 +514,7 @@ void SpeedEnemyTank::Fire()
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -525,6 +532,7 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	this->stageInfo = stageInfo;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -549,7 +557,7 @@ void RapidEnemyTank::Fire()
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -567,6 +575,7 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	this->stageInfo = stageInfo;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -596,7 +605,7 @@ void Tank::Update()
 	SetShape();
 	ammoPack->Update();
 
-	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
 	{
 		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
@@ -623,8 +632,12 @@ void Tank::Update()
 
 	if (!bCheckSpawnStatus)
 	{
-		Move();
-		Fire();
+		if (!clockItem)
+		{
+			Move();	
+			Fire();	
+
+		}
 	}
 
 	testelapsed_2++;  //아이템 탱크 깜빡깜빡
@@ -897,20 +910,6 @@ bool Tank::IsCollided()
 		}
 	}
 
-	//for (itItemList = itemManager->vecItems.begin(); itItemList != itemManager->vecItems.end(); itItemList++)
-	//{
-	//	//cout << " rc.left" << &(*itItemTest)->item->rc.left << endl;
-	//	if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
-	//	{
-	//		/*cout << (*itItemList)->rc.left << endl;
-	//		cout << (*itItemList)->rc.top << endl;
-	//		cout << (*itItemList)->rc.right << endl;
-	//		cout << (*itItemList)->rc.bottom << endl;
-	//		cout << &(*itItemList)->rc << endl;*/
-	//		cout << "item get" << endl;
-	//	}
-	//}
-
 	return false;
 }
 
@@ -928,15 +927,27 @@ void Tank::CheckItem()
 
 	for (itItemList = itemManager->vecItems.begin(); itItemList != itemManager->vecItems.end(); itItemList++)
 	{
-		//cout << " rc.left" << &(*itItemTest)->item->rc.left << endl;
 		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
 		{
-			/*cout << (*itItemList)->rc.left << endl;
-			cout << (*itItemList)->rc.top << endl;
-			cout << (*itItemList)->rc.right << endl;
-			cout << (*itItemList)->rc.bottom << endl;
-			cout << &(*itItemList)->rc << endl;*/
-			cout << "item get" << endl;
+			(*itItemList)->UseItem();
+			//int itemType = (*itItemList)->GetType();
+			//int stageLevel = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
+			//if ((*itItemList)->GetType() == 0)	//헬멧
+			//{
+			//	bCheckShieldOn = true;
+			//}
+			//switch (stageLevel)
+			//{
+			//case 1:
+			//	((Stage1Scene*)stageInfo)->UseItem((*itItemList)->GetType());
+			//	break;
+			//case 2:
+			//	((Stage2Scene*)stageInfo)->UseItem((*itItemList)->GetType());
+			//	break;
+			//case 3:
+			//	((Stage3Scene*)stageInfo)->UseItem((*itItemList)->GetType());
+			//	break;
+			//}
 
 			itItemList = itemManager->vecItems.erase(itItemList);
 			break;

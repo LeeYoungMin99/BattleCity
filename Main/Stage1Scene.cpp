@@ -123,7 +123,7 @@ HRESULT Stage1Scene::Init()
 
 	itemManager = new ItemManager;
 	
-	tank->Init(tileInfo, enemyMgr, tank, itemManager);
+	tank->Init(tileInfo, enemyMgr, tank, itemManager, this);
 	enemyMgr->Init(tileInfo, tank, this);
 
 	backGroundRect.left = STAGE_SIZE_X;
@@ -139,8 +139,8 @@ HRESULT Stage1Scene::Init()
 	}
 
 
-	GameManager::GetSingleton()->remainSpawnMonster = 1;
-	GameManager::GetSingleton()->remainMonster = 1;
+	GameManager::GetSingleton()->remainSpawnMonster = 4;
+	GameManager::GetSingleton()->remainMonster = 4;
 
 	return S_OK;
 }
@@ -206,7 +206,7 @@ void Stage1Scene::Update()
 		boomImg[0].imgPos = tank->GetPos();
 		delete tank;
 		tank = vecTankFactorial[0]->CreateTank();
-		tank->Init(tileInfo, enemyMgr, tank,itemManager);
+		tank->Init(tileInfo, enemyMgr, tank,itemManager, this);
 		tank->SetPos({ -50.0f,-50.0f });
 	}
 
@@ -224,7 +224,7 @@ void Stage1Scene::Update()
 			{
 				boomImg[0].bRenderBoomImg = false;
 				boomImg[0].BoomImgCurrFrame = 0;
-				tank->Init(tileInfo, enemyMgr, tank, itemManager);
+				tank->Init(tileInfo, enemyMgr, tank, itemManager, this);
 			}
 		}
 	}
@@ -348,12 +348,42 @@ void Stage1Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = 3;//rand() % 7;
-			itemManager->Init(itemtype, randtile);
+			int itemtype = 1;//rand() % 7;
+			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
 		}
 	}
+}
+
+void Stage1Scene::UseItem(int type)
+{
+	//enemyMgr->SetClockItem(true);
+	//switch (type)
+	//{
+	//case 0:		// 헬멧 : 일정시간 플레이어 탱크 무적
+	//	cout << "Helmet" << endl;
+	//	break;
+	//case 1:		// 시계 : 일정시간 적 탱크들 모든 행동멈춤
+	//	cout << "Clock" << endl;
+	//	enemyMgr->SetClockItem(true);
+	//	break;
+	//case 2:		// 삽 : 일정시간 넥서스 주변 흰색타일로 강화
+	//	cout << "Shovel" << endl;
+	//	break;
+	//case 3:		// 별 : 플레이어 탱크 업그레이드
+	//	cout << "Star" << endl;
+	//	break;
+	//case 4:		// 수류탄 : 이것은 수류탄이여
+	//	cout << "Grenade" << endl;
+	//	break;
+	//case 5:		// 탱크 : 플레이어 목숨 +1 증가
+	//	cout << "Tank" << endl;
+	//	break;
+	//case 6:		// 권총 : 모름띠..
+	//	cout << "Gun" << endl;
+	//	break;
+	//}
 }
 
 void Stage1Scene::Load(int index)
