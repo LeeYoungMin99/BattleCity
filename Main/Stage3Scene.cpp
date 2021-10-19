@@ -131,7 +131,6 @@ void Stage3Scene::Update()
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
-		enemyMgr->Update();
 		playerTankAmmoManager->Update();
 		enemyTankAmmoManager->Update();
 

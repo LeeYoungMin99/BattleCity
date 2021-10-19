@@ -38,9 +38,9 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 	this->ammoManager = ammoManager;
 	this->targetAmmoManager = targetAmmoManager;
 
-	currFireNomberOFAmmo = 0;
+	currFireNumberOfAmmo = 0;
 	this->stageInfo = stageInfo;
-	
+
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -314,11 +314,11 @@ void PlayerTank::Move()
 
 void PlayerTank::Fire()
 {
-	if (currFireNomberOFAmmo == 0)
+	if (currFireNumberOfAmmo == 0)
 	{
 		if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
 		{
-			currFireNomberOFAmmo++;
+			currFireNumberOfAmmo++;
 			ammoManager->Fire(this, ammoManager, targetAmmoManager);
 		}
 	}
@@ -371,14 +371,14 @@ HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoM
 
 void NormalEnemyTank::Fire()
 {
-		testelapsed++;
+	testelapsed++;
 
 	if (testelapsed >= delay_2)
 	{
 		testelapsed = 0;
 		delay_2 = RANDOM_2(10, 15);
 
-		currFireNomberOFAmmo++;
+		currFireNumberOfAmmo++;
 		ammoManager->Fire(this, ammoManager, targetAmmoManager);
 
 		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
@@ -395,7 +395,6 @@ void NormalEnemyTank::Fire()
 #pragma region SpeedEnemyTank
 
 HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
-
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -505,7 +504,7 @@ void Tank::Update()
 	if (bIsAlive == false)	return;
 	SetShape();
 
-		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
 	{
 		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
@@ -535,12 +534,11 @@ void Tank::Update()
 
 		if (!clockItem)
 		{
-			Move();	
-      if(currFireNomberOFAmmo == 0)
-      {
-			  Fire();	
-      }
-
+			Move();
+			if (currFireNumberOfAmmo == 0)
+			{
+				Fire();
+			}
 		}
 	}
 
@@ -763,6 +761,7 @@ void Tank::Move()
 
 void Tank::Fire()
 {
+
 }
 
 bool Tank::IsCollided()

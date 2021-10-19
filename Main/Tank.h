@@ -29,7 +29,7 @@ public:
 	int enforceCount = 0;
 	bool bIsAlive = true;
 	
-	int currFireNomberOFAmmo = 0;
+	int currFireNumberOfAmmo = 0;
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
 	GameEntity* stageInfo = nullptr;

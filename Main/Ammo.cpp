@@ -106,7 +106,7 @@ void Ammo::Update()
 					pos.x = -10;
 					pos.y = -10;
 
-					ownerTank->currFireNomberOFAmmo--;
+					ownerTank->currFireNumberOfAmmo--;
 					boomImgCurrFrame = 0;
 					bRenderBoomImg = false;
 					isFire = false;
@@ -306,7 +306,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				collision.bottom = -10;
 				pos.x = -10;
 				pos.y = -10;
-				ownerTank->currFireNomberOFAmmo--;
+				ownerTank->currFireNumberOfAmmo--;
 				(*itAmmos)->isFire = false;
 				(*itAmmos)->collision.left = -50;
 				(*itAmmos)->collision.top = -50;
@@ -314,7 +314,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				(*itAmmos)->collision.bottom = -50;
 				(*itAmmos)->pos.x = -50;
 				(*itAmmos)->pos.y = -50;
-				(*itAmmos)->ownerTank->currFireNomberOFAmmo--;
+				(*itAmmos)->ownerTank->currFireNumberOfAmmo--;
 			}
 		}
 	}

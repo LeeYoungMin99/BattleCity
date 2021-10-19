@@ -138,7 +138,7 @@ HRESULT Stage1Scene::Init()
 	tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
 	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager,tileInfo, tank, this);
 	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
-
+	enemyTankAmmoManager->Init(tileInfo, tank);
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
@@ -183,7 +183,6 @@ void Stage1Scene::Update()
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
-		enemyMgr->Update();
 		playerTankAmmoManager->Update();
 		enemyTankAmmoManager->Update();
 
