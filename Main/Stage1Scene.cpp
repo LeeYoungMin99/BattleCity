@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
+#include "AmmoManager.h"
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
@@ -86,8 +87,8 @@ HRESULT Stage1Scene::Init()
 
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	slate1 = -(backGround->GetHeight())+200;
-	slate2 = backGround->GetHeight()+210;	//닫
+	slate1 = -(backGround->GetHeight()) + 200;
+	slate2 = backGround->GetHeight() + 210;	//닫
 	if (slate == nullptr)
 	{
 		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
@@ -126,19 +127,23 @@ HRESULT Stage1Scene::Init()
 	vecTankFactorial[3] = new RapidEnemyTankFactorial;
 	vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
 
+	playerTankAmmoManager = new AmmoManager;
+	enemyTankAmmoManager = new AmmoManager;
+
 	tank = vecTankFactorial[0]->CreateTank();
 	enemyMgr = new EnemyManager;
 
 	itemManager = new ItemManager;
-	
-	tank->Init(tileInfo, enemyMgr, tank, itemManager, this);
-	enemyMgr->Init(tileInfo, tank, this);
+
+	tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager,tileInfo, tank, this);
+	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
+
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
 	backGroundRect.right = STAGE_SIZE_X + 416;
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
-
 
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
 	for (int i = 0; i < 2; i++)
@@ -158,11 +163,29 @@ void Stage1Scene::Update()
 {
 	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
+		slate1 += 10;
+		slate2 -= 10;	//닫
+
+		if (slate1 >= 0)
+		{
+			GameManager::GetSingleton()->state = GameState::Playing;
+			GameManager::GetSingleton()->stageLevel++;
+
+			SceneManager::GetSingleton()->ChangeScene("LoadingScene");
+
+			slate1 = -(backGround->GetHeight()) + 200;
+			slate2 = backGround->GetHeight() + 200;	//닫
+			return;
+		}
+
 		CloseSlate();
 	}
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
+		enemyMgr->Update();
+		playerTankAmmoManager->Update();
+		enemyTankAmmoManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -194,7 +217,8 @@ void Stage1Scene::Update()
 		boomImg[0].imgPos = tank->GetPos();
 		delete tank;
 		tank = vecTankFactorial[0]->CreateTank();
-		tank->Init(tileInfo, enemyMgr, tank,itemManager, this);
+		tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+
 		tank->SetPos({ -50.0f,-50.0f });
 	}
 
@@ -212,7 +236,6 @@ void Stage1Scene::Update()
 
 			if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
 			{
-
 				boomImg[0].elapsedCount = 0;
 				boomImg[0].BoomImgCurrFrame++;
 
@@ -221,7 +244,7 @@ void Stage1Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-						tank->Init(tileInfo, enemyMgr, tank, itemManager, this);
+				tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
 		}
@@ -281,9 +304,8 @@ void Stage1Scene::Update()
 
 void Stage1Scene::Render(HDC hdc)
 {
-
 	// 배경
- 	backGround->Render(hdc);
+	backGround->Render(hdc);
 
 	HBRUSH myBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
@@ -336,7 +358,7 @@ void Stage1Scene::Render(HDC hdc)
 
 	stageImage->Render(hdc, 480, 370);
 
-	
+
 	if (GameManager::GetSingleton()->stageLevel < 10)
 	{
 		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel % 5, GameManager::GetSingleton()->stageLevel / 5);
@@ -350,6 +372,8 @@ void Stage1Scene::Render(HDC hdc)
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
 	itemManager->Render(hdc);
+	playerTankAmmoManager->Render(hdc);
+	enemyTankAmmoManager->Render(hdc);
 
 	if (boomImg[0].bRenderBoomImg)
 	{
@@ -359,6 +383,7 @@ void Stage1Scene::Render(HDC hdc)
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
+
 	
 
 	gameOver->Render(hdc, STAGE_SIZE_X+208, gameOverPosY);

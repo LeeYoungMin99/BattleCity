@@ -16,8 +16,7 @@ HRESULT Enemy::Init()
 	}
 
 	ammoMgr = new AmmoManager;
-	ammoMgr->Init();
-	ammoMgr->SetOwner(this);
+	//ammoMgr->Init();
 
 	pos.x = WIN_SIZE_X / 2.0f;
 	pos.y = 100.0f;
@@ -48,7 +47,7 @@ void Enemy::Update()
 	fireTimer++;
 	if (fireTimer >= fireDelay)
 	{
-		ammoMgr->Fire();
+		//ammoMgr->Fire();
 		fireTimer = 0;
 		fireDelay = rand() % 100;
 	}

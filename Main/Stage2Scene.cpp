@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
+#include "AmmoManager.h"
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
@@ -89,14 +90,18 @@ HRESULT Stage2Scene::Init()
 	vecTankFactorial[3] = new RapidEnemyTankFactorial;
 	vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
 
+	playerTankAmmoManager = new AmmoManager;
+	enemyTankAmmoManager = new AmmoManager;
+
 	tank = vecTankFactorial[0]->CreateTank();
 	enemyMgr = new EnemyManager;
 
 	itemManager = new ItemManager;
 
-	tank->Init(tileInfo, enemyMgr, tank, itemManager);
-	enemyMgr->Init(tileInfo, tank, this);
-
+	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
+	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
+	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
+	enemyTankAmmoManager->Init(tileInfo, tank);
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
@@ -130,6 +135,9 @@ void Stage2Scene::Update()
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
+		enemyMgr->Update();
+		playerTankAmmoManager->Update();
+		enemyTankAmmoManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -166,7 +174,7 @@ void Stage2Scene::Update()
 			boomImg[0].imgPos = tank->GetPos();
 			delete tank;
 			tank = vecTankFactorial[0]->CreateTank();
-			tank->Init(tileInfo, enemyMgr, tank, itemManager);
+			tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
 			tank->SetPos({ -50.0f,-50.0f });
 		}
 
@@ -191,7 +199,8 @@ void Stage2Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-						tank->Init(tileInfo, enemyMgr, tank, itemManager);
+					   tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
+
 				}
 			}
 		}
@@ -309,6 +318,8 @@ void Stage2Scene::Render(HDC hdc)
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
 	itemManager->Render(hdc);
+	playerTankAmmoManager->Render(hdc);
+	enemyTankAmmoManager->Render(hdc);
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{

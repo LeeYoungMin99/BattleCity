@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "CommonFunction.h"
 
+#include "AmmoManager.h"
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
@@ -18,7 +19,7 @@ HRESULT Stage3Scene::Init()
 	sampleImage = ImageManager::GetSingleton()->FindImage("Image/Tile3.bmp");
 	if (sampleImage == nullptr)
 	{
-		cout << "Image/Tile2.bmp ·Îµå ½ÇÆĞ!!" << endl;
+		cout << "Image/Tile2.bmp ë¡œë“œ ì‹¤íŒ¨!!" << endl;
 		return E_FAIL;
 	}
 
@@ -52,7 +53,7 @@ HRESULT Stage3Scene::Init()
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 	slate1 = -(backGround->GetHeight()) + 200;
-	slate2 = backGround->GetHeight() + 210;	//´İ
+	slate2 = backGround->GetHeight() + 210;	//ë‹«
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
@@ -90,14 +91,18 @@ HRESULT Stage3Scene::Init()
 	vecTankFactorial[3] = new RapidEnemyTankFactorial;
 	vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
 
+	playerTankAmmoManager = new AmmoManager;
+	enemyTankAmmoManager = new AmmoManager;
+
 	tank = vecTankFactorial[0]->CreateTank();
 	enemyMgr = new EnemyManager;
 
 	itemManager = new ItemManager;
 
-	tank->Init(tileInfo, enemyMgr, tank, itemManager);
-	enemyMgr->Init(tileInfo, tank, this);
-
+	tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
+	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
+	enemyTankAmmoManager->Init(tileInfo, tank);
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
@@ -126,6 +131,9 @@ void Stage3Scene::Update()
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
+		enemyMgr->Update();
+		playerTankAmmoManager->Update();
+		enemyTankAmmoManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -162,7 +170,7 @@ void Stage3Scene::Update()
 			boomImg[0].imgPos = tank->GetPos();
 			delete tank;
 			tank = vecTankFactorial[0]->CreateTank();
-			tank->Init(tileInfo, enemyMgr, tank, itemManager);
+			tank->Init(playerTankAmmoManager,enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
 			tank->SetPos({ -50.0f,-50.0f });
 		}
 
@@ -187,7 +195,7 @@ void Stage3Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-						tank->Init(tileInfo, enemyMgr, tank, itemManager);
+					tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
 		}
@@ -253,7 +261,7 @@ void Stage3Scene::Update()
 
 void Stage3Scene::Render(HDC hdc)
 {
-	// ¹è°æ
+	// ë°°ê²½
 	backGround->Render(hdc);
 	HBRUSH myBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
@@ -263,7 +271,7 @@ void Stage3Scene::Render(HDC hdc)
 	SelectObject(hdc, oldBrush);
 	DeleteObject(myBrush);
 
-	// ¸ŞÀÎ ¿µ¿ª
+	// ë©”ì¸ ì˜ì—­
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
 		for (int j = 0; j < TILE_COUNT_X; j++)
@@ -303,6 +311,8 @@ void Stage3Scene::Render(HDC hdc)
 
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
+	playerTankAmmoManager->Render(hdc);
+	enemyTankAmmoManager->Render(hdc);
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
@@ -379,7 +389,7 @@ void Stage3Scene::CreateItem()
 void Stage3Scene::CloseSlate()
 {
 	slate1 += 10;
-	slate2 -= 10;	//´İ
+	slate2 -= 10;	//ë‹«
 
 	if (slate1 >= 0)
 	{
@@ -389,7 +399,7 @@ void Stage3Scene::CloseSlate()
 		SceneManager::GetSingleton()->ChangeScene("LoadingScene");
 
 		slate1 = -(backGround->GetHeight()) + 200;
-		slate2 = backGround->GetHeight() + 200;	//´İ
+		slate2 = backGround->GetHeight() + 200;	//ë‹«
 	}
 }
 
@@ -415,18 +425,18 @@ void Stage3Scene::Load(int index)
 	string filePath = "Save/saveMapData" + to_string(index) + ".map";
 
 	HANDLE hFile = CreateFile(filePath.c_str(),
-		GENERIC_READ,                  //ÀĞ±â, ¾²±â Å¸ÀÔ
-		0, NULL,                        //°øÀ¯, º¸¾È ¸ğµå
-		OPEN_EXISTING,                  //ÆÄÀÏÀ» ¸¸µé°Å³ª ÀĞÀ» ¶§ ¿É¼Ç
-		FILE_ATTRIBUTE_NORMAL,          //ÆÄÀÏ ¼Ó¼º(ÀĞ±â Àü¿ë, ¼û±è µîµî)
+		GENERIC_READ,                  //ì½ê¸°, ì“°ê¸° íƒ€ì…
+		0, NULL,                        //ê³µìœ , ë³´ì•ˆ ëª¨ë“œ
+		OPEN_EXISTING,                  //íŒŒì¼ì„ ë§Œë“¤ê±°ë‚˜ ì½ì„ ë•Œ ì˜µì…˜
+		FILE_ATTRIBUTE_NORMAL,          //íŒŒì¼ ì†ì„±(ì½ê¸° ì „ìš©, ìˆ¨ê¹€ ë“±ë“±)
 		NULL);                          //
 
-	//ÀĞ±â
+	//ì½ê¸°
 
 	DWORD readByte;
 	if (ReadFile(hFile, tileInfo, sizeof(tagTile) * TILE_COUNT_X * TILE_COUNT_Y, &readByte, NULL) == false)
 	{
-		MessageBox(g_hWnd, "¸Ê µ¥ÀÌÅÍ ·Îµå¿¡ ½ÇÆĞÇß½À´Ï´Ù.", "¿¡·¯", MB_OK);
+		MessageBox(g_hWnd, "ë§µ ë°ì´í„° ë¡œë“œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.", "ì—ëŸ¬", MB_OK);
 	}
 
 	CloseHandle(hFile);

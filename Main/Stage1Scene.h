@@ -6,6 +6,7 @@
 
 class Image;
 class EnemyManager;
+class AmmoManager;
 class Tank;
 class TankFactorial;
 class ItemManager;
@@ -35,6 +36,8 @@ private:
 	Tank* tank = nullptr;
 	vector<TankFactorial*> vecTankFactorial = {};
 
+	AmmoManager* playerTankAmmoManager = nullptr;
+	AmmoManager* enemyTankAmmoManager = nullptr;
 
 	float elapsedCount = 0.0f;
 	float spawmElapsedCount = 5.0f;
