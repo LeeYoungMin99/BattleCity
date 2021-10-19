@@ -3,7 +3,10 @@
 #include "Tank.h"
 #include "Image.h"
 #include "Stage1Scene.h"
+#include "Stage2Scene.h"
+#include "Stage3Scene.h"
 #include "ItemManager.h"
+
 
 HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank, GameEntity* stageInfo)
 {
@@ -50,7 +53,20 @@ void EnemyManager::Update()
 			}
 			if ((*itEnemys)->bItem)
 			{
-				((Stage1Scene*)stageInfo)->CreateItem();
+				int i=((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
+				cout << i << endl;
+				switch (i)
+				{
+				case 1:
+					((Stage1Scene*)stageInfo)->CreateItem();
+					break;
+				case 2:
+					((Stage2Scene*)stageInfo)->CreateItem();
+					break;
+				case 3:
+					((Stage3Scene*)stageInfo)->CreateItem();
+					break;
+				}
 			}
 
 			Tank* temp = (*itEnemys);
@@ -118,7 +134,7 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 
 	tank->Init(tileInfo, this, playerTank);
 	elapsedcount++;
-	if (elapsedcount  >= 0/*RANDOM_2(0, 16)*/)
+	if (elapsedcount >= 0/*RANDOM_2(0, 16)*/)
 	{
 		tank->bItem = true;
 	}

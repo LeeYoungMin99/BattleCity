@@ -19,6 +19,8 @@ private:
 	GameEntity* stageInfo = nullptr;
 	ItemManager* itemManager = nullptr;
 
+	string nextStage;
+
 public:
 	vector<Tank*> vecEnemys;
 	vector<Tank*>::iterator itEnemys;

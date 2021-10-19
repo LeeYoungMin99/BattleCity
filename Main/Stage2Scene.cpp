@@ -6,8 +6,7 @@
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
-
-
+#include "ItemManager.h"
 #include "Stage3Scene.h"
 #include "ScoreScene.h"
 
@@ -89,7 +88,9 @@ HRESULT Stage2Scene::Init()
 	tank = vecTankFactorial[0]->CreateTank();
 	enemyMgr = new EnemyManager;
 
-	tank->Init(tileInfo, enemyMgr, tank);
+	itemManager = new ItemManager;
+
+	tank->Init(tileInfo, enemyMgr, tank, itemManager);
 	enemyMgr->Init(tileInfo, tank, this);
 
 
@@ -298,6 +299,7 @@ void Stage2Scene::Render(HDC hdc)
 
 	tank->Render(hdc);
 	enemyMgr->Render(hdc);
+	itemManager->Render(hdc);
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
@@ -347,6 +349,22 @@ void Stage2Scene::SpawnEnemy(TankType type)
 		GameManager::GetSingleton()->spawnCount -= maxSpawnCount;
 	}
 
+}
+
+void Stage2Scene::CreateItem()
+{
+	for (int i = 0; i < 1; )
+	{
+		int randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
+
+		if (tileInfo[randtile].tileType == TileType::Ground)
+		{
+			int itemtype = 3;//rand() % 7;
+			itemManager->Init(itemtype, randtile);
+			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
+			break;
+		}
+	}
 }
 
 void Stage2Scene::Load(int index)

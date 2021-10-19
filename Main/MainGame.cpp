@@ -35,7 +35,7 @@ HRESULT MainGame::Init()
 
 
 
-	SceneManager::GetSingleton()->ChangeScene("TitleScene");
+	SceneManager::GetSingleton()->ChangeScene("Stage1");
 
 
 

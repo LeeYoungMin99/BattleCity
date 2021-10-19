@@ -4,11 +4,12 @@
 
 HRESULT ItemManager::Init(int type, int tile)
 {
-	itemCount = 3;
-	vecItems.reserve(itemCount);
+	//itemCount = 10;
+	//vecItems.reserve(itemCount);
 
 	Item* tempItem = new Item;
 	tempItem->Init(type, tile);
+	
 	vecItems.push_back(tempItem);
 
     return S_OK;
