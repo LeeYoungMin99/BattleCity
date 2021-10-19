@@ -52,6 +52,11 @@ private:
 	//vector<ItemManager*>::iterator itItems = {};
 	ItemManager* itemManager;
 	//Item* item;
+
+	//GameOver
+	Image* gameOver;
+	int gameOverPosY;
+	int stateElapsedCount;
 	
 public:
 	void Load(int index);
@@ -64,5 +69,9 @@ public:
 	inline void SubCurrSpawnEnemy() { this->currSpawnEnemy--; }
 	inline TileType GetTileType(int i) { return this->tileInfo[i].tileType; }
 	void CreateItem();
+	
+	void CloseSlate();
+	void RotateGameOverScene();
+	void ShowHitCollider();
 };
 
