@@ -1,7 +1,12 @@
 #include "Item.h"
 #include "Image.h"
+#include "Stage1Scene.h"
+#include "Stage2Scene.h"
+#include "Stage3Scene.h"
+#include "Tank.h"
+#include "EnemyManager.h"
 
-HRESULT Item::Init(int type, int tile)
+HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Item/Item1.bmp", 32, 32, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Item/Item2.bmp", 32, 32, true, RGB(255, 0, 255));
@@ -21,6 +26,9 @@ HRESULT Item::Init(int type, int tile)
 	itemType = type;
 	itemTile = tile;
 
+	this->tank = tank;
+	this->enemyMgr = enemyMgr;
+	//this->stageInfo = stageInfo;
 	rc.left = ((itemTile % 26) * 16) + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;
 	rc.top = ((itemTile / 26) * 16) + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
 	rc.right = ((itemTile % 26) * 16) + 32 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;
@@ -31,6 +39,7 @@ HRESULT Item::Init(int type, int tile)
 
 void Item::Update()
 {
+
 }
 
 void Item::Render(HDC hdc)
@@ -38,15 +47,55 @@ void Item::Render(HDC hdc)
 	itemImage[itemType]->Render(hdc,
 		((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
 		((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y);
-	
-	//Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
-	//cout << rc.left << endl;
-	//cout << rc.top << endl;
-	//cout << rc.right << endl;
-	//cout << rc.bottom<< endl;
 
 }
 
 void Item::Release()
 {
 }
+
+void Item::UseItem()
+{
+	int stageLevel = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
+	/*switch (stageLevel)
+	{
+	case 1:
+		((Stage1Scene*)stageInfo)->UseItem(itemType);
+		break;
+	case 2:
+		((Stage2Scene*)stageInfo)->UseItem(itemType);
+		break;
+	case 3:
+		((Stage3Scene*)stageInfo)->UseItem(itemType);
+		break;
+	}*/
+
+	switch (itemType)
+	{
+	case 0:		// 헬멧 : 일정시간 플레이어 탱크 무적
+		cout << "Helmet" << endl;
+		break;
+	case 1:		// 시계 : 일정시간 적 탱크들 모든 행동멈춤
+		cout << "Clock" << endl;
+		enemyMgr->SetClockItem(true);
+		//((Stage1Scene*)stageInfo)->UseItem(1);
+		break;
+	case 2:		// 삽 : 일정시간 넥서스 주변 흰색타일로 강화
+		cout << "Shovel" << endl;
+		break;
+	case 3:		// 별 : 플레이어 탱크 업그레이드
+		cout << "Star" << endl;
+		break;
+	case 4:		// 수류탄 : 이것은 수류탄이여
+		cout << "Grenade" << endl;
+		break;
+	case 5:		// 탱크 : 플레이어 목숨 +1 증가
+		cout << "Tank" << endl;
+		break;
+	case 6:		// 권총 : 모름띠..
+		cout << "Gun" << endl;
+		break;
+	}
+}
+
+

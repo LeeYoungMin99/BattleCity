@@ -66,11 +66,19 @@ HRESULT Stage1Scene::Init()
 		return E_FAIL;
 	}
 
-	cout << stageLevel->GetFrameHeight() << endl;
-	cout << stageLevel->GetFrameWidth() << endl;
 
 	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	if (backGround == nullptr)
+	{
+		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
+		return E_FAIL;
+	}
+
+	ImageManager::GetSingleton()->AddImage("Image/Text/Game_Over.bmp", 64, 30, 1, 1, true, RGB(255, 0, 255));
+	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
+	gameOverPosY = WIN_SIZE_Y+30;
+
 	if (backGround == nullptr)
 	{
 		cout << "Image/Tile1.bmp 로드 실패!!" << endl;
@@ -130,7 +138,7 @@ HRESULT Stage1Scene::Init()
 	tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
 	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager,tileInfo, tank, this);
 	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
-	enemyTankAmmoManager->Init(tileInfo, tank);
+
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
@@ -143,8 +151,10 @@ HRESULT Stage1Scene::Init()
 		boomImg[i].BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
 	}
 
-	GameManager::GetSingleton()->remainSpawnMonster = 1;
-	GameManager::GetSingleton()->remainMonster = 1;
+
+	GameManager::GetSingleton()->remainSpawnMonster = 4;
+	GameManager::GetSingleton()->remainMonster = 4;
+
 
 	return S_OK;
 }
@@ -168,8 +178,9 @@ void Stage1Scene::Update()
 			return;
 		}
 
+		CloseSlate();
 	}
-	else
+	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
 		enemyMgr->Update();
@@ -184,13 +195,75 @@ void Stage1Scene::Update()
 			elapsedCount -= spawmElapsedCount;
 			SpawnEnemy(TankType::Normal);
 		}
+		//ShowHitCollider
+		ShowHitCollider();
 
-		if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
+		//몬스터 다 잡을 시 스코어 씬 RotateScoreScene();
+		if (GameManager::GetSingleton()->remainMonster <= 0)
 		{
-			if (check)
-				check = false;
-			else
-				check = true;
+			elapsedCount++;
+			if (elapsedCount > 200) {
+				elapsedCount = 0;
+				GameManager::GetSingleton()->state = GameState::Done;
+				GameManager::GetSingleton()->spawnCount = 0;
+				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
+				SceneManager::GetSingleton()->ChangeScene("scoreScene");
+			}
+		}
+
+	if (tank->HP <= 0)
+	{
+		boomImg[0].bRenderBoomImg = true;
+		boomImg[0].imgPos = tank->GetPos();
+		delete tank;
+		tank = vecTankFactorial[0]->CreateTank();
+		tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+
+		tank->SetPos({ -50.0f,-50.0f });
+	}
+
+
+		if (tileInfo[636].frameX == 4)
+		{
+			boomImg[1].bRenderBoomImg = true;
+			POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
+			boomImg[1].imgPos = temp;
+		}
+
+		if (boomImg[0].bRenderBoomImg)
+		{
+			boomImg[0].elapsedCount++;
+
+			if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+			{
+				boomImg[0].elapsedCount = 0;
+				boomImg[0].BoomImgCurrFrame++;
+
+				if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
+				{
+					boomImg[0].bRenderBoomImg = false;
+					boomImg[0].BoomImgCurrFrame = 0;
+					if (GameManager::GetSingleton()->player1Life >= 0)
+				tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+				}
+			}
+		}
+
+		if (boomImg[1].bRenderBoomImg)
+		{
+			boomImg[1].elapsedCount++;
+
+			if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
+			{
+				boomImg[1].elapsedCount = 0;
+				boomImg[1].BoomImgCurrFrame++;
+
+				if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
+				{
+					boomImg[1].bRenderBoomImg = false;
+					boomImg[1].BoomImgCurrFrame = 0;
+				}
+			}
 		}
 
 		if (GameManager::GetSingleton()->remainMonster <= 0)
@@ -204,53 +277,29 @@ void Stage1Scene::Update()
 				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}
 		}
-	}
 
-	if (tank->HP <= 0)
-	{
-		boomImg[0].bRenderBoomImg = true;
-		boomImg[0].imgPos = tank->GetPos();
-		delete tank;
-		tank = vecTankFactorial[0]->CreateTank();
-		tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
-		tank->SetPos({ -50.0f,-50.0f });
-	}
-
-
-	if (boomImg[0].bRenderBoomImg)
-	{
-		boomImg[0].elapsedCount++;
-
-		if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+		//RotateStateToGameOver()
+		if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 		{
-			boomImg[0].elapsedCount = 0;
-			boomImg[0].BoomImgCurrFrame++;
-
-			if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
+			stateElapsedCount++;
+			if (stateElapsedCount >= 120)
 			{
-				boomImg[0].bRenderBoomImg = false;
-				boomImg[0].BoomImgCurrFrame = 0;
-				tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+				elapsedCount = 0;
+				GameManager::GetSingleton()->spawnCount = 0;
+				stateElapsedCount = 0;
+				GameManager::GetSingleton()->state = GameState::GameOver;
 			}
 		}
 	}
-
-	if (boomImg[1].bRenderBoomImg)
+	else if (GameManager::GetSingleton()->state == GameState::GameOver)
 	{
-		boomImg[1].elapsedCount++;
-
-		if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
-		{
-			boomImg[1].elapsedCount = 0;
-			boomImg[1].BoomImgCurrFrame++;
-
-			if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
-			{
-				boomImg[1].bRenderBoomImg = false;
-				boomImg[1].BoomImgCurrFrame = 0;
-			}
-		}
+		RotateGameOverScene();
 	}
+
+
+
+
+	enemyMgr->Update();
 }
 
 void Stage1Scene::Render(HDC hdc)
@@ -301,6 +350,12 @@ void Stage1Scene::Render(HDC hdc)
 
 
 	lifeImage->Render(hdc, 480, 260);
+	if(GameManager::GetSingleton()->player1Life>=0)
+		stageLevel->Render(hdc, 494, 270, GameManager::GetSingleton()->player1Life % 5, GameManager::GetSingleton()->player1Life / 5);
+	else
+
+		stageLevel->Render(hdc, 494, 270,0, 0);
+
 	stageImage->Render(hdc, 480, 370);
 
 
@@ -329,6 +384,9 @@ void Stage1Scene::Render(HDC hdc)
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
 
+	
+
+	gameOver->Render(hdc, STAGE_SIZE_X+208, gameOverPosY);
 }
 
 void Stage1Scene::Release()
@@ -355,11 +413,56 @@ void Stage1Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = 3;//rand() % 7;
-			itemManager->Init(itemtype, randtile);
+			int itemtype = 1;//rand() % 7;
+			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
 		}
+	}
+}
+
+void Stage1Scene::CloseSlate()
+{
+	slate1 += 10;
+	slate2 -= 10;	//닫
+
+	if (slate1 >= 0)
+	{
+		GameManager::GetSingleton()->state = GameState::Playing;
+		GameManager::GetSingleton()->stageLevel++;
+
+		SceneManager::GetSingleton()->ChangeScene("LoadingScene");
+
+		slate1 = -(backGround->GetHeight()) + 200;
+		slate2 = backGround->GetHeight() + 200;	//닫
+		return;
+	}
+}
+
+void Stage1Scene::RotateGameOverScene()
+{
+	if (gameOverPosY > WIN_SIZE_Y / 2)
+	{
+		gameOverPosY -= 2;
+	}
+	else
+	{
+		stateElapsedCount++;
+		if (stateElapsedCount > 100)
+		{
+			SceneManager::GetSingleton()->ChangeScene("ScoreScene");
+		}
+	}
+}
+
+void Stage1Scene::ShowHitCollider()
+{
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
+	{
+		if (check)
+			check = false;
+		else
+			check = true;
 	}
 }
 

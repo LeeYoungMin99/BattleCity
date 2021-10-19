@@ -40,7 +40,7 @@ void EnemyManager::Update()
 		itEnemys != vecEnemys.end();)
 	{
 		(*itEnemys)->Update();
-
+		
 		if ((*itEnemys)->HP <= 0)
 		{
 			for (int i = 0; i < 3; i++)
@@ -100,6 +100,28 @@ void EnemyManager::Update()
 			}
 		}
 	}
+
+	if (clockItem)
+	{
+		for (itEnemys = vecEnemys.begin();
+			itEnemys != vecEnemys.end(); itEnemys++)
+		{
+			(*itEnemys)->SetClockItem(true);
+		}
+
+		elapsedcount_2++;
+		if (elapsedcount_2 >= 200)
+		{
+			elapsedcount_2 = 0;
+			for (itEnemys = vecEnemys.begin();
+				itEnemys != vecEnemys.end(); itEnemys++)
+			{
+				(*itEnemys)->SetClockItem(false);
+			}
+			clockItem = false;
+		}
+	}
+
 }
 
 
@@ -142,3 +164,4 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 	}
 	vecEnemys.push_back(tank);
 }
+

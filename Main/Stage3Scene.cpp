@@ -19,7 +19,7 @@ HRESULT Stage3Scene::Init()
 	sampleImage = ImageManager::GetSingleton()->FindImage("Image/Tile3.bmp");
 	if (sampleImage == nullptr)
 	{
-		cout << "Image/Tile2.bmp ·Îµå ½ÇÆĞ!!" << endl;
+		cout << "Image/Tile2.bmp ë¡œë“œ ì‹¤íŒ¨!!" << endl;
 		return E_FAIL;
 	}
 
@@ -44,11 +44,16 @@ HRESULT Stage3Scene::Init()
 	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 
+
+	ImageManager::GetSingleton()->AddImage("Image/Text/Game_Over.bmp", 64, 30, 1, 1, true, RGB(255, 0, 255));
+	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
+	gameOverPosY = WIN_SIZE_Y + 30;
+
 	Load(3);
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 	slate1 = -(backGround->GetHeight()) + 200;
-	slate2 = backGround->GetHeight() + 210;	//´İ
+	slate2 = backGround->GetHeight() + 210;	//ë‹«
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
@@ -109,9 +114,10 @@ HRESULT Stage3Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 1;
-	GameManager::GetSingleton()->remainMonster =1;
+	GameManager::GetSingleton()->remainSpawnMonster = 2;
+	GameManager::GetSingleton()->remainMonster =2;
 
+	stateElapsedCount = 0;
 
 	return S_OK;
 }
@@ -120,22 +126,9 @@ void Stage3Scene::Update()
 {
 	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
-		slate1 += 10;
-		slate2 -= 10;	//´İ
-
-		if (slate1 >= 0)
-		{
-			GameManager::GetSingleton()->state = GameState::Playing;
-			GameManager::GetSingleton()->stageLevel++;
-
-			SceneManager::GetSingleton()->ChangeScene("LoadingScene");
-
-			slate1 = -(backGround->GetHeight()) + 200;
-			slate2 = backGround->GetHeight() + 200;	//´İ
-		}
-
+		CloseSlate();
 	}
-	else
+	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
 		enemyMgr->Update();
@@ -201,6 +194,7 @@ void Stage3Scene::Update()
 				{
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
+					if (GameManager::GetSingleton()->player1Life >= 0)
 					tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
@@ -247,13 +241,27 @@ void Stage3Scene::Update()
 				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}
 		}
-	}
 
+		if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::DestoryNexus)
+		{
+			stateElapsedCount++;
+			if (stateElapsedCount >= 120)
+			{
+				stateElapsedCount = 0;
+				GameManager::GetSingleton()->state = GameState::GameOver;
+			}
+		}
+	}
+	else if (GameManager::GetSingleton()->state == GameState::GameOver)
+	{
+		RotateGameOverScene();
+	}
+	enemyMgr->Update();
 }
 
 void Stage3Scene::Render(HDC hdc)
 {
-	// ¹è°æ
+	// ë°°ê²½
 	backGround->Render(hdc);
 	HBRUSH myBrush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
 	HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, myBrush);
@@ -263,7 +271,7 @@ void Stage3Scene::Render(HDC hdc)
 	SelectObject(hdc, oldBrush);
 	DeleteObject(myBrush);
 
-	// ¸ŞÀÎ ¿µ¿ª
+	// ë©”ì¸ ì˜ì—­
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
 		for (int j = 0; j < TILE_COUNT_X; j++)
@@ -324,6 +332,8 @@ void Stage3Scene::Render(HDC hdc)
 
 
 	lifeImage->Render(hdc, 480, 260);
+	stageLevel->Render(hdc, 494, 270, GameManager::GetSingleton()->player1Life % 5, GameManager::GetSingleton()->player1Life / 5);
+
 	stageImage->Render(hdc, 480, 370);
 
 	if (GameManager::GetSingleton()->stageLevel < 10)
@@ -340,6 +350,8 @@ void Stage3Scene::Render(HDC hdc)
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
 
+
+	gameOver->Render(hdc, STAGE_SIZE_X + 208, gameOverPosY);
 }
 
 void Stage3Scene::Release()
@@ -367,9 +379,43 @@ void Stage3Scene::CreateItem()
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
 			int itemtype = 3;//rand() % 7;
-			itemManager->Init(itemtype, randtile);
+			//itemManager->Init(itemtype, randtile);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
+		}
+	}
+}
+
+void Stage3Scene::CloseSlate()
+{
+	slate1 += 10;
+	slate2 -= 10;	//ë‹«
+
+	if (slate1 >= 0)
+	{
+		GameManager::GetSingleton()->state = GameState::Playing;
+		GameManager::GetSingleton()->stageLevel++;
+
+		SceneManager::GetSingleton()->ChangeScene("LoadingScene");
+
+		slate1 = -(backGround->GetHeight()) + 200;
+		slate2 = backGround->GetHeight() + 200;	//ë‹«
+	}
+}
+
+void Stage3Scene::RotateGameOverScene()
+{
+
+	if (gameOverPosY > WIN_SIZE_Y / 2)
+	{
+		gameOverPosY -= 2;
+	}
+	else
+	{
+		stateElapsedCount++;
+		if (stateElapsedCount > 100)
+		{
+			SceneManager::GetSingleton()->ChangeScene("ScoreScene");
 		}
 	}
 }
@@ -379,18 +425,18 @@ void Stage3Scene::Load(int index)
 	string filePath = "Save/saveMapData" + to_string(index) + ".map";
 
 	HANDLE hFile = CreateFile(filePath.c_str(),
-		GENERIC_READ,                  //ÀĞ±â, ¾²±â Å¸ÀÔ
-		0, NULL,                        //°øÀ¯, º¸¾È ¸ğµå
-		OPEN_EXISTING,                  //ÆÄÀÏÀ» ¸¸µé°Å³ª ÀĞÀ» ¶§ ¿É¼Ç
-		FILE_ATTRIBUTE_NORMAL,          //ÆÄÀÏ ¼Ó¼º(ÀĞ±â Àü¿ë, ¼û±è µîµî)
+		GENERIC_READ,                  //ì½ê¸°, ì“°ê¸° íƒ€ì…
+		0, NULL,                        //ê³µìœ , ë³´ì•ˆ ëª¨ë“œ
+		OPEN_EXISTING,                  //íŒŒì¼ì„ ë§Œë“¤ê±°ë‚˜ ì½ì„ ë•Œ ì˜µì…˜
+		FILE_ATTRIBUTE_NORMAL,          //íŒŒì¼ ì†ì„±(ì½ê¸° ì „ìš©, ìˆ¨ê¹€ ë“±ë“±)
 		NULL);                          //
 
-	//ÀĞ±â
+	//ì½ê¸°
 
 	DWORD readByte;
 	if (ReadFile(hFile, tileInfo, sizeof(tagTile) * TILE_COUNT_X * TILE_COUNT_Y, &readByte, NULL) == false)
 	{
-		MessageBox(g_hWnd, "¸Ê µ¥ÀÌÅÍ ·Îµå¿¡ ½ÇÆĞÇß½À´Ï´Ù.", "¿¡·¯", MB_OK);
+		MessageBox(g_hWnd, "ë§µ ë°ì´í„° ë¡œë“œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.", "ì—ëŸ¬", MB_OK);
 	}
 
 	CloseHandle(hFile);

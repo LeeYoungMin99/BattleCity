@@ -110,8 +110,7 @@ void TitleScene::Update()
 
 void TitleScene::Render(HDC hdc)
 {
-	if (backGround)
-		backGround->Render(hdc);
+	PatBlt(hdc, 0, 0, WIN_SIZE_X, WIN_SIZE_Y, BLACKNESS);
 
 	if (!titleStart)
 	{

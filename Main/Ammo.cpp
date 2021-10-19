@@ -260,7 +260,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 				}
 			}
-
+			GameManager::GetSingleton()->state = GameState::DestoryNexus;
 			//조건 처리
 		}
 	}
@@ -275,7 +275,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 			{
 				GameManager::GetSingleton()->remainMonster--;
 				(*itEnemyTanks)->increaseScore();
-				cout << GameManager::GetSingleton()->defeatNormalTank << endl;
 				(*itEnemyTanks)->HP--;
 				check = true;
 			}
@@ -287,6 +286,8 @@ bool Ammo::CheckCollision(int idX, int idY)
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
 			playerTank->HP--;
+			GameManager::GetSingleton()->player1Life--;
+
 			check = true;
 		}
 	}
