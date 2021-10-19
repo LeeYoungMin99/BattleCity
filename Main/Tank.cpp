@@ -5,7 +5,7 @@
 #include "Item.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
+HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
@@ -29,7 +29,8 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
-	this->itemList = item;
+	this->itemManager = item;
+	
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -183,6 +184,7 @@ void PlayerTank::Move()
 			pos.x += moveSpeed;
 			SetShape();
 		}
+		CheckItem();
 
 		if (checkMoveCount > 0) { checkMoveCount = 0; }
 		else { checkMoveCount = 1; }
@@ -213,6 +215,7 @@ void PlayerTank::Move()
 					pos.y -= tempPos;
 					SetShape();
 				}
+
 			}
 		}
 		moveDir = MoveDir::Right;
@@ -225,7 +228,7 @@ void PlayerTank::Move()
 			pos.x -= moveSpeed;
 			SetShape();
 		}
-
+		CheckItem();
 		if (checkMoveCount > 0) { checkMoveCount = 0; }
 		else { checkMoveCount = 1; }
 	}
@@ -266,6 +269,7 @@ void PlayerTank::Move()
 			pos.y += moveSpeed;
 			SetShape();
 		}
+		CheckItem();
 
 		if (checkMoveCount > 0) { checkMoveCount = 0; }
 		else { checkMoveCount = 1; }
@@ -307,6 +311,7 @@ void PlayerTank::Move()
 			pos.y -= moveSpeed;
 			SetShape();
 		}
+		CheckItem();
 
 		if (checkMoveCount > 0) { checkMoveCount = 0; }
 		else { checkMoveCount = 1; }
@@ -362,7 +367,7 @@ PlayerTank::PlayerTank()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
+HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -460,7 +465,7 @@ void NormalEnemyTank::Fire()
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
+HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager*  item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -502,7 +507,7 @@ void SpeedEnemyTank::Fire()
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
+HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -544,7 +549,7 @@ void RapidEnemyTank::Fire()
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, vector<Item*> item)
+HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -859,14 +864,7 @@ bool Tank::IsCollided()
 		{
 			return true;
 		}
-
-		for (itItemList = itemList.begin(); itItemList != itemList.end(); itItemList++)
-		{
-			if (IntersectRect(&temp, &((*itItemList)->rc), &shape))
-			{
-				cout << "item get" << endl;
-			}
-		}
+		
 
 	}
 
@@ -877,7 +875,6 @@ bool Tank::IsCollided()
 		{
 			continue;
 		}
-
 		if (IntersectRect(&temp, &((*itEnemyTanks)->shape), &shape))
 		{
 			if ((*itEnemyTanks)->bCheckSpawnCollided && ((*itEnemyTanks)->moveDir != moveDir || (*itEnemyTanks)->bCheckSpawnStatus))
@@ -891,6 +888,7 @@ bool Tank::IsCollided()
 	{
 		if (IntersectRect(&temp, &(playerTank->shape), &shape))
 		{
+			
 			if (playerTank->bCheckSpawnCollided && playerTank->moveDir != moveDir)
 			{
 				return false;
@@ -898,6 +896,20 @@ bool Tank::IsCollided()
 			return true;
 		}
 	}
+
+	//for (itItemList = itemManager->vecItems.begin(); itItemList != itemManager->vecItems.end(); itItemList++)
+	//{
+	//	//cout << " rc.left" << &(*itItemTest)->item->rc.left << endl;
+	//	if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
+	//	{
+	//		/*cout << (*itItemList)->rc.left << endl;
+	//		cout << (*itItemList)->rc.top << endl;
+	//		cout << (*itItemList)->rc.right << endl;
+	//		cout << (*itItemList)->rc.bottom << endl;
+	//		cout << &(*itItemList)->rc << endl;*/
+	//		cout << "item get" << endl;
+	//	}
+	//}
 
 	return false;
 }
@@ -908,4 +920,23 @@ void Tank::SetShape()
 	shape.top = pos.y - (bodySize / 2);
 	shape.right = shape.left + bodySize / 2;
 	shape.bottom = shape.top + bodySize / 2;
+}
+
+void Tank::CheckItem()
+{
+	RECT temp = {};
+
+	for (itItemList = itemManager->vecItems.begin(); itItemList != itemManager->vecItems.end(); itItemList++)
+	{
+		//cout << " rc.left" << &(*itItemTest)->item->rc.left << endl;
+		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
+		{
+			/*cout << (*itItemList)->rc.left << endl;
+			cout << (*itItemList)->rc.top << endl;
+			cout << (*itItemList)->rc.right << endl;
+			cout << (*itItemList)->rc.bottom << endl;
+			cout << &(*itItemList)->rc << endl;*/
+			cout << "item get" << endl;
+		}
+	}
 }

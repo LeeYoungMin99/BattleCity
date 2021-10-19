@@ -48,7 +48,8 @@ private:
 	RECT backGroundRect;
 
 	bool check = false;
-	vector<ItemManager*> vecItems;
+	vector<ItemManager*> vecItems = {};
+	vector<ItemManager*>::iterator itItems = {};
 	ItemManager* itemManager;
 	Item* item;
 	
