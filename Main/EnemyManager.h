@@ -20,6 +20,8 @@ private:
 	ItemManager* itemManager = nullptr;
 
 	string nextStage;
+	bool clockItem = false ;
+	int elapsedcount_2 = 0;
 
 public:
 	vector<Tank*> vecEnemys;
@@ -31,6 +33,7 @@ public:
 	void Release();
 
 	void AddEnemy(Tank* tank, POINTFLOAT pos);
+	inline void SetClockItem(bool clockItem) { this->clockItem = clockItem; }
 
 	inline vector<Tank*> GetVecEnemys() { return vecEnemys; }
 };

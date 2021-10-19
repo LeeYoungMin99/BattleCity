@@ -9,6 +9,8 @@
 
 class Image;
 class Item;
+class Tank;
+class EnemyManager;
 class ItemManager : public GameEntity
 {
 public:
@@ -22,7 +24,7 @@ public:
 	Item* item;
 	int itemCount = 0;
 
-	HRESULT Init(int type, int tile);
+	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
 	void Update();
 	void Render(HDC hdc);
 	void Release();

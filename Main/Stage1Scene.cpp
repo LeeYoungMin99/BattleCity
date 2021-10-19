@@ -131,7 +131,7 @@ HRESULT Stage1Scene::Init()
 
 	itemManager = new ItemManager;
 	
-	tank->Init(tileInfo, enemyMgr, tank, itemManager);
+	tank->Init(tileInfo, enemyMgr, tank, itemManager, this);
 	enemyMgr->Init(tileInfo, tank, this);
 
 	backGroundRect.left = STAGE_SIZE_X;
@@ -147,9 +147,9 @@ HRESULT Stage1Scene::Init()
 	}
 
 
-	GameManager::GetSingleton()->remainSpawnMonster = 1;
-	GameManager::GetSingleton()->remainMonster = 1;
-	stateElapsedCount = 0;
+	GameManager::GetSingleton()->remainSpawnMonster = 4;
+	GameManager::GetSingleton()->remainMonster = 4;
+
 
 	return S_OK;
 }
@@ -188,17 +188,15 @@ void Stage1Scene::Update()
 			}
 		}
 
-		//탱크 죽었을 때 RespawnPlayerTank();
-		if (tank->HP <= 0)
-		{
-			boomImg[0].bRenderBoomImg = true;
-			boomImg[0].imgPos = tank->GetPos();
-			delete tank;
-			tank = vecTankFactorial[0]->CreateTank();
-			tank->Init(tileInfo, enemyMgr, tank, itemManager);
-			tank->SetPos({ -50.0f,-50.0f });
-		}
-
+	if (tank->HP <= 0)
+	{
+		boomImg[0].bRenderBoomImg = true;
+		boomImg[0].imgPos = tank->GetPos();
+		delete tank;
+		tank = vecTankFactorial[0]->CreateTank();
+		tank->Init(tileInfo, enemyMgr, tank,itemManager, this);
+		tank->SetPos({ -50.0f,-50.0f });
+	}
 
 
 		if (tileInfo[636].frameX == 4)
@@ -214,6 +212,7 @@ void Stage1Scene::Update()
 
 			if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
 			{
+
 				boomImg[0].elapsedCount = 0;
 				boomImg[0].BoomImgCurrFrame++;
 
@@ -222,7 +221,7 @@ void Stage1Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-						tank->Init(tileInfo, enemyMgr, tank, itemManager);
+						tank->Init(tileInfo, enemyMgr, tank, itemManager, this);
 				}
 			}
 		}
@@ -389,8 +388,8 @@ void Stage1Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = 3;//rand() % 7;
-			itemManager->Init(itemtype, randtile);
+			int itemtype = 1;//rand() % 7;
+			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
 		}

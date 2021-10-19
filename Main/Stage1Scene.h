@@ -44,13 +44,12 @@ private:
 	int maxSpawnEnemy = 6;
 	POINTFLOAT spawnEnemyPos[3] = {};
 	EnemyManager* enemyMgr = nullptr;
-
+	
 	RECT backGroundRect;
 
 	bool check = false;
-	//vector<ItemManager*> vecItems = {};
-	//vector<ItemManager*>::iterator itItems = {};
 	ItemManager* itemManager;
+
 	//Item* item;
 
 	//GameOver
@@ -69,6 +68,7 @@ public:
 	inline void SubCurrSpawnEnemy() { this->currSpawnEnemy--; }
 	inline TileType GetTileType(int i) { return this->tileInfo[i].tileType; }
 	void CreateItem();
+	void UseItem(int type);
 	
 	void CloseSlate();
 	void RotateGameOverScene();

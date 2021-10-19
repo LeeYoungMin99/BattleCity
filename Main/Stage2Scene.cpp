@@ -113,8 +113,8 @@ HRESULT Stage2Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 1;
-	GameManager::GetSingleton()->remainMonster = 1;
+	GameManager::GetSingleton()->remainSpawnMonster = 2;
+	GameManager::GetSingleton()->remainMonster = 2;
 
 	stateElapsedCount = 0;
 	return S_OK;
@@ -383,12 +383,13 @@ void Stage2Scene::CreateItem()
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
 			int itemtype = 3;//rand() % 7;
-			itemManager->Init(itemtype, randtile);
+			//itemManager->Init(itemtype, randtile);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
 		}
 	}
 }
+
 
 void Stage2Scene::CloseSlate()
 {
