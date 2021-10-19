@@ -47,7 +47,7 @@ HRESULT Stage3Scene::Init()
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 	slate1 = -(backGround->GetHeight()) + 200;
-	slate2 = backGround->GetHeight() + 200;	//´Ý
+	slate2 = backGround->GetHeight() + 210;	//´Ý
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
@@ -104,8 +104,8 @@ HRESULT Stage3Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster = 2;
+	GameManager::GetSingleton()->remainSpawnMonster = 1;
+	GameManager::GetSingleton()->remainMonster =1;
 
 
 	return S_OK;
@@ -316,7 +316,16 @@ void Stage3Scene::Render(HDC hdc)
 
 	lifeImage->Render(hdc, 480, 260);
 	stageImage->Render(hdc, 480, 370);
-	stageLevel->Render(hdc, 490, 390, 1, 0);
+
+	if (GameManager::GetSingleton()->stageLevel < 10)
+	{
+		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel % 5, GameManager::GetSingleton()->stageLevel / 5);
+	}
+	else if (GameManager::GetSingleton()->stageLevel >= 10)
+	{
+		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel / 10, GameManager::GetSingleton()->stageLevel / 50);
+		stageLevel->Render(hdc, 502, 390, (GameManager::GetSingleton()->stageLevel % 10) % 5, (GameManager::GetSingleton()->stageLevel % 10) / 5);
+	}
 
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
