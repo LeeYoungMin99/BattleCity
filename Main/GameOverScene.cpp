@@ -22,15 +22,17 @@ HRESULT GameOverScene::Init()
 void GameOverScene::Update()
 {
 	elapsedcount++;
-	if (elapsedcount >= 200)
+	if (elapsedcount >= 400)
 	{
-		SceneManager::GetSingleton()->ChangeScene("Stage1");
+		GameManager::GetSingleton()->GameInit();
+		SceneManager::GetSingleton()->ChangeScene("TitleScene");
+		return;
 	}
 	//test_1 += 1;
 	//test_2 -= 1;	//´Ý
 
-	test_1 -= 1;
-	test_2 += 1;	//¿­
+	test_1 -= 3;
+	test_2 += 3;	//¿­
 
 	/*if (test_1 >= 0)
 	{
