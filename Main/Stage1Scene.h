@@ -48,10 +48,10 @@ private:
 	RECT backGroundRect;
 
 	bool check = false;
-	vector<ItemManager*> vecItems = {};
-	vector<ItemManager*>::iterator itItems = {};
+	//vector<ItemManager*> vecItems = {};
+	//vector<ItemManager*>::iterator itItems = {};
 	ItemManager* itemManager;
-	Item* item;
+	//Item* item;
 	
 public:
 	void Load(int index);

@@ -6,7 +6,7 @@
 #include "Tank.h"
 #include "TankFactorial.h"
 #include "EnemyManager.h"
-
+#include "ItemManager.h"
 
 #include "ScoreScene.h"
 
@@ -282,6 +282,22 @@ void Stage3Scene::SpawnEnemy(TankType type)
 		GameManager::GetSingleton()->spawnCount -= maxSpawnCount;
 	}
 
+}
+
+void Stage3Scene::CreateItem()
+{
+	for (int i = 0; i < 1; )
+	{
+		int randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
+
+		if (tileInfo[randtile].tileType == TileType::Ground)
+		{
+			int itemtype = 3;//rand() % 7;
+			itemManager->Init(itemtype, randtile);
+			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
+			break;
+		}
+	}
 }
 
 void Stage3Scene::Load(int index)

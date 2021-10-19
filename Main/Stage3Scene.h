@@ -10,6 +10,7 @@ class Image;
 class EnemyManager;
 class Tank;
 class TankFactorial;
+class ItemManager;
 class Stage3Scene : public GameEntity
 {
 private:
@@ -49,6 +50,8 @@ private:
 	bool check = false;
 	bool bShowBodyCollider = false;
 
+	ItemManager* itemManager;
+
 
 	//물 타일 이미지
 	vector<pair<int, int>> waterTilePos;
@@ -60,5 +63,6 @@ public:
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
 	void SpawnEnemy(TankType type);
+	void CreateItem();
 };
 

@@ -937,6 +937,9 @@ void Tank::CheckItem()
 			cout << (*itItemList)->rc.bottom << endl;
 			cout << &(*itItemList)->rc << endl;*/
 			cout << "item get" << endl;
+
+			itItemList = itemManager->vecItems.erase(itItemList);
+			break;
 		}
 	}
 }
