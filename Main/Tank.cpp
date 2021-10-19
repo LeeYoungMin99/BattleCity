@@ -2,10 +2,11 @@
 #include "Image.h"
 #include "EnemyManager.h"
 #include "ItemManager.h"
+#include "AmmoManager.h"
 #include "Item.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
@@ -30,7 +31,10 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 	this->tileInfo = tile;
 	this->enemyMgr = enemyMgr;
 	this->itemManager = item;
-	
+	this->ammoManager = ammoManager;
+	this->targetAmmoManager = targetAmmoManager;
+
+	currFireNomberOFAmmo = 0;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -42,15 +46,6 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 	bCheckSpawnStatus = true;
 	bCheckShieldOn = false;
 
-
-	ammoCount = 1;
-	ammoPack = new Ammo[ammoCount];
-	// 미사일 초기화
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Init(this->tileInfo, this->enemyMgr);
-	}
-
 	BarrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
 
 	return S_OK;
@@ -59,7 +54,6 @@ HRESULT PlayerTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTa
 void PlayerTank::Update()
 {
 	if (bIsAlive == false)	return;
-	ammoPack->Update();
 
 	// 스폰 이미지와 쉴드 이미지 업데이트
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
@@ -114,11 +108,6 @@ void PlayerTank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Render(hdc);
-	}
-
 	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
@@ -142,7 +131,6 @@ void PlayerTank::Render(HDC hdc)
 
 void PlayerTank::Release()
 {
-	delete[] ammoPack;
 }
 
 void PlayerTank::Move()
@@ -320,41 +308,12 @@ void PlayerTank::Move()
 
 void PlayerTank::Fire()
 {
-	if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
+	if (currFireNomberOFAmmo == 0)
 	{
-		for (int i = 0; i < ammoCount; i++)
+		if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
 		{
-			// 전체 미사일을 순회하면서 발사 됐는지 안됐는지 판단
-			if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
-				continue;
-
-			switch (moveDir)
-			{
-			case Left:
-				BarrelPos = { pos.x - bodySize / 2 + 3, pos.y - bodySize / 4 };
-				ammoPack[i].SetMoveDir("Left");
-				break;
-			case Right:
-				BarrelPos = { pos.x, pos.y - bodySize / 4 };
-				ammoPack[i].SetMoveDir("Right");
-				break;
-			case Up:
-				BarrelPos = { pos.x - bodySize / 4, pos.y - bodySize / 2 };
-				ammoPack[i].SetMoveDir("Up");
-				break;
-			case Down:
-				BarrelPos = { pos.x - bodySize / 4, pos.y };
-				ammoPack[i].SetMoveDir("Down");
-				break;
-			default:
-				break;
-			}
-
-			//ammoPack[i].SetIsAlive(true);
-			ammoPack[i].SetPos(BarrelPos);	// 미사일 위치 변경
-			ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
-
-			break;
+			currFireNomberOFAmmo++;
+			ammoManager->Fire(this, ammoManager, targetAmmoManager);
 		}
 	}
 }
@@ -367,7 +326,7 @@ PlayerTank::PlayerTank()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -388,6 +347,7 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
 	this->enemyMgr = enemyMgr;
+	this->ammoManager = ammoManager;
 
 	SetShape();
 	if (IsCollided())
@@ -398,14 +358,6 @@ HRESULT NormalEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* pla
 	moveDir = MoveDir::Down;
 
 	bIsAlive = true;
-
-	ammoCount = 1;
-	ammoPack = new Ammo[ammoCount];
-	// 미사일 초기화
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
-	}
 
 	return S_OK;
 }
@@ -418,40 +370,8 @@ void NormalEnemyTank::Fire()
 		testelapsed = 0;
 		delay_2 = RANDOM_2(10, 15);
 
-		for (int i = 0; i < ammoCount; i++)
-		{
-			// 전체 미사일을 순회하면서 발사 됐는지 안됐는지 판단
-			if (ammoPack[i].GetIsFire()/* && ammoPack[i].GetIsAlive()*/)
-				continue;
-
-			switch (moveDir)
-			{
-			case Left:
-				BarrelPos = { pos.x - bodySize / 2 + 3, pos.y - bodySize / 4 };
-				ammoPack[i].SetMoveDir("Left");
-				break;
-			case Right:
-				BarrelPos = { pos.x, pos.y - bodySize / 4 };
-				ammoPack[i].SetMoveDir("Right");
-				break;
-			case Up:
-				BarrelPos = { pos.x - bodySize / 4, pos.y - bodySize / 2 };
-				ammoPack[i].SetMoveDir("Up");
-				break;
-			case Down:
-				BarrelPos = { pos.x - bodySize / 4, pos.y };
-				ammoPack[i].SetMoveDir("Down");
-				break;
-			default:
-				break;
-			}
-
-			//ammoPack[i].SetIsAlive(true);
-			ammoPack[i].SetPos(BarrelPos);	// 미사일 위치 변경
-			ammoPack[i].SetIsFire(true);	// 미사일 상태 변경
-
-			break;
-		}
+		currFireNomberOFAmmo++;
+		ammoManager->Fire(this, ammoManager, targetAmmoManager);
 
 		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
@@ -465,7 +385,7 @@ void NormalEnemyTank::Fire()
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager*  item)
+HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -481,8 +401,8 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	HP = 1;
 
 	this->tileInfo = tile;
-	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	this->ammoManager = ammoManager;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -490,14 +410,6 @@ HRESULT SpeedEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	moveDir = MoveDir::Down;
 
 	bIsAlive = true;
-
-	ammoCount = 30;
-	ammoPack = new Ammo[ammoCount];
-	// 미사일 초기화
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
-	}
 
 	return S_OK;
 }
@@ -507,7 +419,7 @@ void SpeedEnemyTank::Fire()
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -523,8 +435,8 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	HP = 1;
 
 	this->tileInfo = tile;
-	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	this->ammoManager = ammoManager;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -532,14 +444,6 @@ HRESULT RapidEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* play
 	moveDir = MoveDir::Down;
 
 	bIsAlive = true;
-
-	ammoCount = 30;
-	ammoPack = new Ammo[ammoCount];
-	// 미사일 초기화
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
-	}
 
 	return S_OK;
 }
@@ -549,7 +453,7 @@ void RapidEnemyTank::Fire()
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
+HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
 	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
@@ -565,8 +469,8 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 	HP = 4;
 
 	this->tileInfo = tile;
-	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	this->ammoManager = ammoManager;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -574,14 +478,6 @@ HRESULT DefensiveEnemyTank::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* 
 	moveDir = MoveDir::Down;
 
 	bIsAlive = true;
-
-	ammoCount = 30;
-	ammoPack = new Ammo[ammoCount];
-	// 미사일 초기화
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Init(this->tileInfo, this->enemyMgr, this, this->playerTank);
-	}
 
 	return S_OK;
 }
@@ -594,7 +490,6 @@ void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
-	ammoPack->Update();
 
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
@@ -624,7 +519,11 @@ void Tank::Update()
 	if (!bCheckSpawnStatus)
 	{
 		Move();
-		Fire();
+
+		if (currFireNomberOFAmmo == 0)
+		{
+			Fire();
+		}
 	}
 
 	testelapsed_2++;  //아이템 탱크 깜빡깜빡
@@ -641,11 +540,6 @@ void Tank::Update()
 void Tank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
-
-	for (int i = 0; i < ammoCount; i++)
-	{
-		ammoPack[i].Render(hdc);
-	}
 
 	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 	if (bCheckSpawnStatus)
@@ -667,7 +561,6 @@ void Tank::Render(HDC hdc)
 
 void Tank::Release()
 {
-	delete[] ammoPack;
 }
 
 void Tank::Move()
@@ -864,7 +757,7 @@ bool Tank::IsCollided()
 		{
 			return true;
 		}
-		
+
 
 	}
 
@@ -888,7 +781,7 @@ bool Tank::IsCollided()
 	{
 		if (IntersectRect(&temp, &(playerTank->shape), &shape))
 		{
-			
+
 			if (playerTank->bCheckSpawnCollided && playerTank->moveDir != moveDir)
 			{
 				return false;

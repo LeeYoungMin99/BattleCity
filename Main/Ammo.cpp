@@ -2,9 +2,10 @@
 #include "Tank.h"
 #include "Image.h"
 #include "EnemyManager.h"
+#include "AmmoManager.h"
 #include "CommonFunction.h"
 
-HRESULT Ammo::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* ownerTank, Tank* playerTank)
+HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr, Tank* playerTank)
 {
 	//float x = 10.0f, y = 20.0f, h = 0.0f;
 	//h = (float)sqrtf((x * x) + (y * y));
@@ -45,10 +46,12 @@ HRESULT Ammo::Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* ownerTank, Tan
 
 	bulletDir = BulletDir::Up;
 
+	bRenderBoomImg = false;
+
 	this->tile = tile;
+	this->ownerTank = ownerTank;
 	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
-	this->ownerTank = ownerTank;
 	return S_OK;
 }
 
@@ -72,12 +75,6 @@ void Ammo::Update()
 		int posIdX = (pos.x - STAGE_SIZE_X) / 16;
 		int posIdY = (pos.y - STAGE_SIZE_Y) / 16;
 
-		// 타겟과의 충돌확인
-		if (CheckCollision(posIdX, posIdY))
-		{
-			bRenderBoomImg = true;
-		}
-
 		// 화면을 벗어났는지 확인
 		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
 			collision.top > STAGE_SIZE_Y + 416 || collision.bottom < STAGE_SIZE_Y)
@@ -85,10 +82,16 @@ void Ammo::Update()
 			bRenderBoomImg = true;
 		}
 
+		// 타겟과의 충돌확인
+		if (CheckCollision(posIdX, posIdY))
+		{
+			bRenderBoomImg = true;
+		}
+
 		if (bRenderBoomImg)
 		{
 			currElapsedCount++;
-			
+
 			if (currElapsedCount >= addImgFrameCount)
 			{
 				boomImgCurrFrame++;
@@ -103,6 +106,7 @@ void Ammo::Update()
 					pos.x = -10;
 					pos.y = -10;
 
+					ownerTank->currFireNomberOFAmmo--;
 					boomImgCurrFrame = 0;
 					bRenderBoomImg = false;
 					isFire = false;
@@ -275,26 +279,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 				(*itEnemyTanks)->HP--;
 				check = true;
 			}
-			// Enemy의 ammo와 충돌 처리
-			else if (IntersectRect(&rc, &((*itEnemyTanks)->ammoPack->collision), &collision))
-			{
-
-
-				isFire = false;
-				collision.left = -10;
-				collision.top = -10;
-				collision.right = -10;
-				collision.bottom = -10;
-				pos.x = -10;
-				pos.y = -10;
-				(*itEnemyTanks)->ammoPack->isFire = false;
-				(*itEnemyTanks)->ammoPack->collision.left = -10;
-				(*itEnemyTanks)->ammoPack->collision.top = -10;
-				(*itEnemyTanks)->ammoPack->collision.right = -10;
-				(*itEnemyTanks)->ammoPack->collision.bottom = -10;
-				(*itEnemyTanks)->ammoPack->pos.x = -10;
-				(*itEnemyTanks)->ammoPack->pos.y = -10;
-			}
 		}
 	}
 
@@ -305,25 +289,61 @@ bool Ammo::CheckCollision(int idX, int idY)
 			playerTank->HP--;
 			check = true;
 		}
+	}
 
-		if (IntersectRect(&rc, &(playerTank->ammoPack->collision), &collision))
+	if (playerTank == nullptr)
+	{
+		for (itAmmos = enemyAmmoManager->vecAmmos.begin();
+			itAmmos != enemyAmmoManager->vecAmmos.end(); itAmmos++)
 		{
-			isFire = false;
-			collision.left = -10;
-			collision.top = -10;
-			collision.right = -10;
-			collision.bottom = -10;
-			pos.x = -10;
-			pos.y = -10;
-			playerTank->ammoPack->isFire = false;
-			playerTank->ammoPack->collision.left = -10;
-			playerTank->ammoPack->collision.top = -10;
-			playerTank->ammoPack->collision.right = -10;
-			playerTank->ammoPack->collision.bottom = -10;
-			playerTank->ammoPack->pos.x = -10;
-			playerTank->ammoPack->pos.y = -10;
+			if (IntersectRect(&rc, &((*itAmmos)->collision), &collision))
+			{
+				isFire = false;
+				collision.left = -10;
+				collision.top = -10;
+				collision.right = -10;
+				collision.bottom = -10;
+				pos.x = -10;
+				pos.y = -10;
+				ownerTank->currFireNomberOFAmmo--;
+				(*itAmmos)->isFire = false;
+				(*itAmmos)->collision.left = -50;
+				(*itAmmos)->collision.top = -50;
+				(*itAmmos)->collision.right = -50;
+				(*itAmmos)->collision.bottom = -50;
+				(*itAmmos)->pos.x = -50;
+				(*itAmmos)->pos.y = -50;
+				(*itAmmos)->ownerTank->currFireNomberOFAmmo--;
+			}
 		}
 	}
+
+	//if (playerTank != nullptr)
+	//{
+	//	for (itAmmos = playerAmmoManager->vecAmmos.begin(); 
+	//		itAmmos != playerAmmoManager->vecAmmos.end(); itAmmos++)
+	//	{
+	//		if (IntersectRect(&rc, &((*itAmmos)->collision), &collision))
+	//		{
+	//			isFire = false;
+	//			collision.left = -50;
+	//			collision.top = -50;
+	//			collision.right = -50;
+	//			collision.bottom = -50;
+	//			pos.x = -50;
+	//			pos.y = -50;
+	//			ownerTank->currFireNomberOFAmmo--;
+	//			(*itAmmos)->isFire = false;
+	//			(*itAmmos)->collision.left = -10;
+	//			(*itAmmos)->collision.top = -10;
+	//			(*itAmmos)->collision.right = -10;
+	//			(*itAmmos)->collision.bottom = -10;
+	//			(*itAmmos)->pos.x = -10;
+	//			(*itAmmos)->pos.y = -10;
+	//			playerTank->currFireNomberOFAmmo--;
+	//		}
+	//	}
+	//}
 
 	if (check)
 	{

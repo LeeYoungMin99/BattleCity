@@ -8,7 +8,7 @@
 #include "ItemManager.h"
 
 
-HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank, GameEntity* stageInfo)
+HRESULT EnemyManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, Tank* playerTank, GameEntity* stageInfo)
 {
 	enemyMaxCount = 6;
 	vecEnemys.reserve(enemyMaxCount);
@@ -25,6 +25,8 @@ HRESULT EnemyManager::Init(TILE_INFO* tile, Tank* playerTank, GameEntity* stageI
 
 	this->tileInfo = tile;
 	this->stageInfo = stageInfo;
+	this->ammoManager = ammoManager;
+	this->targetAmmoManager = targetAmmoManager;
 
 	itemManager = new ItemManager;
 
@@ -53,7 +55,7 @@ void EnemyManager::Update()
 			}
 			if ((*itEnemys)->bItem)
 			{
-				int i=((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
+				int i = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
 				cout << i << endl;
 				switch (i)
 				{
@@ -132,7 +134,7 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 {
 	tank->SetPos(pos);
 
-	tank->Init(tileInfo, this, playerTank);
+	tank->Init(ammoManager, targetAmmoManager, tileInfo, this, playerTank);
 	elapsedcount++;
 	if (elapsedcount >= 0/*RANDOM_2(0, 16)*/)
 	{

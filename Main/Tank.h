@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Ammo.h"
 
+class AmmoManager;
 class EnemyManager;
 class ItemManager;
 class Item;
@@ -27,9 +28,9 @@ public:
 	int enforceCount = 0;
 	bool bIsAlive = true;
 	
-	
-
-	int ammoCount = 0;
+	int currFireNomberOFAmmo = 0;
+	AmmoManager* ammoManager = nullptr;
+	AmmoManager* targetAmmoManager = nullptr;
 
 	POINTFLOAT BarrelPos;
 
@@ -38,8 +39,6 @@ public:
 	EnemyManager* enemyMgr = nullptr;
 	vector<Tank*> enemyTanks = {};
 	vector<Tank*>::iterator itEnemyTanks = {};
-	Ammo* ammoPack = nullptr;
-
 
 	ItemManager* itemManager;
 	vector<Item*>::iterator itItemList = {};
@@ -54,7 +53,7 @@ public:
 	bool bItem = false;		//아이템 여부
 
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
+	virtual HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) { return E_NOTIMPL; };	// 부모클래스의 함수 중 기능이 다른 경우는
 	virtual void Update();												// 오버라이딩을 한다
 	virtual void Render(HDC hdc);
 	virtual void Release();
@@ -85,7 +84,7 @@ private:
 	bool bShieldImageChanged = false;
 
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
+	virtual HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
@@ -101,7 +100,7 @@ public:
 class NormalEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
+	virtual HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
 	
 	virtual void Fire() override;
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; } ;
@@ -113,7 +112,7 @@ public:
 class SpeedEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
+	virtual HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
 
 	virtual void Fire() override;
 
@@ -125,7 +124,7 @@ public:
 class RapidEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
+	virtual HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
 
 	virtual void Fire() override;
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
@@ -137,7 +136,7 @@ public:
 class DefensiveEnemyTank : public Tank
 {
 public:
-	virtual HRESULT Init(TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
+	virtual HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tileInfo, EnemyManager* enemyMgr, Tank* playerTank = nullptr, ItemManager* item = nullptr) override;
 
 	virtual void Fire() override;
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };

@@ -7,6 +7,7 @@ enum class BulletDir { Left, Right, Up, Down };
 class Image;
 class Tank;		// 전방선언 (Tank라는 클래스가 있다)
 class EnemyManager;
+class AmmoManager;
 class Ammo : public GameObject
 {
 private:
@@ -32,10 +33,13 @@ private:
 	TILE_INFO* tile = nullptr;
 	Tank* ownerTank = nullptr;
 	Tank* playerTank = nullptr;
+	AmmoManager* playerAmmoManager = nullptr;
+	AmmoManager* enemyAmmoManager = nullptr;
+	vector<Ammo*>::iterator itAmmos = {};
 	EnemyManager* enemyMgr = nullptr;
 	vector<Tank*>::iterator itEnemyTanks = {};
 public:
-	HRESULT Init(TILE_INFO* tile, EnemyManager* enemyMgr, Tank* ownerTank = nullptr, Tank* playerTank = nullptr);
+	HRESULT Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr = nullptr, Tank* playerTank = nullptr);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
@@ -51,6 +55,9 @@ public:
 
 	inline void SetMoveAngle(float angle) { this->moveAngle = angle; }
 	inline void SetTarget(Tank* target) { this->playerTank = target; }
+	inline void SetOwnerTank(Tank* tank) { this->ownerTank = tank; }
+	inline void SetPlayerAmmoManager(AmmoManager* playerAmmoManager) { this->playerAmmoManager = playerAmmoManager; }
+	inline void SetEnemyAmmoManager(AmmoManager* enemyAmmoManager) { this->enemyAmmoManager = enemyAmmoManager; }
 
 	//inline void SetIsAlive(bool alive) { this->isAlive = alive; }
 	//inline bool GetIsAlive() { return this->isAlive; }

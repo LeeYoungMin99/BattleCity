@@ -3,21 +3,19 @@
 #include "GameObject.h"
 #include "Tank.h"
 
-HRESULT AmmoManager::Init()
+HRESULT AmmoManager::Init(TILE_INFO* tileInfo, Tank* playerTank, EnemyManager* enemyMgr)
 {
-	owner = nullptr;
-
-	//owner->Reload();	// x
-	//((Tank*)owner)->Reload();	// o
-
-	ammoMaxCount = 1;
 	vecAmmos.resize(ammoMaxCount);
+
+	this->tileInfo = tileInfo;
+	this->playerTank = playerTank;
+	this->enemyMgr = enemyMgr;
 
 	for (itAmmos = vecAmmos.begin();
 		itAmmos != vecAmmos.end(); itAmmos++)
 	{
 		(*itAmmos) = new Ammo;
-		//(*itAmmos)->Init();
+		(*itAmmos)->Init(this->tileInfo, nullptr, this->enemyMgr, this->playerTank);
 	}
 
 	return S_OK;
@@ -51,18 +49,43 @@ void AmmoManager::Release()
 	vecAmmos.clear();
 }
 
-void AmmoManager::Fire()
+void AmmoManager::Fire(Tank* tank, AmmoManager* playerAmmoManager, AmmoManager* enemyAmmoManager)
 {
-	if (!owner) return;
-
 	for (itAmmos = vecAmmos.begin();
 		itAmmos != vecAmmos.end(); itAmmos++)
 	{
 		if ((*itAmmos)->GetIsFire())	continue;
 
-		(*itAmmos)->SetIsFire(true);
-		(*itAmmos)->SetPos(owner->GetPos());
-		(*itAmmos)->SetMoveAngle(DEGREE_TO_RADIAN(270.0f));
+		(*itAmmos)->SetOwnerTank(tank);
+		(*itAmmos)->SetPlayerAmmoManager(playerAmmoManager);
+		(*itAmmos)->SetEnemyAmmoManager(enemyAmmoManager);
+
+		switch (tank->moveDir)
+		{
+		case Left:
+			tank->BarrelPos = { tank->GetPos().x - tank->GetBodySize() / 2 + 3, tank->GetPos().y - tank->GetBodySize() / 4 };
+			(*itAmmos)->SetMoveDir("Left");
+			break;
+		case Right:
+			tank->BarrelPos = { tank->GetPos().x,  tank->GetPos().y - tank->GetBodySize() / 4 };
+			(*itAmmos)->SetMoveDir("Right");
+			break;
+		case Up:
+			tank->BarrelPos = { tank->GetPos().x - tank->GetBodySize() / 4,  tank->GetPos().y - tank->GetBodySize() / 2 };
+			(*itAmmos)->SetMoveDir("Up");
+			break;
+		case Down:
+			tank->BarrelPos = { tank->GetPos().x - tank->GetBodySize() / 4,  tank->GetPos().y };
+			(*itAmmos)->SetMoveDir("Down");
+			break;
+		default:
+			break;
+		}
+
+		//ammoPack[i].SetIsAlive(true);
+		(*itAmmos)->SetPos(tank->BarrelPos);	// 미사일 위치 변경
+		(*itAmmos)->SetIsFire(true);	// 미사일 상태 변경
+
 		break;
 	}
 }
