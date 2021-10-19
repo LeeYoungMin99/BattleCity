@@ -122,11 +122,9 @@ HRESULT Stage1Scene::Init()
 	enemyMgr = new EnemyManager;
 
 	itemManager = new ItemManager;
-	item = new Item;
-
-	tank->Init(tileInfo, enemyMgr, tank, itemManager->vecItems);
+	
+	tank->Init(tileInfo, enemyMgr, tank, itemManager);
 	enemyMgr->Init(tileInfo, tank, this);
-
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;

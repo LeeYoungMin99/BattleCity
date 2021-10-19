@@ -4,7 +4,7 @@
 
 HRESULT ItemManager::Init(int type, int tile)
 {
-	itemCount = 1;
+	itemCount = 3;
 	vecItems.reserve(itemCount);
 
 	Item* tempItem = new Item;

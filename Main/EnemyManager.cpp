@@ -118,7 +118,7 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 
 	tank->Init(tileInfo, this, playerTank);
 	elapsedcount++;
-	if (elapsedcount%2  == 0/*RANDOM_2(0, 16)*/)
+	if (elapsedcount  >= 0/*RANDOM_2(0, 16)*/)
 	{
 		tank->bItem = true;
 	}

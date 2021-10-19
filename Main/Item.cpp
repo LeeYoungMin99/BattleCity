@@ -39,7 +39,7 @@ void Item::Render(HDC hdc)
 		((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
 		((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y);
 	
-	Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
+	//Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
 	//cout << rc.left << endl;
 	//cout << rc.top << endl;
 	//cout << rc.right << endl;
