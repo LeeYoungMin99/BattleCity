@@ -42,11 +42,11 @@ HRESULT ScoreScene::Init()
 
 	
 	// 디버깅용 
-	KNE = 11;
-	KSE = 11;
-	KRE = 11;
-	KBE = 11;
-	round = 9;
+	KNE = GameManager::GetSingleton()->defeatNormalTank;
+	KSE = GameManager::GetSingleton()->defeatSpeedTank;
+	KRE = GameManager::GetSingleton()->defeatRapidTank;
+	KBE = GameManager::GetSingleton()->defeatDefensiveTank;
+	round = GameManager::GetSingleton()->stageLevel;
 	
 	CNE = CSE = CRE = CBE = 0;
 	SNE = SSE = SRE = SBE = 0;
@@ -79,13 +79,22 @@ void ScoreScene::Update()
 	
 	if (bTotalScore)
 	{
-		GameManager::GetSingleton()->SetScore(player1Score);
 		elapsedcount++;
 		if (elapsedcount >= 100)
 		{	
 			if (GameManager::GetSingleton()->player1Life > 0)
 			{
-				SceneManager::GetSingleton()->ChangeScene("Stage1");
+
+				GameManager::GetSingleton()->player1Score = player1Score;
+
+				GameManager::GetSingleton()->defeatDefensiveTank = 0;
+				GameManager::GetSingleton()->defeatNormalTank = 0;
+				GameManager::GetSingleton()->defeatRapidTank = 0;
+				GameManager::GetSingleton()->defeatSpeedTank = 0;
+
+				string nextStage = "Stage";
+				nextStage += to_string( (GameManager::GetSingleton()->stageLevel-1)%3+1 );
+				SceneManager::GetSingleton()->ChangeScene(nextStage);
 				return;
 			}
 
@@ -136,8 +145,17 @@ void ScoreScene::Render(HDC hdc)
 	if (stage)
 		stage->Render(hdc, WIN_SIZE_X / 2 -30 , WIN_SIZE_Y / 5);		//스테이지 텍스트
 
-	if (number)
-		number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);	//스테이지 넘버 텍스트
+	if (round < 10)
+	{
+		if (number)
+			number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);	//스테이지 넘버 텍스트
+	}
+	else if (round >= 10)
+	{
+		number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round / 10, round / 50);
+		number->Render(hdc, WIN_SIZE_X / 2 + 62, WIN_SIZE_Y / 5, (round % 10) % 5, (round % 10) / 5);
+
+	}
 
 	if (player)
 		player->Render(hdc, WIN_SIZE_X / 5 + 15, WIN_SIZE_Y / 4);			//플레이어 텍스트

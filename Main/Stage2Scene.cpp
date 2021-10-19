@@ -45,7 +45,7 @@ HRESULT Stage2Scene::Init()
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 	slate1 = -(backGround->GetHeight()) + 200;
-	slate2 = backGround->GetHeight() + 200;	//닫
+	slate2 = backGround->GetHeight() + 210;	//닫
 
 	Load(2);
 
@@ -109,8 +109,8 @@ HRESULT Stage2Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 0;
-	GameManager::GetSingleton()->remainMonster = 0;
+	GameManager::GetSingleton()->remainSpawnMonster = 1;
+	GameManager::GetSingleton()->remainMonster = 1;
 
 
 	return S_OK;
@@ -321,7 +321,16 @@ void Stage2Scene::Render(HDC hdc)
 
 	lifeImage->Render(hdc, 480, 260);
 	stageImage->Render(hdc, 480, 370);
-	stageLevel->Render(hdc, 490, 390, 1, 0);
+
+	if (GameManager::GetSingleton()->stageLevel < 10)
+	{
+		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel % 5, GameManager::GetSingleton()->stageLevel / 5);
+	}
+	else if (GameManager::GetSingleton()->stageLevel >= 10)
+	{
+		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel / 10, GameManager::GetSingleton()->stageLevel / 50);
+		stageLevel->Render(hdc, 502, 390, (GameManager::GetSingleton()->stageLevel % 10) % 5, (GameManager::GetSingleton()->stageLevel % 10) / 5);
+	}
 
 	if (boomImg[0].bRenderBoomImg)
 	{

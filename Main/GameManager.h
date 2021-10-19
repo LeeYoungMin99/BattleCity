@@ -8,6 +8,9 @@ class GameManager : public Singleton<GameManager>
 {
 public:
 	int defeatNormalTank;
+	int defeatSpeedTank;
+	int defeatRapidTank;
+	int defeatDefensiveTank;
 
 	int hightScore;	 // 최고 점수
 	int player1Score;

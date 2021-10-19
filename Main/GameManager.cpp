@@ -9,6 +9,9 @@ void GameManager::Init()
     remainMonster=0;
     spawnCount = 0;
     defeatNormalTank = 0;
+    defeatSpeedTank = 0;
+    defeatRapidTank = 0;
+    defeatDefensiveTank = 0;
     player1Life = 2;
 
     state = GameState::Playing;
