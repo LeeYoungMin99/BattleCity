@@ -41,7 +41,7 @@ public:
 	TILE_INFO* tileInfo = nullptr;
 	Tank* playerTank = nullptr;
 	EnemyManager* enemyMgr = nullptr;
-	vector<Tank*> enemyTanks = {};
+	vector<Tank*>* enemyTanks = nullptr;
 	vector<Tank*>::iterator itEnemyTanks = {};
 
 	ItemManager* itemManager;

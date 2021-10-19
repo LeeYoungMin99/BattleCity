@@ -16,21 +16,20 @@ private:
 	BOOM_IMAGE_INFO boomImg[3];
 
 	TILE_INFO* tileInfo = nullptr;
-	
+
 	Tank* playerTank = nullptr;
 	GameEntity* stageInfo = nullptr;
 	ItemManager* itemManager = nullptr;
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
 	string nextStage;
-	bool clockItem = false ;
+	bool clockItem = false;
 	int elapsedcount_2 = 0;
 
-public:
 	vector<Tank*> vecEnemys;
 	vector<Tank*>::iterator itEnemys;
-
-	HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager,TILE_INFO* tilemap, Tank* playerTank , GameEntity* stageInfo);
+public:
+	HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tilemap, Tank* playerTank, GameEntity* stageInfo);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
@@ -38,6 +37,6 @@ public:
 	void AddEnemy(Tank* tank, POINTFLOAT pos);
 	inline void SetClockItem(bool clockItem) { this->clockItem = clockItem; }
 
-	inline vector<Tank*> GetVecEnemys() { return vecEnemys; }
+	inline vector<Tank*>* GetAddresVecEnemys() { return &vecEnemys; }
 };
 

@@ -37,6 +37,7 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 	this->itemManager = item;
 	this->ammoManager = ammoManager;
 	this->targetAmmoManager = targetAmmoManager;
+	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
 
 	currFireNumberOfAmmo = 0;
 	this->stageInfo = stageInfo;
@@ -319,7 +320,7 @@ void PlayerTank::Fire()
 		if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
 		{
 			currFireNumberOfAmmo++;
-			ammoManager->Fire(this, ammoManager, targetAmmoManager);
+			ammoManager->Fire(this);
 		}
 	}
 }
@@ -355,6 +356,7 @@ HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoM
 	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
+	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
 
 	SetShape();
 	if (IsCollided())
@@ -379,7 +381,7 @@ void NormalEnemyTank::Fire()
 		delay_2 = RANDOM_2(10, 15);
 
 		currFireNumberOfAmmo++;
-		ammoManager->Fire(this, ammoManager, targetAmmoManager);
+		ammoManager->Fire(this);
 
 		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
@@ -537,7 +539,7 @@ void Tank::Update()
 			Move();
 			if (currFireNumberOfAmmo == 0)
 			{
-				Fire();
+				//Fire();
 			}
 		}
 	}
@@ -778,8 +780,8 @@ bool Tank::IsCollided()
 
 	}
 
-	for (itEnemyTanks = enemyMgr->vecEnemys.begin();
-		itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
+	for (itEnemyTanks = enemyTanks->begin();
+		itEnemyTanks != enemyTanks->end(); itEnemyTanks++)
 	{
 		if ((*itEnemyTanks) == this)
 		{

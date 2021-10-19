@@ -49,7 +49,7 @@ void AmmoManager::Release()
 	vecAmmos.clear();
 }
 
-void AmmoManager::Fire(Tank* tank, AmmoManager* playerAmmoManager, AmmoManager* enemyAmmoManager)
+void AmmoManager::Fire(Tank* tank)
 {
 	for (itAmmos = vecAmmos.begin();
 		itAmmos != vecAmmos.end(); itAmmos++)
@@ -57,8 +57,7 @@ void AmmoManager::Fire(Tank* tank, AmmoManager* playerAmmoManager, AmmoManager* 
 		if ((*itAmmos)->GetIsFire())	continue;
 
 		(*itAmmos)->SetOwnerTank(tank);
-		(*itAmmos)->SetPlayerAmmoManager(playerAmmoManager);
-		(*itAmmos)->SetEnemyAmmoManager(enemyAmmoManager);
+		(*itAmmos)->SetTargetAmmos(&(tank->targetAmmoManager->vecAmmos));
 
 		switch (tank->moveDir)
 		{
