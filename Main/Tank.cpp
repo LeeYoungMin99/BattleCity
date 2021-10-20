@@ -622,6 +622,7 @@ void Tank::Update()
 		else
 			checkMoveCount_2 = 0;
 	}
+
 }
 
 void Tank::Render(HDC hdc)

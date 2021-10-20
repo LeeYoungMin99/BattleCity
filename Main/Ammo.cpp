@@ -69,10 +69,7 @@ void Ammo::Update()
 			pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 		}
 
-		collision.left = pos.x - (bodySize / 2.0f);
-		collision.top = pos.y - (bodySize / 2.0f);
-		collision.right = pos.x + (bodySize / 2.0f);
-		collision.bottom = pos.y + (bodySize / 2.0f);
+		SetCollider();
 
 		int posIdX = (pos.x - STAGE_SIZE_X) / 16;
 		int posIdY = (pos.y - STAGE_SIZE_Y) / 16;
@@ -150,101 +147,201 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	/*if (IntersectRect(&rc, &collision, &target->GetShape()))
 		return true;*/
+	if (ownerTank->enforceCount != 3) 
+	{
+		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
+		{
 
-	if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
+			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
+			{
+				// 벽 없애기
+				check = true;
+
+				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX - 1].collider.top += 8;
+					tile[26 * (idY)+idX - 1].topHit++;
+				}
+				else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX - 1].collider.bottom -= 8;
+					tile[26 * (idY)+idX - 1].bottomHit++;
+				}
+
+
+				if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
+					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+				}
+			}
+
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+			{
+				// 벽 없애기
+				check = true;
+				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.top += 8;
+					tile[26 * (idY)+idX].topHit++;
+				}
+				else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.bottom -= 8;
+					tile[26 * (idY)+idX].bottomHit++;
+				}
+				if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
+			}
+
+
+		}
+		else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
+		{
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
+			{
+				// 벽 없애기
+				check = true;
+				if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY - 1) + idX].collider.right -= 8;
+					tile[26 * (idY - 1) + idX].rightHit++;
+				}
+				else if (bulletDir == BulletDir::Right && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY - 1) + idX].collider.left += 8;
+					tile[26 * (idY - 1) + idX].leftHit++;
+				}
+				if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
+				{
+					tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
+					tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
+				}
+			}
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+			{
+				// 벽 없애기
+				check = true;
+				if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.right -= 8;
+					tile[26 * (idY)+idX].rightHit++;
+				}
+				else if (bulletDir == BulletDir::Right && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.left += 8;
+					tile[26 * (idY)+idX].leftHit++;
+				}
+				if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
+			}
+
+		}
+	}
+	else
 	{
 
-		if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
+		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 		{
-			// 벽 없애기
-			check = true;
-			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+
+			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 			{
-				tile[26 * (idY)+idX - 1].collider.top += 8;
-				tile[26 * (idY)+idX - 1].topHit++;
+				// 벽 없애기
+				check = true;
+
+				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX - 1].collider.top += 16;
+					tile[26 * (idY)+idX - 1].topHit+=2;
+				}
+				else if (bulletDir == BulletDir::Up && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX - 1].collider.bottom -= 16;
+					tile[26 * (idY)+idX - 1].bottomHit+=2;
+				}
+
+
+				if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
+					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+				}
 			}
-			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				tile[26 * (idY)+idX - 1].collider.bottom -= 8;
-				tile[26 * (idY)+idX - 1].bottomHit++;
+				// 벽 없애기
+				check = true;
+				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.top += 16;
+					tile[26 * (idY)+idX].topHit+=2;
+				}
+				else if (bulletDir == BulletDir::Up && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.bottom -= 16;
+					tile[26 * (idY)+idX].bottomHit+=2;
+				}
+				if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
 			}
 
 
-			if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
-			{
-				tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
-				tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
-			}
 		}
-
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+		else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
 		{
-			// 벽 없애기
-			check = true;
-			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 			{
-				tile[26 * (idY)+idX].collider.top += 8;
-				tile[26 * (idY)+idX].topHit++;
+				// 벽 없애기
+				check = true;
+				// 벽 없애기
+				if (bulletDir == BulletDir::Left && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY - 1) + idX].collider.right -= 16;
+					tile[26 * (idY - 1) + idX].rightHit+=2;
+				}
+				else if (bulletDir == BulletDir::Right && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY - 1) + idX].collider.left += 16;
+					tile[26 * (idY - 1) + idX].leftHit+=2;
+				}
+				if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
+				{
+					tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
+					tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
+				}
 			}
-			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX].tileType == TileType::Brick)
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				tile[26 * (idY)+idX].collider.bottom -= 8;
-				tile[26 * (idY)+idX].bottomHit++;
+				// 벽 없애기
+				check = true;
+				if (bulletDir == BulletDir::Left && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.right -= 16;
+					tile[26 * (idY)+idX].rightHit+=2;
+				}
+				else if (bulletDir == BulletDir::Right && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.left += 16;
+					tile[26 * (idY)+idX].leftHit+=2;
+				}
+				if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
 			}
-			if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
-			{
-				tile[26 * (idY)+idX].bodyCollider.left = 0;
-				tile[26 * (idY)+idX].bodyCollider.right = 0;
-			}
+
 		}
-
-
 	}
-	else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
-	{
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
-		{
-			// 벽 없애기
-			check = true;
-			if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY - 1) + idX].collider.right -= 8;
-				tile[26 * (idY - 1) + idX].rightHit++;
-			}
-			else if (bulletDir == BulletDir::Right && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY - 1) + idX].collider.left += 8;
-				tile[26 * (idY - 1) + idX].leftHit++;
-			}
-			if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
-			{
-				tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
-				tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
-			}
-		}
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
-		{
-			// 벽 없애기
-			check = true;
-			if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY)+idX].collider.right -= 8;
-				tile[26 * (idY)+idX].rightHit++;
-			}
-			else if (bulletDir == BulletDir::Right && tile[26 * (idY)+idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY)+idX].collider.left += 8;
-				tile[26 * (idY)+idX].leftHit++;
-			}
-			if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
-			{
-				tile[26 * (idY)+idX].bodyCollider.left = 0;
-				tile[26 * (idY)+idX].bodyCollider.right = 0;
-			}
-		}
-
-	}
-
 	// 넥서스 충돌 처리
 	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 	{
@@ -275,9 +372,20 @@ bool Ammo::CheckCollision(int idX, int idY)
 		{	// Enemy가 Spawn상태가 아니라면 충돌 처리
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
-				GameManager::GetSingleton()->remainMonster--;
-				(*itEnemyTanks)->increaseScore();
+				cout << (*itEnemyTanks)->HP << endl;
 				(*itEnemyTanks)->HP--;
+				if ((*itEnemyTanks)->HP <= 0)
+				{
+					(*itEnemyTanks)->increaseScore();
+					GameManager::GetSingleton()->remainMonster--;
+				}
+
+				pos.x = -100;
+				pos.y = -100;
+				collision.left = 0;
+				collision.right = 0;
+				collision.top = 0;
+				collision.bottom = 0;
 				check = true;
 			}
 		}
@@ -400,6 +508,38 @@ void Ammo::SetMoveDir(string dir)
 		bulletDir = BulletDir::Down;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Down.bmp");
 		SetMoveAngle(DEGREE_TO_RADIAN(270));
+	}
+}
+
+void Ammo::SetCollider()
+{
+	if (bulletDir == BulletDir::Left)
+	{
+		collision.left = pos.x - (bodySize / 2.0f) + 3;
+		collision.top = pos.y - (bodySize / 2.0f);
+		collision.right = pos.x + (bodySize / 2.0f) + 1;
+		collision.bottom = pos.y + (bodySize / 2.0f);
+	}
+	else if (bulletDir == BulletDir::Right)
+	{
+		collision.left = pos.x - (bodySize / 2.0f) - 1;
+		collision.top = pos.y - (bodySize / 2.0f);
+		collision.right = pos.x + (bodySize / 2.0f) - 3;
+		collision.bottom = pos.y + (bodySize / 2.0f);
+	}
+	else if (bulletDir == BulletDir::Down)
+	{
+		collision.left = pos.x - (bodySize / 2.0f);
+		collision.top = pos.y - (bodySize / 2.0f) - 1;
+		collision.right = pos.x + (bodySize / 2.0f);
+		collision.bottom = pos.y + (bodySize / 2.0f) - 3;
+	}
+	else if (bulletDir == BulletDir::Up)
+	{
+		collision.left = pos.x - (bodySize / 2.0f);
+		collision.top = pos.y - (bodySize / 2.0f) + 4;
+		collision.right = pos.x + (bodySize / 2.0f);
+		collision.bottom = pos.y + (bodySize / 2.0f) + 1;
 	}
 }
 

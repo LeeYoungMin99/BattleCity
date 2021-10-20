@@ -152,8 +152,8 @@ HRESULT Stage1Scene::Init()
 	}
 
 
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster = 2;
+	GameManager::GetSingleton()->remainSpawnMonster = 20;
+	GameManager::GetSingleton()->remainMonster = 20;
 
 
 	return S_OK;
@@ -185,8 +185,6 @@ void Stage1Scene::Update()
 		itemManager->Update();
 
 		tank->Update();
-		playerTankAmmoManager->Update();
-		enemyTankAmmoManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -194,7 +192,7 @@ void Stage1Scene::Update()
 			GameManager::GetSingleton()->remainSpawnMonster--;
 			currSpawnEnemy++;
 			elapsedCount -= spawmElapsedCount;
-			int randomType = RANDOM(0, 3);
+			int randomType = RANDOM(3, 3);
 			SpawnEnemy((TankType)randomType);
 		}
 		//ShowHitCollider
@@ -303,6 +301,8 @@ void Stage1Scene::Update()
 
 
 
+	playerTankAmmoManager->Update();
+	enemyTankAmmoManager->Update();
 
 	enemyMgr->Update();
 }
