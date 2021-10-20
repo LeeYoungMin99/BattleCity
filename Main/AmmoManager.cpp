@@ -49,7 +49,7 @@ void AmmoManager::Release()
 	vecAmmos.clear();
 }
 
-void AmmoManager::Fire(Tank* tank)
+void AmmoManager::Fire(Tank* tank, float moveSpeed)
 {
 	for (itAmmos = vecAmmos.begin();
 		itAmmos != vecAmmos.end(); itAmmos++)
@@ -58,6 +58,7 @@ void AmmoManager::Fire(Tank* tank)
 
 		(*itAmmos)->SetOwnerTank(tank);
 		(*itAmmos)->SetTargetAmmos(&(tank->targetAmmoManager->vecAmmos));
+		(*itAmmos)->SetMoveSpeed(moveSpeed);
 
 		switch (tank->moveDir)
 		{

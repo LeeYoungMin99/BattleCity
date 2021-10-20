@@ -52,7 +52,7 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr, Tan
 	this->ownerTank = ownerTank;
 	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
-	
+
 	vecEnemyTanks = this->enemyMgr->GetAddresVecEnemys();
 	return S_OK;
 }
@@ -287,10 +287,23 @@ bool Ammo::CheckCollision(int idX, int idY)
 	{	// Player를 타겟으로 잡고있고 Player가 Spawn상태가 아니라면 충돌처리 
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
-			playerTank->HP--;
-			GameManager::GetSingleton()->player1Life--;
+			if (playerTank->bCheckShieldOn)
+			{
+				isFire = false;
+				collision.left = -10;
+				collision.top = -10;
+				collision.right = -10;
+				collision.bottom = -10;
+				pos.x = -10;
+				pos.y = -10;
+				ownerTank->currFireNumberOfAmmo--;
+			}
+			else
+			{
+				playerTank->HP--;
 
-			check = true;
+				check = true;
+			}
 		}
 	}
 

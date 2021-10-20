@@ -144,7 +144,8 @@ void Stage2Scene::Update()
 			GameManager::GetSingleton()->remainSpawnMonster--;
 			currSpawnEnemy++;
 			elapsedCount -= spawmElapsedCount;
-			SpawnEnemy(TankType::Normal);
+			int randomType = RANDOM(0, 3);
+			SpawnEnemy((TankType)randomType);
 		}
 
 		if (KeyManager::GetSingleton()->IsOnceKeyDown('W'))
@@ -167,21 +168,20 @@ void Stage2Scene::Update()
 			}
 		}
 
-		if (tank->HP <= 0)
+		if (GameManager::GetSingleton()->player1Life >= 0)
 		{
-			boomImg[0].bRenderBoomImg = true;
-			boomImg[0].imgPos = tank->GetPos();
-			delete tank;
-			tank = vecTankFactorial[0]->CreateTank();
-			tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
-			tank->SetPos({ -50.0f,-50.0f });
-		}
-
-		if (tileInfo[636].frameX == 4)
-		{
-			boomImg[1].bRenderBoomImg = true;
-			POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
-			boomImg[1].imgPos = temp;
+			if (!(boomImg[0].bRenderBoomImg) && tank->HP <= 0)
+			{
+				boomImg[0].bRenderBoomImg = true;
+				boomImg[0].imgPos = tank->GetPos();
+				delete tank;
+				tank = vecTankFactorial[0]->CreateTank();
+				for (itEnemyTanks = enemyMgr->GetAddresVecEnemys()->begin(); itEnemyTanks != enemyMgr->GetAddresVecEnemys()->end(); itEnemyTanks++)
+				{
+					(*itEnemyTanks)->playerTank = tank;
+				}
+				GameManager::GetSingleton()->player1Life--;
+			}
 		}
 
 		if (boomImg[0].bRenderBoomImg)
@@ -198,10 +198,16 @@ void Stage2Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-					   tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
-
+						tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
+		}
+
+		if (tileInfo[636].frameX == 4)
+		{
+			boomImg[1].bRenderBoomImg = true;
+			POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
+			boomImg[1].imgPos = temp;
 		}
 
 		if (boomImg[1].bRenderBoomImg)
@@ -216,7 +222,6 @@ void Stage2Scene::Update()
 				if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
 				{
 					boomImg[1].bRenderBoomImg = false;
-					boomImg[1].BoomImgCurrFrame = 0;
 
 					waterElapsedCount++;
 					if (waterElapsedCount == 50)

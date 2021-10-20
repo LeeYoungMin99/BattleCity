@@ -60,6 +60,9 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 
 void PlayerTank::Update()
 {
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('P')) { if (enforceCount <= 2) { enforceCount++; } }
+	else if (KeyManager::GetSingleton()->IsOnceKeyDown('O')) { if (enforceCount >= 1) { enforceCount--; } }
+
 	if (bIsAlive == false)	return;
 
 	// 스폰 이미지와 쉴드 이미지 업데이트
@@ -320,12 +323,24 @@ void PlayerTank::Fire()
 		if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
 		{
 			currFireNumberOfAmmo++;
-			ammoManager->Fire(this);
+
+			if (enforceCount == 0) { ammoManager->Fire(this); }
+			else { ammoManager->Fire(this, 400.0f); }
+		}
+	}
+	else if (enforceCount > 1 && currFireNumberOfAmmo == 1)
+	{
+		if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
+		{
+			currFireNumberOfAmmo++;
+			ammoManager->Fire(this, 400.0f);
 		}
 	}
 }
 PlayerTank::PlayerTank()
 {
+	pos.x = -100;
+	pos.y = -100;
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
 	shieldImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Shield.bmp");
 	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
@@ -350,6 +365,7 @@ HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoM
 	bodySize = 64;
 	moveSpeed = 2.0f;
 	HP = 1;
+	type = TankType::Normal;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
@@ -385,12 +401,6 @@ void NormalEnemyTank::Fire()
 
 		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 	}
-
-
-
-
-
-
 }
 #pragma endregion
 
@@ -404,17 +414,23 @@ HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
 	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
 
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
-	moveSpeed = 2.0f;
+	moveSpeed = 4.0f;
 	HP = 1;
+	type = TankType::Speed;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
+	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
+	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -427,6 +443,18 @@ HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 }
 void SpeedEnemyTank::Fire()
 {
+	testelapsed++;
+
+	if (testelapsed >= delay_2)
+	{
+		testelapsed = 0;
+		delay_2 = RANDOM_2(10, 15);
+
+		currFireNumberOfAmmo++;
+		ammoManager->Fire(this);
+
+		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
+	}
 }
 #pragma endregion
 
@@ -440,17 +468,23 @@ HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
 	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
 
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
 	HP = 1;
+	type = TankType::Rapid;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
+	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
+	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -463,6 +497,18 @@ HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 }
 void RapidEnemyTank::Fire()
 {
+	testelapsed++;
+
+	if (testelapsed >= delay_2)
+	{
+		testelapsed = 0;
+		delay_2 = RANDOM_2(10, 15);
+
+		currFireNumberOfAmmo++;
+		ammoManager->Fire(this);
+
+		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
+	}
 }
 #pragma endregion
 
@@ -476,17 +522,24 @@ HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAm
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
 	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
 
+	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
 	HP = 4;
+	type = TankType::Defensive;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
+	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
+	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
+
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
 
@@ -498,6 +551,18 @@ HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAm
 }
 void DefensiveEnemyTank::Fire()
 {
+	testelapsed++;
+
+	if (testelapsed >= delay_2)
+	{
+		testelapsed = 0;
+		delay_2 = RANDOM_2(10, 15);
+
+		currFireNumberOfAmmo++;
+		ammoManager->Fire(this);
+
+		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
+	}
 }
 #pragma endregion
 
@@ -538,6 +603,10 @@ void Tank::Update()
 		{
 			Move();
 			if (currFireNumberOfAmmo == 0)
+			{
+				Fire();
+			}
+			else if (type == TankType::Rapid && currFireNumberOfAmmo == 1)
 			{
 				Fire();
 			}
