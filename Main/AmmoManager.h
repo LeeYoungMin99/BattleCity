@@ -23,7 +23,7 @@ public:
 	void Render(HDC hdc);
 	void Release();
 
-	void Fire(Tank* tank);
+	void Fire(Tank* tank, float moveSpeed = 200.0f);
 	vector<Ammo*>* GetAddressVecAmmos() { return &vecAmmos; }
 	vector<Ammo*>::iterator* GetAddressItAmmos() { return &itAmmos; }
 	void SetAddressItAmmos(vector<Ammo*>* vecAmmos) { itAmmos = vecAmmos->begin(); }

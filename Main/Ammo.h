@@ -24,8 +24,6 @@ private:
 	int currElapsedCount = 0;
 	int addImgFrameCount = 5;
 
-	float moveSpeed = 0.0f;
-
 	BulletDir bulletDir = BulletDir::Down;
 
 	RECT collision = {}; // 충돌 콜리션

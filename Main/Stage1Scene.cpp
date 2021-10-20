@@ -77,7 +77,7 @@ HRESULT Stage1Scene::Init()
 
 	ImageManager::GetSingleton()->AddImage("Image/Text/Game_Over.bmp", 64, 30, 1, 1, true, RGB(255, 0, 255));
 	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
-	gameOverPosY = WIN_SIZE_Y+30;
+	gameOverPosY = WIN_SIZE_Y + 30;
 
 	if (backGround == nullptr)
 	{
@@ -135,8 +135,8 @@ HRESULT Stage1Scene::Init()
 
 	itemManager = new ItemManager;
 
-	tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
-	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager,tileInfo, tank, this);
+	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
+	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
 	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
 	enemyTankAmmoManager->Init(tileInfo, tank);
 
@@ -192,7 +192,8 @@ void Stage1Scene::Update()
 			GameManager::GetSingleton()->remainSpawnMonster--;
 			currSpawnEnemy++;
 			elapsedCount -= spawmElapsedCount;
-			SpawnEnemy(TankType::Normal);
+			int randomType = RANDOM(0, 3);
+			SpawnEnemy((TankType)randomType);
 		}
 		//ShowHitCollider
 		ShowHitCollider();
@@ -210,23 +211,20 @@ void Stage1Scene::Update()
 			}
 		}
 
-	if (tank->HP <= 0)
-	{
-		boomImg[0].bRenderBoomImg = true;
-		boomImg[0].imgPos = tank->GetPos();
-		delete tank;
-		tank = vecTankFactorial[0]->CreateTank();
-		tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
-
-		tank->SetPos({ -50.0f,-50.0f });
-	}
-
-
-		if (tileInfo[636].frameX == 4)
+		if (GameManager::GetSingleton()->player1Life >= 0)
 		{
-			boomImg[1].bRenderBoomImg = true;
-			POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
-			boomImg[1].imgPos = temp;
+			if (!(boomImg[0].bRenderBoomImg) && tank->HP <= 0)
+			{
+				boomImg[0].bRenderBoomImg = true;
+				boomImg[0].imgPos = tank->GetPos();
+				delete tank;
+				tank = vecTankFactorial[0]->CreateTank();
+				for (itEnemyTanks = enemyMgr->GetAddresVecEnemys()->begin(); itEnemyTanks != enemyMgr->GetAddresVecEnemys()->end(); itEnemyTanks++)
+				{
+					(*itEnemyTanks)->playerTank = tank;
+				}
+				GameManager::GetSingleton()->player1Life--;
+			}
 		}
 
 		if (boomImg[0].bRenderBoomImg)
@@ -243,9 +241,16 @@ void Stage1Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-				tank->Init(playerTankAmmoManager, enemyTankAmmoManager,tileInfo, enemyMgr, tank, itemManager);
+						tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
 				}
 			}
+		}
+
+		if (tileInfo[636].frameX == 4)
+		{
+			boomImg[1].bRenderBoomImg = true;
+			POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
+			boomImg[1].imgPos = temp;
 		}
 
 		if (boomImg[1].bRenderBoomImg)
@@ -260,7 +265,6 @@ void Stage1Scene::Update()
 				if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
 				{
 					boomImg[1].bRenderBoomImg = false;
-					boomImg[1].BoomImgCurrFrame = 0;
 				}
 			}
 		}
@@ -349,11 +353,11 @@ void Stage1Scene::Render(HDC hdc)
 
 
 	lifeImage->Render(hdc, 480, 260);
-	if(GameManager::GetSingleton()->player1Life>=0)
+	if (GameManager::GetSingleton()->player1Life >= 0)
 		stageLevel->Render(hdc, 494, 270, GameManager::GetSingleton()->player1Life % 5, GameManager::GetSingleton()->player1Life / 5);
 	else
 
-		stageLevel->Render(hdc, 494, 270,0, 0);
+		stageLevel->Render(hdc, 494, 270, 0, 0);
 
 	stageImage->Render(hdc, 480, 370);
 
@@ -379,13 +383,18 @@ void Stage1Scene::Render(HDC hdc)
 		boomImg[0].BoomImg->Render(hdc, boomImg[0].imgPos.x - STAGE_SIZE_X / 2, boomImg[0].imgPos.y - STAGE_SIZE_Y, boomImg[0].BoomImgCurrFrame, 0);
 	}
 
+	if (boomImg[1].bRenderBoomImg)
+	{
+		boomImg[1].BoomImg->Render(hdc, boomImg[1].imgPos.x, boomImg[1].imgPos.y, boomImg[1].BoomImgCurrFrame, 0);
+	}
+
 
 	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
 	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
 
-	
 
-	gameOver->Render(hdc, STAGE_SIZE_X+208, gameOverPosY);
+
+	gameOver->Render(hdc, STAGE_SIZE_X + 208, gameOverPosY);
 }
 
 void Stage1Scene::Release()
