@@ -285,7 +285,7 @@ void Stage1Scene::Update()
 		if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 		{
 			stateElapsedCount++;
-			if (stateElapsedCount >= 120)
+			if (stateElapsedCount >= 60)
 			{
 				elapsedCount = 0;
 				GameManager::GetSingleton()->spawnCount = 0;

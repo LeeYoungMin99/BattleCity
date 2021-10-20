@@ -114,8 +114,8 @@ HRESULT Stage3Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster =2;
+	GameManager::GetSingleton()->remainSpawnMonster = 20;
+	GameManager::GetSingleton()->remainMonster =20;
 
 	stateElapsedCount = 0;
 
@@ -248,7 +248,7 @@ void Stage3Scene::Update()
 		if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 		{
 			stateElapsedCount++;
-			if (stateElapsedCount >= 120)
+			if (stateElapsedCount >= 60)
 			{
 				stateElapsedCount = 0;
 				GameManager::GetSingleton()->state = GameState::GameOver;
