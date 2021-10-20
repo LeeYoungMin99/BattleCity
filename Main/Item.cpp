@@ -26,7 +26,6 @@ HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_
 
 	itemType = type;
 	itemTile = tile;
-
 	this->tank = tank;
 	this->enemyMgr = enemyMgr;
 	//this->stageInfo = stageInfo;
@@ -51,7 +50,6 @@ void Item::Render(HDC hdc)
 	itemImage[itemType]->Render(hdc,
 		((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
 		((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y);
-
 }
 
 void Item::Release()
@@ -60,42 +58,19 @@ void Item::Release()
 
 void Item::UseItem()
 {
-	//switch (itemType)
-	//{
-	//case 0:		// 헬멧 : 일정시간 플레이어 탱크 무적
-	//	cout << "Helmet" << endl;
-	//	break;
-	//case 1:		// 시계 : 일정시간 적 탱크들 모든 행동멈춤
-	//	cout << "Clock" << endl;
-	//	enemyMgr->SetClockItem(true);
-	//	//((Stage1Scene*)stageInfo)->UseItem(1);
-	//	break;
-	//case 2:		// 삽 : 일정시간 넥서스 주변 흰색타일로 강화
-	//	cout << "Shovel" << endl;
-	//	itemManager->Fortification();
-	//	break;
-	//case 3:		// 별 : 플레이어 탱크 업그레이드
-	//	cout << "Star" << endl;
-	//	tank->enforceCount++;
-	//	break;
-	//case 4:		// 수류탄 : 이것은 수류탄이여
-	//	cout << "Grenade" << endl;
-	//	enemyMgr->BoomItem();
-	//	break;
-	//case 5:		// 탱크 : 플레이어 목숨 +1 증가
-	//	cout << "Tank" << endl;
-	//	GameManager::GetSingleton()->player1Life++;
-	//	break;
-	//case 6:		// 권총 : 모름띠..
-	//	cout << "Gun" << endl;
-	//	break;
-	//}
+
+}
+
+void Item::ItemPoint()
+{
+	GetItemManager()->SetItemPoint(true);
 }
 
 void HelmetItem::UseItem()
 {
 	GetTank()->bCheckShieldOn = true;
 	GetTank()->elapsedCount = 0;
+	
 }
 
 void ClockItem::UseItem()

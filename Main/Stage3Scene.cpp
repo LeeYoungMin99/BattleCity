@@ -320,6 +320,7 @@ void Stage3Scene::Render(HDC hdc)
 	enemyMgr->Render(hdc);
 	playerTankAmmoManager->Render(hdc);
 	enemyTankAmmoManager->Render(hdc);
+	itemManager->Render(hdc);
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{

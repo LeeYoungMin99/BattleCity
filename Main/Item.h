@@ -27,11 +27,13 @@ public:
 	void Render(HDC hdc);
 	void Release();
 	virtual void UseItem() = 0;
+	void ItemPoint();
 
 	inline Tank* GetTank() { return tank; }
 	inline EnemyManager* GetEnemyManager() { return enemyMgr; };
 	inline int GetType() { return this->itemType; }
 	inline ItemManager* GetItemManager() { return itemManager; }
+	
 };
 
 class HelmetItem : public Item
