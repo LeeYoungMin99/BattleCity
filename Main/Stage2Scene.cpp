@@ -137,6 +137,7 @@ void Stage2Scene::Update()
 		tank->Update();
 		playerTankAmmoManager->Update();
 		enemyTankAmmoManager->Update();
+		itemManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)

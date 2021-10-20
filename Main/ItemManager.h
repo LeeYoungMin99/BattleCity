@@ -15,7 +15,8 @@ class ItemFactorial;
 class ItemManager : public GameEntity
 {
 public:
-
+	Image* itemScore;
+	int itemTile = 0;
 	vector<Item*> vecItems;
 	vector<Item*>::iterator itItems;
 
@@ -23,6 +24,9 @@ public:
 
 	Item* item;
 	int itemCount = 0;
+	int elapsedcount;
+	bool itemPoint;
+
 
 	int fortificationCount;
 	bool bIsFortification;
@@ -36,5 +40,6 @@ public:
 
 	void Fortification();
 	void DestoryFortification();
+	inline void SetItemPoint(bool itemPoint) { this->itemPoint = itemPoint; }
 };
 

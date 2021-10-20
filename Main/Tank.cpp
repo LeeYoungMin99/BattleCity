@@ -570,7 +570,7 @@ void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
-
+	cout << HP << endl;
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
 	{
@@ -898,14 +898,7 @@ void Tank::CheckItem()
 		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
 		{
 			(*itItemList)->UseItem();
-			//int itemType = (*itItemList)->GetType();
-			//int stageLevel = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
-			//if ((*itItemList)->GetType() == 0)	//헬멧
-			//{
-			//	bCheckShieldOn = true;
-			//	elapsedCount = 0;
-			//}
-
+			(*itItemList)->ItemPoint();
 			itItemList = itemManager->vecItems.erase(itItemList);
 			break;
 		}
