@@ -14,16 +14,16 @@ private:
 	Tank* playerTank = nullptr;
 	EnemyManager* enemyMgr = nullptr;
 	TILE_INFO* tileInfo = nullptr;
-public:
 	vector<Ammo*> vecAmmos;
 	vector<Ammo*>::iterator itAmmos;
+public:
 
 	HRESULT Init(TILE_INFO* tileInfo, Tank* playerTank = nullptr, EnemyManager* enemyMgr = nullptr);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 
-	void Fire(Tank* tank, AmmoManager* playerAmmoManager, AmmoManager* enemyAmmoManager);
+	void Fire(Tank* tank);
 	vector<Ammo*>* GetAddressVecAmmos() { return &vecAmmos; }
 	vector<Ammo*>::iterator* GetAddressItAmmos() { return &itAmmos; }
 	void SetAddressItAmmos(vector<Ammo*>* vecAmmos) { itAmmos = vecAmmos->begin(); }

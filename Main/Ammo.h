@@ -33,10 +33,10 @@ private:
 	TILE_INFO* tile = nullptr;
 	Tank* ownerTank = nullptr;
 	Tank* playerTank = nullptr;
-	AmmoManager* playerAmmoManager = nullptr;
-	AmmoManager* enemyAmmoManager = nullptr;
-	vector<Ammo*>::iterator itAmmos = {};
 	EnemyManager* enemyMgr = nullptr;
+	vector<Ammo*>* targetAmmos = {};
+	vector<Tank*>* vecEnemyTanks = {};
+	vector<Ammo*>::iterator itAmmos = {};
 	vector<Tank*>::iterator itEnemyTanks = {};
 public:
 	HRESULT Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr = nullptr, Tank* playerTank = nullptr);
@@ -56,8 +56,11 @@ public:
 	inline void SetMoveAngle(float angle) { this->moveAngle = angle; }
 	inline void SetTarget(Tank* target) { this->playerTank = target; }
 	inline void SetOwnerTank(Tank* tank) { this->ownerTank = tank; }
-	inline void SetPlayerAmmoManager(AmmoManager* playerAmmoManager) { this->playerAmmoManager = playerAmmoManager; }
-	inline void SetEnemyAmmoManager(AmmoManager* enemyAmmoManager) { this->enemyAmmoManager = enemyAmmoManager; }
+	//inline void SetPlayerAmmoManager(AmmoManager* playerAmmoManager) { this->playerAmmoManager = playerAmmoManager; }
+	//inline void SetEnemyAmmoManager(AmmoManager* enemyAmmoManager) { this->enemyAmmoManager = enemyAmmoManager; }
+
+	inline void SetTargetAmmos(vector<Ammo*>* targetAmmos) { this->targetAmmos = targetAmmos; }
+	inline void SetVecEnemyTanks(vector<Tank*>* enemyTanks) { this->vecEnemyTanks = enemyTanks; }
 
 	//inline void SetIsAlive(bool alive) { this->isAlive = alive; }
 	//inline bool GetIsAlive() { return this->isAlive; }

@@ -52,6 +52,8 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr, Tan
 	this->ownerTank = ownerTank;
 	this->enemyMgr = enemyMgr;
 	this->playerTank = playerTank;
+	
+	vecEnemyTanks = this->enemyMgr->GetAddresVecEnemys();
 	return S_OK;
 }
 
@@ -268,8 +270,8 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	if (playerTank == nullptr)
 	{	// 플레이어 탱크면
-		for (itEnemyTanks = enemyMgr->vecEnemys.begin();
-			itEnemyTanks != enemyMgr->vecEnemys.end(); itEnemyTanks++)
+		for (itEnemyTanks = vecEnemyTanks->begin();
+			itEnemyTanks != vecEnemyTanks->end(); itEnemyTanks++)
 		{	// Enemy가 Spawn상태가 아니라면 충돌 처리
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
@@ -294,8 +296,8 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	if (playerTank == nullptr)
 	{
-		for (itAmmos = enemyAmmoManager->vecAmmos.begin();
-			itAmmos != enemyAmmoManager->vecAmmos.end(); itAmmos++)
+		for (itAmmos = targetAmmos->begin();
+			itAmmos != targetAmmos->end(); itAmmos++)
 		{
 			if (IntersectRect(&rc, &((*itAmmos)->collision), &collision))
 			{
