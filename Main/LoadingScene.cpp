@@ -53,7 +53,6 @@ void LoadingScene::Render(HDC hdc)
 	}
 	else if (GameManager::GetSingleton()->stageLevel >= 10)
 	{
-		cout << GameManager::GetSingleton()->stageLevel << endl;
 		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 60, WIN_SIZE_Y / 2 - 10, GameManager::GetSingleton()->stageLevel / 10, GameManager::GetSingleton()->stageLevel / 50);
 		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 72, WIN_SIZE_Y / 2 - 10, (GameManager::GetSingleton()->stageLevel % 10) % 5, (GameManager::GetSingleton()->stageLevel%10) / 5);
 

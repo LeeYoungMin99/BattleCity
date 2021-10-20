@@ -73,12 +73,10 @@ bool KeyManager::IsStayKeyDown(int key)
 	// 실습2. 얘도 해보자.
 	if (GetAsyncKeyState(key) & 0x8001)
 	{
-		//cout << "1. true : " << time(&currTime) << endl;
 		return true;
 	}
 	//else
 	//{
-	//	cout << "2. false : " << time(&currTime) << endl;
 	//}
 
 	//if (GetAsyncKeyState(key) & 0x0001)

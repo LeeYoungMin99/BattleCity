@@ -344,7 +344,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 		}
 	}
 	// 넥서스 충돌 처리
-	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)) && GameManager::GetSingleton()->state != GameState::GameOver)
 	{
 
 		check = true;

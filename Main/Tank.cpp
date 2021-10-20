@@ -570,7 +570,6 @@ void Tank::Update()
 {
 	if (bIsAlive == false)	return;
 	SetShape();
-	cout << HP << endl;
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckSpawnStatus)
 	{
