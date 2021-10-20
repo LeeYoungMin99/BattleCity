@@ -126,7 +126,7 @@ public:
 
 	virtual void Fire() override;
 
-	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatSpeedTank++; };
 	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
 };
@@ -138,7 +138,7 @@ public:
 
 
 	virtual void Fire() override;
-	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatRapidTank++; };
 
 	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
@@ -151,7 +151,7 @@ public:
 
 
 	virtual void Fire() override;
-	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
+	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatDefensiveTank++; };
 
 	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}

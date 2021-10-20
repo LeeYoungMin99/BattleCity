@@ -60,6 +60,8 @@ public:
 	inline void SetTargetAmmos(vector<Ammo*>* targetAmmos) { this->targetAmmos = targetAmmos; }
 	inline void SetVecEnemyTanks(vector<Tank*>* enemyTanks) { this->vecEnemyTanks = enemyTanks; }
 
+	void SetCollider();
+
 	//inline void SetIsAlive(bool alive) { this->isAlive = alive; }
 	//inline bool GetIsAlive() { return this->isAlive; }
 	Ammo();
