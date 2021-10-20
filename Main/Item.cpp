@@ -60,70 +60,65 @@ void Item::Release()
 
 void Item::UseItem()
 {
-	int stageLevel = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
-
-	switch (itemType)
-	{
-	case 0:		// 헬멧 : 일정시간 플레이어 탱크 무적
-		cout << "Helmet" << endl;
-		break;
-	case 1:		// 시계 : 일정시간 적 탱크들 모든 행동멈춤
-		cout << "Clock" << endl;
-		enemyMgr->SetClockItem(true);
-		//((Stage1Scene*)stageInfo)->UseItem(1);
-		break;
-	case 2:		// 삽 : 일정시간 넥서스 주변 흰색타일로 강화
-		cout << "Shovel" << endl;
-		itemManager->Fortification();
-		break;
-	case 3:		// 별 : 플레이어 탱크 업그레이드
-		cout << "Star" << endl;
-		tank->enforceCount++;
-		break;
-	case 4:		// 수류탄 : 이것은 수류탄이여
-		cout << "Grenade" << endl;
-		enemyMgr->BoomItem();
-		break;
-	case 5:		// 탱크 : 플레이어 목숨 +1 증가
-		cout << "Tank" << endl;
-		GameManager::GetSingleton()->player1Life++;
-		break;
-	case 6:		// 권총 : 모름띠..
-		cout << "Gun" << endl;
-		break;
-	}
+	//switch (itemType)
+	//{
+	//case 0:		// 헬멧 : 일정시간 플레이어 탱크 무적
+	//	cout << "Helmet" << endl;
+	//	break;
+	//case 1:		// 시계 : 일정시간 적 탱크들 모든 행동멈춤
+	//	cout << "Clock" << endl;
+	//	enemyMgr->SetClockItem(true);
+	//	//((Stage1Scene*)stageInfo)->UseItem(1);
+	//	break;
+	//case 2:		// 삽 : 일정시간 넥서스 주변 흰색타일로 강화
+	//	cout << "Shovel" << endl;
+	//	itemManager->Fortification();
+	//	break;
+	//case 3:		// 별 : 플레이어 탱크 업그레이드
+	//	cout << "Star" << endl;
+	//	tank->enforceCount++;
+	//	break;
+	//case 4:		// 수류탄 : 이것은 수류탄이여
+	//	cout << "Grenade" << endl;
+	//	enemyMgr->BoomItem();
+	//	break;
+	//case 5:		// 탱크 : 플레이어 목숨 +1 증가
+	//	cout << "Tank" << endl;
+	//	GameManager::GetSingleton()->player1Life++;
+	//	break;
+	//case 6:		// 권총 : 모름띠..
+	//	cout << "Gun" << endl;
+	//	break;
+	//}
 }
 
-void Item::HelmetItem()
+void HelmetItem::UseItem()
 {
-
+	GetTank()->bCheckShieldOn = true;
+	GetTank()->elapsedCount = 0;
 }
 
-void Item::ClockItem()
+void ClockItem::UseItem()
 {
-
+	GetEnemyManager()->SetClockItem(true);
 }
 
-void Item::ShovelItem()
+void ShovelItem::UseItem()
 {
-
+	GetItemManager()->Fortification();
 }
 
-void Item::StarItem()
+void StarItem::UseItem()
 {
-
+	GetTank()->enforceCount++;
 }
 
-void Item::GrenadeItem()
+void GrenadeItem::UseItem()
 {
-
+	GetEnemyManager()->BoomItem();
 }
 
-void Item::TankLifeItem()
+void TankLifeItem::UseItem()
 {
-
+	GameManager::GetSingleton()->player1Life++;
 }
-
-
-
-

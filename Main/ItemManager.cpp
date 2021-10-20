@@ -3,16 +3,25 @@
 #include "Item.h"
 #include "Tank.h"
 #include "EnemyManager.h"
-
+#include "ItemFactorial.h"
 
 HRESULT ItemManager::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
 {
 	//itemCount = 10;
 	//vecItems.reserve(itemCount);
 
-	Item* tempItem = new Item;
+	itemFactorial[0]= new HelmetItemFactorial;
+	itemFactorial[1] = new ClockItemFactorial;
+	itemFactorial[2] = new ShovelItemFactorial;
+	itemFactorial[3] = new StarItemFactorial;
+	itemFactorial[4] = new GrenadeItemFactorial;
+	itemFactorial[5] = new TankLifeItemFactorial;
+
+
+
+	Item* tempItem = itemFactorial[type]->CreateTank();
 	tempItem->Init(type, tile, tank, enemyMgr, tileInfo, this);
-	
+
 	vecItems.push_back(tempItem);
 
 	fortificationCount = 0;

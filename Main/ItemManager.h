@@ -11,6 +11,7 @@ class Image;
 class Item;
 class Tank;
 class EnemyManager;
+class ItemFactorial;
 class ItemManager : public GameEntity
 {
 public:
@@ -25,6 +26,7 @@ public:
 
 	int fortificationCount;
 	bool bIsFortification;
+	ItemFactorial* itemFactorial[6];
 
 	TILE_INFO* tileInfo;
 	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);

@@ -26,15 +26,42 @@ public:
 	void Update();
 	void Render(HDC hdc);
 	void Release();
-	virtual void UseItem();
-	
-	void HelmetItem();
-	void ClockItem();
-	void ShovelItem();
-	void StarItem();
-	void GrenadeItem();
-	void TankLifeItem();
+	virtual void UseItem() = 0;
 
+	inline Tank* GetTank() { return tank; }
+	inline EnemyManager* GetEnemyManager() { return enemyMgr; };
 	inline int GetType() { return this->itemType; }
+	inline ItemManager* GetItemManager() { return itemManager; }
 };
 
+class HelmetItem : public Item
+{
+public:
+	virtual void UseItem() override;
+};
+
+class ClockItem : public Item
+{
+public:
+	virtual void UseItem() override;
+};
+class ShovelItem : public Item
+{
+public:
+	virtual void UseItem() override;
+};
+class StarItem : public Item
+{
+public:
+	virtual void UseItem() override;
+};
+class GrenadeItem : public Item
+{
+public:
+	virtual void UseItem() override;
+};
+class TankLifeItem : public Item
+{
+public:
+	virtual void UseItem() override;
+};

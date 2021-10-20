@@ -3,7 +3,8 @@
 void GameManager::Init()
 {
     player1Score = 0;
-    hightScore = 0;
+    hightScore = 100;
+    ScoreLoad();
 
     remainSpawnMonster=0;
     remainMonster=0;

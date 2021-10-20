@@ -831,11 +831,11 @@ void Tank::CheckItem()
 			(*itItemList)->UseItem();
 			//int itemType = (*itItemList)->GetType();
 			//int stageLevel = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
-			if ((*itItemList)->GetType() == 0)	//헬멧
-			{
-				bCheckShieldOn = true;
-				elapsedCount = 0;
-			}
+			//if ((*itItemList)->GetType() == 0)	//헬멧
+			//{
+			//	bCheckShieldOn = true;
+			//	elapsedCount = 0;
+			//}
 
 			itItemList = itemManager->vecItems.erase(itItemList);
 			break;

@@ -377,8 +377,8 @@ void Stage3Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = 3;//rand() % 7;
-			//itemManager->Init(itemtype, randtile);
+			int itemtype = rand() % 6;
+			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
 		}

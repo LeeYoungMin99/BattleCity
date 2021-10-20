@@ -170,6 +170,7 @@ void EnemyManager::BoomItem()
 	for (itEnemys = vecEnemys.begin();
 		itEnemys != vecEnemys.end(); itEnemys++)
 	{
+		GameManager::GetSingleton()->remainMonster--;
 		(*itEnemys)->HP -= 5;
 	}
 }

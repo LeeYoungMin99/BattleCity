@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "GameEntity.h"
 
-#define elapsedTest 5		//점수 반영 속도 (적으면 빠름)
+#define elapsedTest 20		//점수 반영 속도 (적으면 빠름)
 
 class Image;
 class ScoreScene : public GameEntity
