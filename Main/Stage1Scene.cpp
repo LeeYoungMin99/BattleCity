@@ -300,7 +300,7 @@ void Stage1Scene::Update()
 	}
 
 
-
+	itemManager->Update();
 	playerTankAmmoManager->Update();
 	enemyTankAmmoManager->Update();
 
