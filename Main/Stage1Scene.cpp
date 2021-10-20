@@ -182,6 +182,8 @@ void Stage1Scene::Update()
 	}
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
+		itemManager->Update();
+
 		tank->Update();
 		playerTankAmmoManager->Update();
 		enemyTankAmmoManager->Update();
@@ -412,7 +414,7 @@ void Stage1Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = 1;//rand() % 7;
+			int itemtype = 2;//rand() % 7;
 			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
