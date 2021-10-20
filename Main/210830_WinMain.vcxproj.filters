@@ -126,6 +126,9 @@
     <ClCompile Include="Item.cpp">
       <Filter>MainGame\Item</Filter>
     </ClCompile>
+    <ClCompile Include="ItemFactorial.cpp">
+      <Filter>MainGame\Item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -216,6 +219,9 @@
       <Filter>MainGame\Item</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
+      <Filter>MainGame\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemFactorial.h">
       <Filter>MainGame\Item</Filter>
     </ClInclude>
   </ItemGroup>

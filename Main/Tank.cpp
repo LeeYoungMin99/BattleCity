@@ -903,18 +903,7 @@ void Tank::CheckItem()
 			//if ((*itItemList)->GetType() == 0)	//헬멧
 			//{
 			//	bCheckShieldOn = true;
-			//}
-			//switch (stageLevel)
-			//{
-			//case 1:
-			//	((Stage1Scene*)stageInfo)->UseItem((*itItemList)->GetType());
-			//	break;
-			//case 2:
-			//	((Stage2Scene*)stageInfo)->UseItem((*itItemList)->GetType());
-			//	break;
-			//case 3:
-			//	((Stage3Scene*)stageInfo)->UseItem((*itItemList)->GetType());
-			//	break;
+			//	elapsedCount = 0;
 			//}
 
 			itItemList = itemManager->vecItems.erase(itItemList);

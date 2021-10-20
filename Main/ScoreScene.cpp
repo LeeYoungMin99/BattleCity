@@ -64,7 +64,6 @@ void ScoreScene::Update()
 {
 	if (!bSNE)
 	{
-		GameManager::GetSingleton()->ScoreLoad();
 		hightScore = GameManager::GetSingleton()->GetHightScore();		
 		
 		bSNE = true; 
@@ -75,7 +74,9 @@ void ScoreScene::Update()
 		ScoreCalculate();
 
 	if (hightScore < player1Score)
+	{
 		hightScore = player1Score;
+	}
 	
 	if (bTotalScore)
 	{
@@ -94,6 +95,11 @@ void ScoreScene::Update()
 
 				string nextStage = "Stage";
 				nextStage += to_string( (GameManager::GetSingleton()->stageLevel-1)%3+1 );
+
+				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
+				{
+					GameManager::GetSingleton()->ScoreSave();
+				}
 				SceneManager::GetSingleton()->ChangeScene(nextStage);
 				return;
 			}
@@ -103,7 +109,10 @@ void ScoreScene::Update()
 
 			if (gameOver)
 			{
-				GameManager::GetSingleton()->ScoreSave();
+				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
+				{
+					GameManager::GetSingleton()->ScoreSave();
+				}
 				player1Score = 0;	
 				GameManager::GetSingleton()->SetScore(player1Score);	//게임이 끝나면 점수초기화
 				SceneManager::GetSingleton()->ChangeScene("GameOverScene");
@@ -121,7 +130,7 @@ void ScoreScene::Render(HDC hdc)
 	if (backGround)
 		backGround->Render(hdc);	//회색화면 백그라운드
 
-	if (hightScore <= 200)
+	if (hightScore < 1)
 	{
 		if (noneHiScore)
 			noneHiScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7);				//하이스코어 텍스트 (디폴트)
@@ -170,18 +179,17 @@ void ScoreScene::Render(HDC hdc)
 		{
 			playerScore->Render(hdc, WIN_SIZE_X / 4 + 20, WIN_SIZE_Y / 4 + 15, 0, 0);
 			playerScore->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 4 + 15, (player1Score % 10) % 5, (player1Score % 10) / 5);
-			playerScore->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 4 + 15, ((player1Score % 100) / 10) % 5, ((player1Score % 100) / 10) / 5);
+			if(player1Score >=10)
+				playerScore->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 4 + 15, ((player1Score % 100) / 10) % 5, ((player1Score % 100) / 10) / 5);
 			if (player1Score >= 100)
-			{
 				playerScore->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 4 + 15, (player1Score / 100) % 5, (player1Score / 100) / 5);
-			}
 		}
 	}
 
 	for (int i = 0; i < 4; i++)		// 에너미 탱크 종류별로 랜더
 	{
 		if (enemyTank)
-			enemyTank->Render(hdc, WIN_SIZE_X / 2 + 10, (WIN_SIZE_Y / 3 + 20) + (i * 45), 0, i);
+			enemyTank->Render(hdc, WIN_SIZE_X / 2 + 30, (WIN_SIZE_Y / 3 + 35) + (i * 45), 0, i, 0.5f);
 	}
 
 	for (int i = 0; i < 4; i++)		// 화살표 랜더

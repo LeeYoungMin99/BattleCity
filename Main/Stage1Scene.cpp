@@ -152,8 +152,8 @@ HRESULT Stage1Scene::Init()
 	}
 
 
-	GameManager::GetSingleton()->remainSpawnMonster = 4;
-	GameManager::GetSingleton()->remainMonster = 4;
+	GameManager::GetSingleton()->remainSpawnMonster = 2;
+	GameManager::GetSingleton()->remainMonster = 2;
 
 
 	return S_OK;
@@ -423,7 +423,7 @@ void Stage1Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = 2;//rand() % 7;
+			int itemtype = 4;//rand()%6;
 			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
