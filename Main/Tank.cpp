@@ -539,7 +539,7 @@ void Tank::Update()
 			Move();
 			if (currFireNumberOfAmmo == 0)
 			{
-				//Fire();
+				Fire();
 			}
 		}
 	}

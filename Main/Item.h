@@ -5,6 +5,7 @@
 class Image;
 class Tank;
 class EnemyManager;
+class ItemManager;
 class Item : public GameObject
 {
 private:
@@ -15,9 +16,12 @@ private:
 	GameEntity* stageInfo = nullptr;
 	Tank* tank;
 	EnemyManager* enemyMgr;
+
+	ItemManager* itemManager;
+	
 public:
 	RECT rc;
-	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
+	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo, ItemManager* itemManager);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
