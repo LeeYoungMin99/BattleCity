@@ -114,8 +114,8 @@ HRESULT Stage3Scene::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster =2;
+	GameManager::GetSingleton()->remainSpawnMonster = 20;
+	GameManager::GetSingleton()->remainMonster =20;
 
 	stateElapsedCount = 0;
 
