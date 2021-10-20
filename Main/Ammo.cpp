@@ -19,7 +19,7 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr, Tan
 	shape.right = 0;
 	shape.bottom = 0;
 
-	moveSpeed = 200.0f;		// ÃÊ´ç 15ÇÈ¼¿ ÀÌµ¿
+	moveSpeed = 200.0f;		// ì´ˆë‹¹ 15í”½ì…€ ì´ë™
 	moveAngle = 0.0f;
 
 	isFire = false;
@@ -65,7 +65,7 @@ void Ammo::Update()
 	{
 		if (!bRenderBoomImg)
 		{
-			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// ÇÁ·¹ÀÓ´ç ÀÌµ¿°Å¸® -> ½Ã°£ ´ç ÀÌµ¿°Å¸®
+			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// í”„ë ˆìž„ë‹¹ ì´ë™ê±°ë¦¬ -> ì‹œê°„ ë‹¹ ì´ë™ê±°ë¦¬
 			pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 		}
 
@@ -74,14 +74,14 @@ void Ammo::Update()
 		int posIdX = (pos.x - STAGE_SIZE_X) / 16;
 		int posIdY = (pos.y - STAGE_SIZE_Y) / 16;
 
-		// È­¸éÀ» ¹þ¾î³µ´ÂÁö È®ÀÎ
+		// í™”ë©´ì„ ë²—ì–´ë‚¬ëŠ”ì§€ í™•ì¸
 		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
 			collision.top > STAGE_SIZE_Y + 416 || collision.bottom < STAGE_SIZE_Y)
 		{
 			bRenderBoomImg = true;
 		}
 
-		// Å¸°Ù°úÀÇ Ãæµ¹È®ÀÎ
+		// íƒ€ê²Ÿê³¼ì˜ ì¶©ëŒí™•ì¸
 		if (CheckCollision(posIdX, posIdY))
 		{
 			bRenderBoomImg = true;
@@ -109,6 +109,7 @@ void Ammo::Update()
 					boomImgCurrFrame = 0;
 					bRenderBoomImg = false;
 					isFire = false;
+					hitTankList.clear();
 				}
 			}
 		}
@@ -154,7 +155,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 
 				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
@@ -178,7 +179,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
 				{
@@ -203,7 +204,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 		{
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 				if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
 				{
@@ -223,7 +224,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 				if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
 				{
@@ -252,7 +253,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 
 				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
@@ -275,7 +276,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
@@ -300,9 +301,9 @@ bool Ammo::CheckCollision(int idX, int idY)
 		{
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				if (bulletDir == BulletDir::Left && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY - 1) + idX].collider.right -= 16;
@@ -321,7 +322,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// º® ¾ø¾Ö±â
+				// ë²½ ì—†ì• ê¸°
 				check = true;
 				if (bulletDir == BulletDir::Left && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
@@ -342,7 +343,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 		}
 	}
-	// ³Ø¼­½º Ãæµ¹ Ã³¸®
+	// ë„¥ì„œìŠ¤ ì¶©ëŒ ì²˜ë¦¬
 	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 	{
 
@@ -360,25 +361,30 @@ bool Ammo::CheckCollision(int idX, int idY)
 				}
 			}
 			GameManager::GetSingleton()->state = GameState::DestoryNexus;
-			//Á¶°Ç Ã³¸®
+			//ì¡°ê±´ ì²˜ë¦¬
 		}
 	}
 
 
 	if (playerTank == nullptr)
-	{	// ÇÃ·¹ÀÌ¾î ÅÊÅ©¸é
+	{	// í”Œë ˆì´ì–´ íƒ±í¬ë©´
 		for (itEnemyTanks = vecEnemyTanks->begin();
 			itEnemyTanks != vecEnemyTanks->end(); itEnemyTanks++)
-		{	// Enemy°¡ Spawn»óÅÂ°¡ ¾Æ´Ï¶ó¸é Ãæµ¹ Ã³¸®
+		{	// Enemyê°€ Spawnìƒíƒœê°€ ì•„ë‹ˆë¼ë©´ ì¶©ëŒ ì²˜ë¦¬
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
-				cout << (*itEnemyTanks)->HP << endl;
-				(*itEnemyTanks)->HP--;
-				if ((*itEnemyTanks)->HP <= 0)
+				if (!CheckHitTank((*itEnemyTanks)))
+				{
+					hitTankList.push_back((*itEnemyTanks));
+					(*itEnemyTanks)->HP--;
+				}
+				if ((*itEnemyTanks)->HP == 0)
+
 				{
 					(*itEnemyTanks)->increaseScore();
 					GameManager::GetSingleton()->remainMonster--;
 				}
+
 
 				pos.x = -100;
 				pos.y = -100;
@@ -392,7 +398,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 	}
 
 	if (playerTank != nullptr && !(playerTank->bCheckSpawnStatus))
-	{	// Player¸¦ Å¸°ÙÀ¸·Î Àâ°íÀÖ°í Player°¡ Spawn»óÅÂ°¡ ¾Æ´Ï¶ó¸é Ãæµ¹Ã³¸® 
+	{	// Playerë¥¼ íƒ€ê²Ÿìœ¼ë¡œ ìž¡ê³ ìžˆê³  Playerê°€ Spawnìƒíƒœê°€ ì•„ë‹ˆë¼ë©´ ì¶©ëŒì²˜ë¦¬ 
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
 			if (playerTank->bCheckShieldOn)
@@ -481,6 +487,20 @@ bool Ammo::CheckCollision(int idX, int idY)
 	}
 
 	return false;
+}
+
+bool Ammo::CheckHitTank(Tank* enemyTank)
+{
+	{
+		for (const auto& enemy : hitTankList)
+		{
+			if (enemy == enemyTank)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 void Ammo::SetMoveDir(string dir)

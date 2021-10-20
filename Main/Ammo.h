@@ -28,6 +28,8 @@ private:
 
 	RECT collision = {}; // 충돌 콜리션
 
+	vector<Tank*> hitTankList = {};
+
 	TILE_INFO* tile = nullptr;
 	Tank* ownerTank = nullptr;
 	Tank* playerTank = nullptr;
@@ -43,6 +45,7 @@ public:
 	void Release();
 
 	bool CheckCollision(int idX, int idY);
+	bool CheckHitTank(Tank* enemyTank);
 
 	void SetMoveDir(string dir);
 

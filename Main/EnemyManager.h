@@ -3,6 +3,19 @@
 #include "GameEntity.h"
 #include "BoomImage.h"
 
+typedef struct scoreInfo
+{
+	POINTFLOAT imgPos = {};
+	bool bRenderScore = false;
+	Image* scoreImg = nullptr;
+	int elapsedCount = 0;
+	int maxElapsedCount = 50;
+	int scoreFrame = 0;
+	int tankHP = -1;
+}SCORE_INFO;
+
+#define NUMBER_OF_IMAGES 6
+
 class Image;
 class Tank;
 class ItemManager;
@@ -13,7 +26,10 @@ private:
 	int enemyMaxCount = 0;
 	int elapsedcount = 0;
 
-	BOOM_IMAGE_INFO boomImg[3];
+	int tlqkf = 0;
+
+	BOOM_IMAGE_INFO boomImg[NUMBER_OF_IMAGES];
+	SCORE_INFO scoreImg[NUMBER_OF_IMAGES];
 
 	TILE_INFO* tileInfo = nullptr;
 
