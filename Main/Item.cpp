@@ -57,18 +57,6 @@ void Item::Release()
 void Item::UseItem()
 {
 	int stageLevel = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
-	/*switch (stageLevel)
-	{
-	case 1:
-		((Stage1Scene*)stageInfo)->UseItem(itemType);
-		break;
-	case 2:
-		((Stage2Scene*)stageInfo)->UseItem(itemType);
-		break;
-	case 3:
-		((Stage3Scene*)stageInfo)->UseItem(itemType);
-		break;
-	}*/
 
 	switch (itemType)
 	{
@@ -85,17 +73,50 @@ void Item::UseItem()
 		break;
 	case 3:		// 별 : 플레이어 탱크 업그레이드
 		cout << "Star" << endl;
+		tank->enforceCount++;
 		break;
 	case 4:		// 수류탄 : 이것은 수류탄이여
 		cout << "Grenade" << endl;
+		enemyMgr->BoomItem();
 		break;
 	case 5:		// 탱크 : 플레이어 목숨 +1 증가
 		cout << "Tank" << endl;
+		GameManager::GetSingleton()->player1Life++;
 		break;
 	case 6:		// 권총 : 모름띠..
 		cout << "Gun" << endl;
 		break;
 	}
+}
+
+void Item::HelmetItem()
+{
+
+}
+
+void Item::ClockItem()
+{
+
+}
+
+void Item::ShovelItem()
+{
+
+}
+
+void Item::StarItem()
+{
+
+}
+
+void Item::GrenadeItem()
+{
+
+}
+
+void Item::TankLifeItem()
+{
+
 }
 
 

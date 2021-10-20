@@ -36,6 +36,7 @@ public:
 
 	void AddEnemy(Tank* tank, POINTFLOAT pos);
 	inline void SetClockItem(bool clockItem) { this->clockItem = clockItem; }
+	void BoomItem();
 
 	inline vector<Tank*>* GetAddresVecEnemys() { return &vecEnemys; }
 };

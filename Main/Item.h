@@ -11,6 +11,7 @@ private:
 	Image* itemImage[7];
 	int itemType = 0;
 	int itemTile = 0;
+	int elapsedcount;
 
 	GameEntity* stageInfo = nullptr;
 	Tank* tank;
@@ -21,8 +22,15 @@ public:
 	void Update();
 	void Render(HDC hdc);
 	void Release();
-	void UseItem();
+	virtual void UseItem();
 	
+	void HelmetItem();
+	void ClockItem();
+	void ShovelItem();
+	void StarItem();
+	void GrenadeItem();
+	void TankLifeItem();
+
 	inline int GetType() { return this->itemType; }
 };
 
