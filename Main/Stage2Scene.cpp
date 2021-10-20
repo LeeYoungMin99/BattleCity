@@ -135,9 +135,6 @@ void Stage2Scene::Update()
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
-		playerTankAmmoManager->Update();
-		enemyTankAmmoManager->Update();
-		itemManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -267,6 +264,8 @@ void Stage2Scene::Update()
 	RotateGameOverScene();
 	}
 
+	playerTankAmmoManager->Update();
+	enemyTankAmmoManager->Update();
 	enemyMgr->Update();
 }
 

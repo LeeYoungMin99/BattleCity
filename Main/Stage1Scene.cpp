@@ -185,8 +185,6 @@ void Stage1Scene::Update()
 		itemManager->Update();
 
 		tank->Update();
-		playerTankAmmoManager->Update();
-		enemyTankAmmoManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -303,6 +301,8 @@ void Stage1Scene::Update()
 
 
 
+	playerTankAmmoManager->Update();
+	enemyTankAmmoManager->Update();
 
 	enemyMgr->Update();
 }

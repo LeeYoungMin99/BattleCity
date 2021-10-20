@@ -109,8 +109,13 @@ void ScoreScene::Update()
 
 			if (gameOver)
 			{
+				GameManager::GetSingleton()->defeatDefensiveTank = 0;
+				GameManager::GetSingleton()->defeatNormalTank = 0;
+				GameManager::GetSingleton()->defeatRapidTank = 0;
+				GameManager::GetSingleton()->defeatSpeedTank = 0;
 				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
 				{
+
 					GameManager::GetSingleton()->ScoreSave();
 				}
 				player1Score = 0;	
@@ -119,6 +124,10 @@ void ScoreScene::Update()
 			}
 			else
 			{
+				GameManager::GetSingleton()->defeatDefensiveTank = 0;
+				GameManager::GetSingleton()->defeatNormalTank = 0;
+				GameManager::GetSingleton()->defeatRapidTank = 0;
+				GameManager::GetSingleton()->defeatSpeedTank = 0;
 				SceneManager::GetSingleton()->ChangeScene("TitleScene");  //다음스테이지씬.
 			}
 		}
