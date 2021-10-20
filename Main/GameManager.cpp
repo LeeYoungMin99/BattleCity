@@ -14,6 +14,7 @@ void GameManager::Init()
     defeatRapidTank = 0;
     defeatDefensiveTank = 0;
     player1Life = 2;
+    playerEnforceCount = 0;
 
     state = GameState::Playing;
 
@@ -83,6 +84,7 @@ void GameManager::GameInit()
     defeatRapidTank = 0;
     defeatDefensiveTank = 0;
     player1Life = 2;
+    playerEnforceCount = 0;
 
     state = GameState::Playing;
 

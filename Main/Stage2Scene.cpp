@@ -244,6 +244,7 @@ void Stage2Scene::Update()
 				elapsedCount = 0;
 				GameManager::GetSingleton()->state = GameState::Done;
 				GameManager::GetSingleton()->spawnCount = 0;
+				GameManager::GetSingleton()->playerEnforceCount = tank->enforceCount;
 				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
 				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}

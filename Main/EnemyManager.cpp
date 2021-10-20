@@ -187,8 +187,10 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 	tank->SetPos(pos);
 
 	tank->Init(ammoManager, targetAmmoManager, tileInfo, this, playerTank);
-	elapsedcount++;
-	if (elapsedcount >= 0/*RANDOM_2(0, 16)*/)
+
+	int a=0, b= RANDOM_2(0, 3);
+	cout << a << " " << b << endl;
+	if (a == b)
 	{
 		tank->bItem = true;
 	}
