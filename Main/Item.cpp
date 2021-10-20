@@ -5,8 +5,9 @@
 #include "Stage3Scene.h"
 #include "Tank.h"
 #include "EnemyManager.h"
+#include "ItemManager.h"
 
-HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
+HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo, ItemManager* itemManager)
 {
 	ImageManager::GetSingleton()->AddImage("Image/Item/Item1.bmp", 32, 32, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Item/Item2.bmp", 32, 32, true, RGB(255, 0, 255));
@@ -34,7 +35,10 @@ HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_
 	rc.right = ((itemTile % 26) * 16) + 32 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;
 	rc.bottom = ((itemTile / 26) * 16) + 32 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
 
+	this->itemManager = itemManager;
+
 	return S_OK;
+
 }
 
 void Item::Update()
@@ -82,6 +86,7 @@ void Item::UseItem()
 		break;
 	case 2:		// 삽 : 일정시간 넥서스 주변 흰색타일로 강화
 		cout << "Shovel" << endl;
+		itemManager->Fortification();
 		break;
 	case 3:		// 별 : 플레이어 탱크 업그레이드
 		cout << "Star" << endl;
@@ -97,5 +102,7 @@ void Item::UseItem()
 		break;
 	}
 }
+
+
 
 

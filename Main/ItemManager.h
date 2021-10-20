@@ -14,7 +14,6 @@ class EnemyManager;
 class ItemManager : public GameEntity
 {
 public:
-	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X];
 
 	vector<Item*> vecItems;
 	vector<Item*>::iterator itItems;
@@ -24,9 +23,16 @@ public:
 	Item* item;
 	int itemCount = 0;
 
+	int fortificationCount;
+	bool bIsFortification;
+
+	TILE_INFO* tileInfo;
 	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
+
+	void Fortification();
+	void DestoryFortification();
 };
 
