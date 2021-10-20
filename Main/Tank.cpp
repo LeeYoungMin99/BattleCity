@@ -9,39 +9,26 @@
 #include "Stage3Scene.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
-
+HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Shield.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
-	shieldImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Shield.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (shieldImg == nullptr) { cout << "ShieldImg nullptr" << endl;  return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 
 	pos.x = 200;
 	pos.y = 430;
-	HP = 1;
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
 
 	this->tileInfo = tile;
-	this->enemyMgr = enemyMgr;
 	this->itemManager = item;
 	this->ammoManager = ammoManager;
 	this->targetAmmoManager = targetAmmoManager;
-	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
+	this->enemyTanks = enemyTanks;
 
 	currFireNumberOfAmmo = 0;
 	this->stageInfo = stageInfo;
-
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -53,7 +40,7 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 	bCheckSpawnStatus = true;
 	bCheckShieldOn = false;
 
-	BarrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
+	barrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
 
 	return S_OK;
 }
@@ -109,7 +96,31 @@ void PlayerTank::Update()
 	SetShape();
 	if (!bCheckSpawnStatus)
 	{
-		Move();
+		if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Left;
+			Move();
+		}
+		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Right;
+			Move();
+		}
+		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Up;
+			Move();
+		}
+		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Down;
+			Move();
+		}
+
 		Fire();
 	}
 }
@@ -126,194 +137,17 @@ void PlayerTank::Render(HDC hdc)
 	}
 	else
 	{
-		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, moveDir + checkMoveCount, enforceCount, 1.0f);
+		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, (int)moveDir + checkMoveCount, enforceCount, 1.0f);
 	}
 
-
-	// 쉴드 렌더 
-	// 타이머가 3초가 되면 쉴드 렌더 X
 	if (bCheckShieldOn)
 	{
 		shieldImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, bShieldImageChanged, 0, 1.0f);
 	}
-
 }
 
 void PlayerTank::Release()
 {
-}
-
-void PlayerTank::Move()
-{
-	if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
-	{
-		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
-		{
-			int tempPos = 0;
-			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.y % 16;
-				pos.y -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.y % 16;
-				pos.y += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y -= tempPos;
-					SetShape();
-				}
-			}
-		}
-		moveDir = MoveDir::Left;
-
-		pos.x -= moveSpeed;
-		SetShape();
-		if (IsCollided() || shape.left < STAGE_SIZE_X)
-		{
-			pos.x += moveSpeed;
-			SetShape();
-		}
-		CheckItem();
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
-	{
-		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
-		{
-			int tempPos = 0;
-			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.y % 16;
-				pos.y -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.y % 16;
-				pos.y += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y -= tempPos;
-					SetShape();
-				}
-
-			}
-		}
-		moveDir = MoveDir::Right;
-
-		pos.x += moveSpeed;
-		SetShape();
-
-		if (IsCollided() || shape.right > 416 + STAGE_SIZE_X)
-		{
-			pos.x -= moveSpeed;
-			SetShape();
-		}
-		CheckItem();
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
-	{
-		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
-		{
-			int tempPos = 0;
-			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.x % 16;
-				pos.x -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.x % 16;
-				pos.x += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x -= tempPos;
-					SetShape();
-				}
-			}
-		}
-		moveDir = MoveDir::Up;
-
-		pos.y -= moveSpeed;
-		SetShape();
-		if (IsCollided() || shape.top < STAGE_SIZE_Y)
-		{
-			pos.y += moveSpeed;
-			SetShape();
-		}
-		CheckItem();
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
-	else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
-	{
-		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
-		{
-			int tempPos = 0;
-			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.x % 16;
-				pos.x -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.x % 16;
-				pos.x += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x -= tempPos;
-					SetShape();
-				}
-			}
-		}
-		moveDir = MoveDir::Down;
-
-		pos.y += moveSpeed;
-		SetShape();
-		if (IsCollided() || shape.bottom > 416 + STAGE_SIZE_Y)
-		{
-			pos.y -= moveSpeed;
-			SetShape();
-		}
-		CheckItem();
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-	}
 }
 
 void PlayerTank::Fire()
@@ -339,10 +173,10 @@ void PlayerTank::Fire()
 		}
 	}
 }
+
 PlayerTank::PlayerTank()
 {
-	pos.x = -100;
-	pos.y = -100;
+	bIsAlive = false;
 	img = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
 	shieldImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Shield.bmp");
 	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
@@ -350,31 +184,21 @@ PlayerTank::PlayerTank()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
+	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
-	HP = 1;
 	type = TankType::Normal;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
-	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
-	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
+	this->enemyTanks = enemyTanks;
 
 	SetShape();
 	if (IsCollided())
@@ -389,50 +213,30 @@ HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoM
 	return S_OK;
 }
 
-void NormalEnemyTank::Fire()
+NormalEnemyTank::NormalEnemyTank()
 {
-	testelapsed++;
-
-	if (testelapsed >= delay_2)
-	{
-		testelapsed = 0;
-		delay_2 = RANDOM_2(10, 15);
-
-		currFireNumberOfAmmo++;
-		ammoManager->Fire(this);
-
-		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
-	}
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
 }
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-
-HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
+	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
 	moveSpeed = 4.0f;
-	HP = 1;
 	type = TankType::Speed;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
-	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
-	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
+	this->enemyTanks = enemyTanks;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -443,50 +247,31 @@ HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 
 	return S_OK;
 }
-void SpeedEnemyTank::Fire()
+
+SpeedEnemyTank::SpeedEnemyTank()
 {
-	testelapsed++;
-
-	if (testelapsed >= delay_2)
-	{
-		testelapsed = 0;
-		delay_2 = RANDOM_2(10, 15);
-
-		currFireNumberOfAmmo++;
-		ammoManager->Fire(this);
-
-		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
-	}
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
 }
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
-
+HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
+	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
-	HP = 1;
 	type = TankType::Rapid;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
-	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
-	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
+	this->enemyTanks = enemyTanks;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -497,38 +282,21 @@ HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 
 	return S_OK;
 }
-void RapidEnemyTank::Fire()
+
+RapidEnemyTank::RapidEnemyTank()
 {
-	testelapsed++;
-
-	if (testelapsed >= delay_2)
-	{
-		testelapsed = 0;
-		delay_2 = RANDOM_2(10, 15);
-
-		currFireNumberOfAmmo++;
-		ammoManager->Fire(this);
-
-		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
-	}
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
 }
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, EnemyManager* enemyMgr, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
-
+HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy_Item.bmp", 128 /*128*/, 128 /*128*/, 8, 8, true, RGB(255, 0, 255));
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
+	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
 
 	bodySize = 64;
 	moveSpeed = 2.0f;
@@ -537,10 +305,9 @@ HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAm
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
-	this->enemyMgr = enemyMgr;
 	this->ammoManager = ammoManager;
 	this->stageInfo = stageInfo;
-	this->enemyTanks = this->enemyMgr->GetAddresVecEnemys();
+	this->enemyTanks = enemyTanks;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -551,20 +318,12 @@ HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAm
 
 	return S_OK;
 }
-void DefensiveEnemyTank::Fire()
+
+DefensiveEnemyTank::DefensiveEnemyTank()
 {
-	testelapsed++;
-
-	if (testelapsed >= delay_2)
-	{
-		testelapsed = 0;
-		delay_2 = RANDOM_2(10, 15);
-
-		currFireNumberOfAmmo++;
-		ammoManager->Fire(this);
-
-		//moveDir = (MoveDir)(RANDOM(0, 3) * 2);
-	}
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
 }
 #pragma endregion
 
@@ -599,10 +358,18 @@ void Tank::Update()
 
 	if (!bCheckSpawnStatus)
 	{
-
 		if (!clockItem)
 		{
+			if (elapsedCount >= delay)
+			{
+				elapsedCount = 0;
+				delay = RANDOM(0, 3);
+				previousDir = moveDir;
+				moveDir = (MoveDir)(RANDOM(0, 3) * 2);
+			}
+
 			Move();
+
 			if (currFireNumberOfAmmo == 0)
 			{
 				Fire();
@@ -623,7 +390,6 @@ void Tank::Update()
 		else
 			checkMoveCount_2 = 0;
 	}
-
 }
 
 void Tank::Render(HDC hdc)
@@ -637,13 +403,13 @@ void Tank::Render(HDC hdc)
 	}
 	else
 	{
-		if (bItem)
+		if (bHaveItem)
 		{
-			itemTank->Render(hdc, pos.x - bodySize * 0.33f, pos.y - bodySize * 0.33f, moveDir + checkMoveCount, ((int)type * 2) + checkMoveCount_2, 2.0f);
+			itemTank->Render(hdc, pos.x - bodySize * 0.33f, pos.y - bodySize * 0.33f, (int)moveDir + checkMoveCount, (((int)type - 1) * 2) + checkMoveCount_2, 2.0f);
 		}
 		else
 		{
-			img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, ((int)type) + (HP/2), 0.5f);
+			img->Render(hdc, pos.x, pos.y, (int)moveDir + checkMoveCount, ((int)type - 1) + (HP / 2), 0.5f);
 		}
 	}
 }
@@ -654,83 +420,23 @@ void Tank::Release()
 
 void Tank::Move()
 {
-	if (elapsedCount >= delay)
-	{
-		elapsedCount = 0;
-		delay = RANDOM(0, 3);
-		moveDir = (MoveDir)(RANDOM(0, 3) * 2);
-	}
-
 	switch (moveDir)
 	{
 	case MoveDir::Left:
-		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
-		{
-			int tempPos = 0;
-			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.y % 16;
-				pos.y -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.y % 16;
-				pos.y += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y -= tempPos;
-					SetShape();
-				}
-			}
-		}
+		CorrectionPosY();
 
 		pos.x -= moveSpeed;
 		SetShape();
+
 		if (IsCollided() || shape.left < STAGE_SIZE_X)
 		{
 			pos.x += moveSpeed;
 			SetShape();
 		}
 
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
-
 		break;
 	case MoveDir::Right:
-		if (moveDir == MoveDir::Up || moveDir == MoveDir::Down)
-		{
-			int tempPos = 0;
-			if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.y % 16;
-				pos.y -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.y % 16;
-				pos.y += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.y -= tempPos;
-					SetShape();
-				}
-			}
-		}
-		moveDir = MoveDir::Right;
+		CorrectionPosY();
 
 		pos.x += moveSpeed;
 		SetShape();
@@ -740,81 +446,25 @@ void Tank::Move()
 			pos.x -= moveSpeed;
 			SetShape();
 		}
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
 		break;
 	case MoveDir::Up:
-		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
-		{
-			int tempPos = 0;
-			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.x % 16;
-				pos.x -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.x % 16;
-				pos.x += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x -= tempPos;
-					SetShape();
-				}
-			}
-		}
-		moveDir = MoveDir::Up;
+		CorrectionPosX();
 
 		pos.y -= moveSpeed;
 		SetShape();
+
 		if (IsCollided() || shape.top < STAGE_SIZE_Y)
 		{
 			pos.y += moveSpeed;
 			SetShape();
 		}
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
 		break;
 	case MoveDir::Down:
-		if (moveDir == MoveDir::Left || moveDir == MoveDir::Right)
-		{
-			int tempPos = 0;
-			if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
-			{
-				tempPos = (int)pos.x % 16;
-				pos.x -= tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x += tempPos;
-					SetShape();
-				}
-			}
-			else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
-			{
-				tempPos = 16 - (int)pos.x % 16;
-				pos.x += tempPos;
-				SetShape();
-				if (IsCollided())
-				{
-					pos.x -= tempPos;
-					SetShape();
-				}
-			}
-		}
-		moveDir = MoveDir::Down;
+		CorrectionPosX();
 
 		pos.y += moveSpeed;
 		SetShape();
+
 		if (IsCollided() || shape.bottom > 416 + STAGE_SIZE_Y)
 		{
 			if (!bCheckSpawnCollided)
@@ -823,18 +473,93 @@ void Tank::Move()
 				SetShape();
 			}
 		}
-
-		if (checkMoveCount > 0) { checkMoveCount = 0; }
-		else { checkMoveCount = 1; }
 		break;
 	default:
 		break;
 	}
+
+	if (type == TankType::Player)
+	{
+		CheckItem();
+	}
+
+	if (checkMoveCount > 0) { checkMoveCount = 0; }
+	else { checkMoveCount = 1; }
 }
 
 void Tank::Fire()
 {
+	testelapsed++;
 
+	if (testelapsed >= delay_2)
+	{
+		testelapsed = 0;
+		delay_2 = RANDOM_2(10, 15);
+
+		currFireNumberOfAmmo++;
+		ammoManager->Fire(this);
+	}
+}
+
+void Tank::CorrectionPosX()
+{
+	if (previousDir == MoveDir::Left || previousDir == MoveDir::Right)
+	{
+		int tempPos = 0;
+		if ((int)pos.x % 16 <= CORRECTION_POS_MIN)
+		{
+			tempPos = (int)pos.x % 16;
+			pos.x -= tempPos;
+			SetShape();
+			if (IsCollided())
+			{
+				pos.x += tempPos;
+				SetShape();
+			}
+		}
+		else if ((int)pos.x % 16 >= CORRECTION_POS_MAX)
+		{
+			tempPos = 16 - (int)pos.x % 16;
+			pos.x += tempPos;
+			SetShape();
+			if (IsCollided())
+			{
+				pos.x -= tempPos;
+				SetShape();
+			}
+		}
+	}
+}
+
+void Tank::CorrectionPosY()
+{
+	if (previousDir == MoveDir::Up || previousDir == MoveDir::Down)
+	{
+		int tempPos = 0;
+		if ((int)pos.y % 16 <= CORRECTION_POS_MIN)
+		{
+			tempPos = (int)pos.y % 16;
+			pos.y -= tempPos;
+			SetShape();
+			if (IsCollided())
+			{
+				pos.y += tempPos;
+				SetShape();
+			}
+		}
+		else if ((int)pos.y % 16 >= CORRECTION_POS_MAX)
+		{
+			tempPos = 16 - (int)pos.y % 16;
+			pos.y += tempPos;
+			SetShape();
+			if (IsCollided())
+			{
+				pos.y -= tempPos;
+				SetShape();
+			}
+		}
+		previousDir = moveDir;
+	}
 }
 
 bool Tank::IsCollided()
@@ -847,8 +572,6 @@ bool Tank::IsCollided()
 		{
 			return true;
 		}
-
-
 	}
 
 	for (itEnemyTanks = enemyTanks->begin();
@@ -867,6 +590,7 @@ bool Tank::IsCollided()
 			return true;
 		}
 	}
+
 	if (playerTank != nullptr)
 	{
 		if (IntersectRect(&temp, &(playerTank->shape), &shape))

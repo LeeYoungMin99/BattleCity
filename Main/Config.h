@@ -28,9 +28,8 @@ using namespace std;
 #define SAFE_RELEASE(p)	{ if (p) { p->Release(); delete p; p = nullptr; } }
 #define SAFE_DELETE(p)	{ if (p) { delete p; p = nullptr; } }
 
-enum MoveDir { Left = 2, Right = 6, Up = 0, Down = 4 };
-enum class TankType { Player, Normal = 0 , Speed, Rapid, Defensive };
-
+enum class MoveDir { Left = 2, Right = 6, Up = 0, Down = 4 };
+enum class TankType { Player, Normal, Speed, Rapid, Defensive };
 
 #include "TimerManager.h"
 #include "ImageManager.h"
@@ -60,7 +59,7 @@ extern POINT g_ptMouse;
 
 enum class Terrain { Earth, Wall, Water, Grass, BreakableWall, End };
 
-enum class TileType {Ground, Wall, Water, Iced, Grass, Brick, Nexus};
+enum class TileType { Ground, Wall, Water, Iced, Grass, Brick, Nexus };
 typedef struct tagSampleTile
 {
 	RECT rc;
