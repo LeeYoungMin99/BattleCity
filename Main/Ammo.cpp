@@ -148,7 +148,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	/*if (IntersectRect(&rc, &collision, &target->GetShape()))
 		return true;*/
-	if (ownerTank->enforceCount != 3) 
+	if (ownerTank->enforceCount != 3)
 	{
 		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 		{
@@ -259,12 +259,12 @@ bool Ammo::CheckCollision(int idX, int idY)
 				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
 				{
 					tile[26 * (idY)+idX - 1].collider.top += 16;
-					tile[26 * (idY)+idX - 1].topHit+=2;
+					tile[26 * (idY)+idX - 1].topHit += 2;
 				}
 				else if (bulletDir == BulletDir::Up && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
 				{
 					tile[26 * (idY)+idX - 1].collider.bottom -= 16;
-					tile[26 * (idY)+idX - 1].bottomHit+=2;
+					tile[26 * (idY)+idX - 1].bottomHit += 2;
 				}
 
 
@@ -281,12 +281,12 @@ bool Ammo::CheckCollision(int idX, int idY)
 				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY)+idX].collider.top += 16;
-					tile[26 * (idY)+idX].topHit+=2;
+					tile[26 * (idY)+idX].topHit += 2;
 				}
 				else if (bulletDir == BulletDir::Up && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY)+idX].collider.bottom -= 16;
-					tile[26 * (idY)+idX].bottomHit+=2;
+					tile[26 * (idY)+idX].bottomHit += 2;
 				}
 				if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
 				{
@@ -304,15 +304,15 @@ bool Ammo::CheckCollision(int idX, int idY)
 				// 벽 없애기
 				check = true;
 				// 벽 없애기
-				if (bulletDir == BulletDir::Left && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
+				if (bulletDir == BulletDir::Left && (tile[26 * (idY - 1) + idX].tileType == TileType::Brick || tile[26 * (idY - 1) + idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY - 1) + idX].collider.right -= 16;
-					tile[26 * (idY - 1) + idX].rightHit+=2;
+					tile[26 * (idY - 1) + idX].rightHit += 2;
 				}
-				else if (bulletDir == BulletDir::Right && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
+				else if (bulletDir == BulletDir::Right && (tile[26 * (idY - 1) + idX].tileType == TileType::Brick || tile[26 * (idY - 1) + idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY - 1) + idX].collider.left += 16;
-					tile[26 * (idY - 1) + idX].leftHit+=2;
+					tile[26 * (idY - 1) + idX].leftHit += 2;
 				}
 				if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
 				{
@@ -327,12 +327,12 @@ bool Ammo::CheckCollision(int idX, int idY)
 				if (bulletDir == BulletDir::Left && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY)+idX].collider.right -= 16;
-					tile[26 * (idY)+idX].rightHit+=2;
+					tile[26 * (idY)+idX].rightHit += 2;
 				}
 				else if (bulletDir == BulletDir::Right && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY)+idX].collider.left += 16;
-					tile[26 * (idY)+idX].leftHit+=2;
+					tile[26 * (idY)+idX].leftHit += 2;
 				}
 				if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
 				{
@@ -377,12 +377,11 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					hitTankList.push_back((*itEnemyTanks));
 					(*itEnemyTanks)->HP--;
-				}
-				if ((*itEnemyTanks)->HP == 0)
-
-				{
-					(*itEnemyTanks)->increaseScore();
-					GameManager::GetSingleton()->remainMonster--;
+					if ((*itEnemyTanks)->HP == 0)
+					{
+						(*itEnemyTanks)->increaseScore();
+						GameManager::GetSingleton()->remainMonster--;
+					}
 				}
 				check = true;
 			}

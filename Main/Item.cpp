@@ -85,7 +85,7 @@ void ShovelItem::UseItem()
 
 void StarItem::UseItem()
 {
-	if (!GetTank()->enforceCount == 4)
+	if (GetTank()->enforceCount != 3)
 	{
 		GetTank()->enforceCount++;
 	}

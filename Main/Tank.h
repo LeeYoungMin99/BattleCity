@@ -26,7 +26,7 @@ public:
 	TankType type = TankType::Player;
 	MoveDir moveDir = MoveDir::Up;
 	int checkMoveCount = 0;
-	int enforceCount = 0;
+	int enforceCount = GameManager::GetSingleton()->playerEnforceCount;
 	bool bIsAlive = true;
 	
 	int currFireNumberOfAmmo = 0;

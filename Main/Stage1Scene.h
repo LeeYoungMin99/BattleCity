@@ -35,7 +35,7 @@ private:
 
 	Tank* tank = nullptr;
 	vector<TankFactorial*> vecTankFactorial = {};
-
+	vector<TankFactorial*>::iterator itVecTankFactory = {};
 	AmmoManager* playerTankAmmoManager = nullptr;
 	AmmoManager* enemyTankAmmoManager = nullptr;
 

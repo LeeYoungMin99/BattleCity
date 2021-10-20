@@ -15,6 +15,7 @@ public:
 	int hightScore;	 // 최고 점수
 	int player1Score;
 	int player1Life;
+	int playerEnforceCount = 0;
 
 
 	int remainSpawnMonster;

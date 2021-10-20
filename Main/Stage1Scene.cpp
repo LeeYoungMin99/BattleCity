@@ -152,7 +152,7 @@ HRESULT Stage1Scene::Init()
 	}
 
 
-	GameManager::GetSingleton()->remainSpawnMonster = 20;
+	GameManager::GetSingleton()->remainSpawnMonster =20;
 	GameManager::GetSingleton()->remainMonster = 20;
 
 
@@ -276,6 +276,7 @@ void Stage1Scene::Update()
 				elapsedCount = 0;
 				GameManager::GetSingleton()->state = GameState::Done;
 				GameManager::GetSingleton()->spawnCount = 0;
+				GameManager::GetSingleton()->playerEnforceCount = tank->enforceCount;
 				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
 				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}
@@ -401,6 +402,12 @@ void Stage1Scene::Render(HDC hdc)
 
 void Stage1Scene::Release()
 {
+	for (itVecTankFactory = vecTankFactorial.begin();
+		itVecTankFactory != vecTankFactorial.end(); itVecTankFactory++)
+	{
+		SAFE_DELETE((*itVecTankFactory));
+	}
+	vecTankFactorial.clear();
 }
 
 void Stage1Scene::SpawnEnemy(TankType type)
@@ -423,7 +430,7 @@ void Stage1Scene::CreateItem()
 
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
-			int itemtype = rand()%6;
+			int itemtype = rand() % 6;
 			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
 			break;
 		}

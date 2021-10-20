@@ -318,10 +318,12 @@ void PlayerTank::Move()
 
 void PlayerTank::Fire()
 {
-	if (currFireNumberOfAmmo == 0)
+	if (currFireNumberOfAmmo <= 0)
 	{
 		if (KeyManager::GetSingleton()->IsOnceKeyDown('Z'))
 		{
+			if (currFireNumberOfAmmo <= 0)
+				currFireNumberOfAmmo = 0;
 			currFireNumberOfAmmo++;
 
 			if (enforceCount == 0) { ammoManager->Fire(this); }
@@ -641,7 +643,7 @@ void Tank::Render(HDC hdc)
 		}
 		else
 		{
-			img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, (int)type, 0.5f);
+			img->Render(hdc, pos.x, pos.y, moveDir + checkMoveCount, ((int)type) + (HP/2), 0.5f);
 		}
 	}
 }
