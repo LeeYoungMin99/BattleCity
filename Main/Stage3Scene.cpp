@@ -131,8 +131,6 @@ void Stage3Scene::Update()
 	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
-		playerTankAmmoManager->Update();
-		enemyTankAmmoManager->Update();
 
 		elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 		if (elapsedCount >= spawmElapsedCount && currSpawnEnemy < maxSpawnEnemy && GameManager::GetSingleton()->remainSpawnMonster>0)
@@ -261,6 +259,10 @@ void Stage3Scene::Update()
 	{
 		RotateGameOverScene();
 	}
+
+	playerTankAmmoManager->Update();
+	enemyTankAmmoManager->Update();
+
 	enemyMgr->Update();
 }
 
@@ -318,6 +320,7 @@ void Stage3Scene::Render(HDC hdc)
 	enemyMgr->Render(hdc);
 	playerTankAmmoManager->Render(hdc);
 	enemyTankAmmoManager->Render(hdc);
+	itemManager->Render(hdc);
 
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{

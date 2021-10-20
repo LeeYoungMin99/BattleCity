@@ -19,7 +19,7 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, EnemyManager* enemyMgr, Tan
 	shape.right = 0;
 	shape.bottom = 0;
 
-	moveSpeed = 200.0f;		// ÃÊ´ç 15ÇÈ¼¿ ÀÌµ¿
+	moveSpeed = 200.0f;		// ì´ˆë‹¹ 15í”½ì…€ ì´ë™
 	moveAngle = 0.0f;
 
 	isFire = false;
@@ -65,26 +65,23 @@ void Ammo::Update()
 	{
 		if (!bRenderBoomImg)
 		{
-			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// ÇÁ·¹ÀÓ´ç ÀÌµ¿°Å¸® -> ½Ã°£ ´ç ÀÌµ¿°Å¸®
+			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// í”„ë ˆìž„ë‹¹ ì´ë™ê±°ë¦¬ -> ì‹œê°„ ë‹¹ ì´ë™ê±°ë¦¬
 			pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 		}
 
-		collision.left = pos.x - (bodySize / 2.0f);
-		collision.top = pos.y - (bodySize / 2.0f);
-		collision.right = pos.x + (bodySize / 2.0f);
-		collision.bottom = pos.y + (bodySize / 2.0f);
+		SetCollider();
 
 		int posIdX = (pos.x - STAGE_SIZE_X) / 16;
 		int posIdY = (pos.y - STAGE_SIZE_Y) / 16;
 
-		// È­¸éÀ» ¹þ¾î³µ´ÂÁö È®ÀÎ
+		// í™”ë©´ì„ ë²—ì–´ë‚¬ëŠ”ì§€ í™•ì¸
 		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
 			collision.top > STAGE_SIZE_Y + 416 || collision.bottom < STAGE_SIZE_Y)
 		{
 			bRenderBoomImg = true;
 		}
 
-		// Å¸°Ù°úÀÇ Ãæµ¹È®ÀÎ
+		// íƒ€ê²Ÿê³¼ì˜ ì¶©ëŒí™•ì¸
 		if (CheckCollision(posIdX, posIdY))
 		{
 			bRenderBoomImg = true;
@@ -151,102 +148,202 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 	/*if (IntersectRect(&rc, &collision, &target->GetShape()))
 		return true;*/
+	if (ownerTank->enforceCount != 3) 
+	{
+		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
+		{
 
-	if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
+			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
+			{
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+
+				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX - 1].collider.top += 8;
+					tile[26 * (idY)+idX - 1].topHit++;
+				}
+				else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX - 1].collider.bottom -= 8;
+					tile[26 * (idY)+idX - 1].bottomHit++;
+				}
+
+
+				if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
+					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+				}
+			}
+
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+			{
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.top += 8;
+					tile[26 * (idY)+idX].topHit++;
+				}
+				else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.bottom -= 8;
+					tile[26 * (idY)+idX].bottomHit++;
+				}
+				if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
+			}
+
+
+		}
+		else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
+		{
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
+			{
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+				if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY - 1) + idX].collider.right -= 8;
+					tile[26 * (idY - 1) + idX].rightHit++;
+				}
+				else if (bulletDir == BulletDir::Right && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY - 1) + idX].collider.left += 8;
+					tile[26 * (idY - 1) + idX].leftHit++;
+				}
+				if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
+				{
+					tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
+					tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
+				}
+			}
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+			{
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+				if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.right -= 8;
+					tile[26 * (idY)+idX].rightHit++;
+				}
+				else if (bulletDir == BulletDir::Right && tile[26 * (idY)+idX].tileType == TileType::Brick)
+				{
+					tile[26 * (idY)+idX].collider.left += 8;
+					tile[26 * (idY)+idX].leftHit++;
+				}
+				if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
+			}
+
+		}
+	}
+	else
 	{
 
-		if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
+		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 		{
-			// º® ¾ø¾Ö±â
-			check = true;
-			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+
+			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 			{
-				tile[26 * (idY)+idX - 1].collider.top += 8;
-				tile[26 * (idY)+idX - 1].topHit++;
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+
+				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX - 1].collider.top += 16;
+					tile[26 * (idY)+idX - 1].topHit+=2;
+				}
+				else if (bulletDir == BulletDir::Up && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX - 1].collider.bottom -= 16;
+					tile[26 * (idY)+idX - 1].bottomHit+=2;
+				}
+
+
+				if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
+					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+				}
 			}
-			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				tile[26 * (idY)+idX - 1].collider.bottom -= 8;
-				tile[26 * (idY)+idX - 1].bottomHit++;
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.top += 16;
+					tile[26 * (idY)+idX].topHit+=2;
+				}
+				else if (bulletDir == BulletDir::Up && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.bottom -= 16;
+					tile[26 * (idY)+idX].bottomHit+=2;
+				}
+				if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
 			}
 
 
-			if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
-			{
-				tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
-				tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
-			}
 		}
-
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
+		else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
 		{
-			// º® ¾ø¾Ö±â
-			check = true;
-			if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 			{
-				tile[26 * (idY)+idX].collider.top += 8;
-				tile[26 * (idY)+idX].topHit++;
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+				// ë²½ ì—†ì• ê¸°
+				if (bulletDir == BulletDir::Left && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY - 1) + idX].collider.right -= 16;
+					tile[26 * (idY - 1) + idX].rightHit+=2;
+				}
+				else if (bulletDir == BulletDir::Right && (tile[26 * (idY-1)+idX].tileType == TileType::Brick || tile[26 * (idY-1)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY - 1) + idX].collider.left += 16;
+					tile[26 * (idY - 1) + idX].leftHit+=2;
+				}
+				if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
+				{
+					tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
+					tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
+				}
 			}
-			else if (bulletDir == BulletDir::Up && tile[26 * (idY)+idX].tileType == TileType::Brick)
+			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				tile[26 * (idY)+idX].collider.bottom -= 8;
-				tile[26 * (idY)+idX].bottomHit++;
+				// ë²½ ì—†ì• ê¸°
+				check = true;
+				if (bulletDir == BulletDir::Left && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.right -= 16;
+					tile[26 * (idY)+idX].rightHit+=2;
+				}
+				else if (bulletDir == BulletDir::Right && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
+				{
+					tile[26 * (idY)+idX].collider.left += 16;
+					tile[26 * (idY)+idX].leftHit+=2;
+				}
+				if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
+				{
+					tile[26 * (idY)+idX].bodyCollider.left = 0;
+					tile[26 * (idY)+idX].bodyCollider.right = 0;
+				}
 			}
-			if (tile[26 * (idY)+idX].topHit + tile[26 * (idY)+idX].bottomHit >= 2)
-			{
-				tile[26 * (idY)+idX].bodyCollider.left = 0;
-				tile[26 * (idY)+idX].bodyCollider.right = 0;
-			}
+
 		}
-
-
 	}
-	else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
-	{
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
-		{
-			// º® ¾ø¾Ö±â
-			check = true;
-			if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY - 1) + idX].collider.right -= 8;
-				tile[26 * (idY - 1) + idX].rightHit++;
-			}
-			else if (bulletDir == BulletDir::Right && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY - 1) + idX].collider.left += 8;
-				tile[26 * (idY - 1) + idX].leftHit++;
-			}
-			if (tile[26 * (idY - 1) + idX].leftHit + tile[26 * (idY - 1) + idX].rightHit >= 2)
-			{
-				tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
-				tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
-			}
-		}
-		if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
-		{
-			// º® ¾ø¾Ö±â
-			check = true;
-			if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY)+idX].collider.right -= 8;
-				tile[26 * (idY)+idX].rightHit++;
-			}
-			else if (bulletDir == BulletDir::Right && tile[26 * (idY)+idX].tileType == TileType::Brick)
-			{
-				tile[26 * (idY)+idX].collider.left += 8;
-				tile[26 * (idY)+idX].leftHit++;
-			}
-			if (tile[26 * (idY)+idX].leftHit + tile[26 * (idY)+idX].rightHit >= 2)
-			{
-				tile[26 * (idY)+idX].bodyCollider.left = 0;
-				tile[26 * (idY)+idX].bodyCollider.right = 0;
-			}
-		}
-
-	}
-
-	// ³Ø¼­½º Ãæµ¹ Ã³¸®
+	// ë„¥ì„œìŠ¤ ì¶©ëŒ ì²˜ë¦¬
 	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 	{
 
@@ -264,16 +361,16 @@ bool Ammo::CheckCollision(int idX, int idY)
 				}
 			}
 			GameManager::GetSingleton()->state = GameState::DestoryNexus;
-			//Á¶°Ç Ã³¸®
+			//ì¡°ê±´ ì²˜ë¦¬
 		}
 	}
 
 
 	if (playerTank == nullptr)
-	{	// ÇÃ·¹ÀÌ¾î ÅÊÅ©¸é
+	{	// í”Œë ˆì´ì–´ íƒ±í¬ë©´
 		for (itEnemyTanks = vecEnemyTanks->begin();
 			itEnemyTanks != vecEnemyTanks->end(); itEnemyTanks++)
-		{	// Enemy°¡ Spawn»óÅÂ°¡ ¾Æ´Ï¶ó¸é Ãæµ¹ Ã³¸®
+		{	// Enemyê°€ Spawnìƒíƒœê°€ ì•„ë‹ˆë¼ë©´ ì¶©ëŒ ì²˜ë¦¬
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
 				if (!CheckHitTank((*itEnemyTanks)))
@@ -282,17 +379,26 @@ bool Ammo::CheckCollision(int idX, int idY)
 					(*itEnemyTanks)->HP--;
 				}
 				if ((*itEnemyTanks)->HP == 0)
+
 				{
 					(*itEnemyTanks)->increaseScore();
 					GameManager::GetSingleton()->remainMonster--;
 				}
+
+
+				pos.x = -100;
+				pos.y = -100;
+				collision.left = 0;
+				collision.right = 0;
+				collision.top = 0;
+				collision.bottom = 0;
 				check = true;
 			}
 		}
 	}
 
 	if (playerTank != nullptr && !(playerTank->bCheckSpawnStatus))
-	{	// Player¸¦ Å¸°ÙÀ¸·Î Àâ°íÀÖ°í Player°¡ Spawn»óÅÂ°¡ ¾Æ´Ï¶ó¸é Ãæµ¹Ã³¸® 
+	{	// Playerë¥¼ íƒ€ê²Ÿìœ¼ë¡œ ìž¡ê³ ìžˆê³  Playerê°€ Spawnìƒíƒœê°€ ì•„ë‹ˆë¼ë©´ ì¶©ëŒì²˜ë¦¬ 
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
 			if (playerTank->bCheckShieldOn)
@@ -422,6 +528,38 @@ void Ammo::SetMoveDir(string dir)
 		bulletDir = BulletDir::Down;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Down.bmp");
 		SetMoveAngle(DEGREE_TO_RADIAN(270));
+	}
+}
+
+void Ammo::SetCollider()
+{
+	if (bulletDir == BulletDir::Left)
+	{
+		collision.left = pos.x - (bodySize / 2.0f) + 3;
+		collision.top = pos.y - (bodySize / 2.0f);
+		collision.right = pos.x + (bodySize / 2.0f) + 1;
+		collision.bottom = pos.y + (bodySize / 2.0f);
+	}
+	else if (bulletDir == BulletDir::Right)
+	{
+		collision.left = pos.x - (bodySize / 2.0f) - 1;
+		collision.top = pos.y - (bodySize / 2.0f);
+		collision.right = pos.x + (bodySize / 2.0f) - 3;
+		collision.bottom = pos.y + (bodySize / 2.0f);
+	}
+	else if (bulletDir == BulletDir::Down)
+	{
+		collision.left = pos.x - (bodySize / 2.0f);
+		collision.top = pos.y - (bodySize / 2.0f) - 1;
+		collision.right = pos.x + (bodySize / 2.0f);
+		collision.bottom = pos.y + (bodySize / 2.0f) - 3;
+	}
+	else if (bulletDir == BulletDir::Up)
+	{
+		collision.left = pos.x - (bodySize / 2.0f);
+		collision.top = pos.y - (bodySize / 2.0f) + 4;
+		collision.right = pos.x + (bodySize / 2.0f);
+		collision.bottom = pos.y + (bodySize / 2.0f) + 1;
 	}
 }
 

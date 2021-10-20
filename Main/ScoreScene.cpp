@@ -109,8 +109,13 @@ void ScoreScene::Update()
 
 			if (gameOver)
 			{
+				GameManager::GetSingleton()->defeatDefensiveTank = 0;
+				GameManager::GetSingleton()->defeatNormalTank = 0;
+				GameManager::GetSingleton()->defeatRapidTank = 0;
+				GameManager::GetSingleton()->defeatSpeedTank = 0;
 				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
 				{
+
 					GameManager::GetSingleton()->ScoreSave();
 				}
 				player1Score = 0;	
@@ -119,6 +124,10 @@ void ScoreScene::Update()
 			}
 			else
 			{
+				GameManager::GetSingleton()->defeatDefensiveTank = 0;
+				GameManager::GetSingleton()->defeatNormalTank = 0;
+				GameManager::GetSingleton()->defeatRapidTank = 0;
+				GameManager::GetSingleton()->defeatSpeedTank = 0;
 				SceneManager::GetSingleton()->ChangeScene("TitleScene");  //다음스테이지씬.
 			}
 		}
@@ -127,6 +136,7 @@ void ScoreScene::Update()
 
 void ScoreScene::Render(HDC hdc)
 {
+	cout << GameManager::GetSingleton()->GetHightScore() << endl;
 	if (backGround)
 		backGround->Render(hdc);	//회색화면 백그라운드
 
@@ -145,7 +155,8 @@ void ScoreScene::Render(HDC hdc)
 		{
 			playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
 			playerScore->Render(hdc, WIN_SIZE_X / 2 + 10, WIN_SIZE_Y / 7, (hightScore % 10) % 5, (hightScore % 10) / 5);
-			playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((hightScore % 100) / 10) % 5, ((hightScore % 100) / 10) / 5);
+			if(hightScore >=10)
+				playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((hightScore % 100) / 10) % 5, ((hightScore % 100) / 10) / 5);
 			if (hightScore >= 100)
 			{
 				playerScore->Render(hdc, WIN_SIZE_X / 2 - 10, WIN_SIZE_Y / 7, (hightScore / 100) % 5, (hightScore / 100) / 5);
@@ -354,6 +365,7 @@ void ScoreScene::Release()
 
 void ScoreScene::ScoreCalculate()
 {
+	
 	elapsedcount++;
 	if (CNE < KNE)		//일반 탱크
 	{
