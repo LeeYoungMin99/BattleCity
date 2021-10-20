@@ -264,6 +264,7 @@ void Stage2Scene::Update()
 	RotateGameOverScene();
 	}
 
+	itemManager->Update();
 	playerTankAmmoManager->Update();
 	enemyTankAmmoManager->Update();
 	enemyMgr->Update();

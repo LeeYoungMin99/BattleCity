@@ -384,14 +384,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 					(*itEnemyTanks)->increaseScore();
 					GameManager::GetSingleton()->remainMonster--;
 				}
-
-
-				pos.x = -100;
-				pos.y = -100;
-				collision.left = 0;
-				collision.right = 0;
-				collision.top = 0;
-				collision.bottom = 0;
 				check = true;
 			}
 		}

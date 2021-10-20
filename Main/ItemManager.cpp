@@ -18,7 +18,7 @@ HRESULT ItemManager::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr
 	itemFactorial[5] = new TankLifeItemFactorial;
 
 
-	ImageManager::GetSingleton()->AddImage("Image/Icon/Point.bmp", 80, 16, 5, 1, true, RGB(255, 0, 255));
+	ImageManager::GetSingleton()->AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
 	itemScore = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 	itemPoint = false;
 
@@ -69,7 +69,7 @@ void ItemManager::Render(HDC hdc)
 	{
 		itemScore->Render(hdc,
 			((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
-			((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y, 4, 0, 1.5f);
+			((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y, 4, 0);
 	}
 }
 
@@ -114,7 +114,6 @@ void ItemManager::Fortification()
 			}
 		}
 	}
-	cout << "진지구축!" << endl;
 	bIsFortification = true;
 }
 
@@ -146,7 +145,6 @@ void ItemManager::DestoryFortification()
 		}
 	}
 
-	cout << "진지구축 해제!" << endl;
 	bIsFortification = false;
 	fortificationCount = 0;
 }
