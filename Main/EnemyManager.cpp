@@ -18,9 +18,11 @@ HRESULT EnemyManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMana
 
 	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
-	for (int i = 0; i < 3; i++)
+	ImageManager::GetSingleton()->AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
+	for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 	{
 		boomImg[i].BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
+		scoreImg[i].scoreImg = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 	}
 
 	this->tileInfo = tile;
@@ -40,23 +42,25 @@ void EnemyManager::Update()
 		itEnemys != vecEnemys.end();)
 	{
 		(*itEnemys)->Update();
-		
+
 		if ((*itEnemys)->HP <= 0)
 		{
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 			{
 				if (boomImg[i].bRenderBoomImg == false)
 				{
 					boomImg[i].bRenderBoomImg = true;
 					boomImg[i].imgPos = (*itEnemys)->GetPos();
 					boomImg[i].BoomImgCurrFrame = 0;
+					scoreImg[i].tankHP = (*itEnemys)->HP;
+					scoreImg[i].imgPos = (*itEnemys)->GetPos();
+					scoreImg[i].scoreFrame = (int)((*itEnemys)->type);
 					break;
 				}
 			}
 			if ((*itEnemys)->bItem)
 			{
 				int i = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
-				cout << i << endl;
 				switch (i)
 				{
 				case 1:
@@ -82,7 +86,7 @@ void EnemyManager::Update()
 		}
 	}
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 	{
 		if (boomImg[i].bRenderBoomImg)
 		{
@@ -95,11 +99,32 @@ void EnemyManager::Update()
 
 				if (boomImg[i].BoomImgCurrFrame == boomImg[i].BoomImgMaxFrame)
 				{
-					boomImg[i].bRenderBoomImg = false;
+					if (scoreImg[i].tankHP == 0)
+					{
+						scoreImg[i].bRenderScore = true;
+					}
+					else
+					{
+						boomImg[i].bRenderBoomImg = false;
+					}
 				}
 			}
 		}
+
+		if (scoreImg[i].bRenderScore)
+		{
+			scoreImg[i].elapsedCount++;
+
+			if (scoreImg[i].elapsedCount > scoreImg[i].maxElapsedCount)
+			{
+				scoreImg[i].elapsedCount = 0;
+				scoreImg[i].bRenderScore = false;
+				boomImg[i].bRenderBoomImg = false;
+			}
+		}
 	}
+
+
 
 	if (clockItem)
 	{
@@ -133,11 +158,16 @@ void EnemyManager::Render(HDC hdc)
 		(*itEnemys)->Render(hdc);
 	}
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 	{
 		if (boomImg[i].bRenderBoomImg)
 		{
 			boomImg[i].BoomImg->Render(hdc, boomImg[i].imgPos.x - STAGE_SIZE_X / 2, boomImg[i].imgPos.y - STAGE_SIZE_Y, boomImg[i].BoomImgCurrFrame, 0);
+		}
+
+		if (scoreImg[i].bRenderScore)
+		{
+			scoreImg[i].scoreImg->Render(hdc, scoreImg[i].imgPos.x - STAGE_SIZE_X / 2, scoreImg[i].imgPos.y - STAGE_SIZE_Y, scoreImg[i].scoreFrame, 0);
 		}
 	}
 }

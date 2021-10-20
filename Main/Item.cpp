@@ -110,7 +110,10 @@ void ShovelItem::UseItem()
 
 void StarItem::UseItem()
 {
-	GetTank()->enforceCount++;
+	if (!GetTank()->enforceCount == 4)
+	{
+		GetTank()->enforceCount++;
+	}
 }
 
 void GrenadeItem::UseItem()

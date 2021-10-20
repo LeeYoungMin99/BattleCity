@@ -112,6 +112,7 @@ void Ammo::Update()
 					boomImgCurrFrame = 0;
 					bRenderBoomImg = false;
 					isFire = false;
+					hitTankList.clear();
 				}
 			}
 		}
@@ -275,9 +276,16 @@ bool Ammo::CheckCollision(int idX, int idY)
 		{	// Enemy가 Spawn상태가 아니라면 충돌 처리
 			if (!(*itEnemyTanks)->bCheckSpawnStatus && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
-				GameManager::GetSingleton()->remainMonster--;
-				(*itEnemyTanks)->increaseScore();
-				(*itEnemyTanks)->HP--;
+				if (!CheckHitTank((*itEnemyTanks)))
+				{
+					hitTankList.push_back((*itEnemyTanks));
+					(*itEnemyTanks)->HP--;
+				}
+				if ((*itEnemyTanks)->HP == 0)
+				{
+					(*itEnemyTanks)->increaseScore();
+					GameManager::GetSingleton()->remainMonster--;
+				}
 				check = true;
 			}
 		}
@@ -373,6 +381,20 @@ bool Ammo::CheckCollision(int idX, int idY)
 	}
 
 	return false;
+}
+
+bool Ammo::CheckHitTank(Tank* enemyTank)
+{
+	{
+		for (const auto& enemy : hitTankList)
+		{
+			if (enemy == enemyTank)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 void Ammo::SetMoveDir(string dir)
