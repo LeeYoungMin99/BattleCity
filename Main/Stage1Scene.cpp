@@ -425,7 +425,6 @@ void Stage1Scene::CreateItem()
 		{
 			int itemtype = rand()%6;
 			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
-			cout << "EnemyManager :" << randtile << "    " << itemtype << endl;
 			break;
 		}
 	}

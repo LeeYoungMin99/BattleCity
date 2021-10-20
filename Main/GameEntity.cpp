@@ -3,7 +3,6 @@
 
 HRESULT GameEntity::Init()
 {
-	//cout << "Hello World!!" << endl;
 	return S_OK;
 }
 

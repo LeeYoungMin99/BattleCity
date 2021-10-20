@@ -74,7 +74,6 @@ HRESULT SceneManager::ChangeScene(string sceneName)
 	{
 		if (currScene)
 			currScene->Release();
-		cout << "¼º°ø!" << it->second << endl;
 
 		currScene = it->second;
 

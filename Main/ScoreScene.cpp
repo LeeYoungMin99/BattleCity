@@ -136,7 +136,6 @@ void ScoreScene::Update()
 
 void ScoreScene::Render(HDC hdc)
 {
-	cout << GameManager::GetSingleton()->GetHightScore() << endl;
 	if (backGround)
 		backGround->Render(hdc);	//회색화면 백그라운드
 
