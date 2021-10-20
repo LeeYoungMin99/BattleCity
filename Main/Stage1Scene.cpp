@@ -192,7 +192,7 @@ void Stage1Scene::Update()
 			GameManager::GetSingleton()->remainSpawnMonster--;
 			currSpawnEnemy++;
 			elapsedCount -= spawmElapsedCount;
-			int randomType = RANDOM(3, 3);
+			int randomType = RANDOM(0, 3);
 			SpawnEnemy((TankType)randomType);
 		}
 		//ShowHitCollider
