@@ -48,11 +48,9 @@ void TitleScene::Update()
 				break;
 			case player_2:
 				selecTitle = selectedTitle::player_1;
-				SceneManager::GetSingleton()->ChangeScene("ScoreScene");
 				break;
 			case CONSTRUCTION:
 				selecTitle = selectedTitle::player_2;
-				SceneManager::GetSingleton()->ChangeScene("GameOverScene");
 				break;
 			}
 			return;

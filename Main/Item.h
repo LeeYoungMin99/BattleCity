@@ -9,7 +9,7 @@ class ItemManager;
 class Item : public GameObject
 {
 private:
-	Image* itemImage[7];
+	Image* itemImage;
 	int itemType = 0;
 	int itemTile = 0;
 	int elapsedcount;

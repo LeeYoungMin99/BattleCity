@@ -24,12 +24,7 @@ private:
 	int elapsedcount;
 	int hightScore;
 	int player1Score;
-	//변수명 고민
-	int killNormalEnemy, killSpeedEnemy, killRapidEnemy, killBossEnemy;
-	int scoreNormalEnemy, scoreSpeedEnemy, scoreRapidEnemy, scoreBossEnemy;
-	bool bScoreNormalEnemy, bScoreSpeedEnemy, bScoreRapidEnemy, bScoreBossEnemy;
 
-	//디버깅용 편하게
 	int KNE, KSE, KRE, KBE;				//종류별 죽인 탱크수
 	int CNE, CSE, CRE, CBE;				//죽인 탱크를 1씩 카운트하기위한 변수
 	int SNE, SSE, SRE, SBE;				//스코어 점수

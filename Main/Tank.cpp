@@ -133,7 +133,7 @@ void PlayerTank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{
@@ -400,7 +400,7 @@ void Tank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{

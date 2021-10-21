@@ -37,14 +37,14 @@ private:
 
 public:
 	
-	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
+	HRESULT Init();
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 
 	void Fortification();
 	void DestoryFortification();
-	void CreateItem();
+	void CreateItem(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
 	inline void SetItemPoint(bool itemPoint) { this->itemPoint = itemPoint; }
 
 	inline vector<Item*>* GetAddressVecItem() { return &(this->vecItems); }
