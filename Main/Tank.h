@@ -65,11 +65,18 @@ public:
 
 	virtual void Move();
 	virtual void Fire();
+
 	virtual void CorrectionPosX();
 	virtual void CorrectionPosY();
 
 	virtual bool IsCollided();
 	virtual void SetShape();
+	
+
+	virtual void SpawnCollided();
+	virtual void Action();
+	void SpwanAnimation();
+	void FlashItemTank();
 
 	inline virtual void increaseScore() = 0;
 
@@ -115,6 +122,10 @@ public:
 	virtual void Release() override;
 
 	virtual void Fire() override;
+	virtual void Action() override;
+
+	void SpwanAndShieldAnimation();
+
 	inline virtual void increaseScore() override { };
 
 	inline void SetCheckShieldOn(bool b) { this->bCheckShieldOn = b; }
@@ -131,7 +142,7 @@ public:
 
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatNormalTank++; };
 
-	NormalEnemyTank();
+	NormalEnemyTank() {}
 	virtual ~NormalEnemyTank() {}
 };
 
@@ -142,7 +153,7 @@ public:
 
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatSpeedTank++; };
 
-	SpeedEnemyTank();
+	SpeedEnemyTank() {}
 	virtual ~SpeedEnemyTank() {}
 };
 
@@ -153,7 +164,7 @@ public:
 
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatRapidTank++; };
 
-	RapidEnemyTank();
+	RapidEnemyTank() {}
 	virtual ~RapidEnemyTank() {}
 };
 
@@ -164,6 +175,6 @@ public:
 
 	inline virtual void increaseScore() override { GameManager::GetSingleton()->defeatDefensiveTank++; };
 
-	DefensiveEnemyTank();
+	DefensiveEnemyTank() {}
 	virtual ~DefensiveEnemyTank() {}
 };
