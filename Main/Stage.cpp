@@ -110,8 +110,8 @@ HRESULT Stage::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 18;
-	GameManager::GetSingleton()->remainMonster = 18;
+	GameManager::GetSingleton()->remainSpawnMonster = 1;
+	GameManager::GetSingleton()->remainMonster = 1;
 
 	stateElapsedCount = 0;
 	return S_OK;
@@ -122,7 +122,7 @@ void Stage::Update()
 	//게임 끝났을 때 
 	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
-		CloseSlate(); // 게임 종료시 슬레이트 닫기
+		if (CloseSlate()) return; // 게임 종료시 슬레이트 닫기
 
 	}
 	else if (GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus) //게임 진행중
@@ -148,14 +148,14 @@ void Stage::Update()
 		WaterTileAnimation();
 	
 		//RotateToScoreScene
-		RotateToScoreScene();
+		if (RotateToScoreScene()) return;
 
 		//RotateToGameOverState
 		RotateToGameOverState();
 	}
 	else if (GameManager::GetSingleton()->state == GameState::GameOver) 
 	{
-		RotateGameOverScene();
+		if (RotateGameOverScene()) return;
 	}
 
 	itemManager->Update();
@@ -212,7 +212,16 @@ void Stage::Render(HDC hdc)
 
 void Stage::Release()
 {
-	itemManager->Release();
+	for (int i = 0; i < 5; i++)
+	{
+		SAFE_DELETE(vecTankFactorial[i]);
+	}
+	SAFE_DELETE(playerTankAmmoManager);
+
+	SAFE_DELETE(enemyTankAmmoManager);
+	SAFE_RELEASE(enemyMgr);
+	SAFE_DELETE(itemManager);
+
 }
 
 void Stage::SpawnEnemy(TankType type)
@@ -241,7 +250,7 @@ void Stage::CreateItem()
 	}
 }
 
-void Stage::CloseSlate()
+bool Stage::CloseSlate()
 {
 	slate1 += 10;
 	slate2 -= 10;	//닫
@@ -255,10 +264,13 @@ void Stage::CloseSlate()
 
 		slate1 = -(backGround->GetHeight()) + 200;
 		slate2 = backGround->GetHeight() + 200;	//닫
+
+		return true;
 	}
+	return false;
 }
 
-void Stage::RotateGameOverScene()
+bool Stage::RotateGameOverScene()
 {
 	if (gameOverPosY > WIN_SIZE_Y / 2)
 	{
@@ -270,6 +282,7 @@ void Stage::RotateGameOverScene()
 		if (stateElapsedCount > 100)
 		{
 			SceneManager::GetSingleton()->ChangeScene("ScoreScene");
+			return true;
 		}
 	}
 }
@@ -287,7 +300,7 @@ void Stage::RotateToGameOverState()
 	}
 }
 
-void Stage::RotateToScoreScene()
+bool Stage::RotateToScoreScene()
 {
 	if (GameManager::GetSingleton()->remainMonster <= 0)
 	{
@@ -299,8 +312,10 @@ void Stage::RotateToScoreScene()
 			GameManager::GetSingleton()->playerEnforceCount = tank->GetEnforceCount();
 			SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
 			SceneManager::GetSingleton()->ChangeScene("scoreScene");
+			return true;
 		}
 	}
+	return false;
 }
 
 void Stage::WaterTileAnimation()

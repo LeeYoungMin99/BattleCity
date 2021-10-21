@@ -80,11 +80,11 @@ public:
 	void CreateItem();
 
 	//Update()
-	void CloseSlate();
-	void RotateGameOverScene();
+	bool CloseSlate();
+	bool RotateGameOverScene();
 	inline void SubCurrSpawnEnemy() { this->currSpawnEnemy--; }
 	void RotateToGameOverState();
-	void RotateToScoreScene();
+	bool RotateToScoreScene();
 	void WaterTileAnimation();
 	void NexusDestoryAnimation();
 	void ShowBodyCollider();

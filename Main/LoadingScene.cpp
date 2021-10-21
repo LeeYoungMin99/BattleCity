@@ -61,5 +61,4 @@ void LoadingScene::Render(HDC hdc)
 
 void LoadingScene::Release()
 {
-
 }

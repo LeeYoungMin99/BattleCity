@@ -32,6 +32,8 @@ protected:
 	int currFireNumberOfAmmo = 0;
 	POINTFLOAT barrelPos = {};
 
+	bool bCheckTankCollider;
+
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
 	GameEntity* stageInfo = nullptr;
