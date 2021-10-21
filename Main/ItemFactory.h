@@ -1,43 +1,43 @@
 #pragma once
 
 class Item;
-class ItemFactorial
+class ItemFactory
 {
 public:
 	virtual Item* CreateTank() = 0;
 };
 
-class HelmetItemFactorial : public ItemFactorial
+class HelmetItemFactory : public ItemFactory
 {
 public:
 	virtual Item* CreateTank() override;
 };
 
-class ClockItemFactorial : public ItemFactorial
+class ClockItemFactory : public ItemFactory
 {
 public:
 	virtual Item* CreateTank() override;
 };
 
-class ShovelItemFactorial : public ItemFactorial
+class ShovelItemFactory : public ItemFactory
 {
 public:
 	virtual Item* CreateTank() override;
 };
 
-class StarItemFactorial : public ItemFactorial
+class StarItemFactory : public ItemFactory
 {
 public:
 	virtual Item* CreateTank() override;
 };
 
-class GrenadeItemFactorial : public ItemFactorial
+class GrenadeItemFactory : public ItemFactory
 {
 public:
 	virtual Item* CreateTank() override;
 };
 
-class TankLifeItemFactorial : public ItemFactorial
+class TankLifeItemFactory : public ItemFactory
 {
 public:
 	virtual Item* CreateTank() override;

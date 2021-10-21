@@ -3,26 +3,22 @@
 #include "Item.h"
 #include "Tank.h"
 #include "EnemyManager.h"
-#include "ItemFactorial.h"
+#include "ItemFactory.h"
 
 HRESULT ItemManager::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
 {
-	//itemCount = 10;
-	//vecItems.reserve(itemCount);
-
-	itemFactorial[0] = new HelmetItemFactorial;
-	itemFactorial[1] = new ClockItemFactorial;
-	itemFactorial[2] = new ShovelItemFactorial;
-	itemFactorial[3] = new StarItemFactorial;
-	itemFactorial[4] = new GrenadeItemFactorial;
-	itemFactorial[5] = new TankLifeItemFactorial;
+	itemFactory[0] = new HelmetItemFactory;
+	itemFactory[1] = new ClockItemFactory;
+	itemFactory[2] = new ShovelItemFactory;
+	itemFactory[3] = new StarItemFactory;
+	itemFactory[4] = new GrenadeItemFactory;
+	itemFactory[5] = new TankLifeItemFactory;
 
 
-	ImageManager::GetSingleton()->AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
 	itemScore = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 	itemPoint = false;
 
-	Item* tempItem = itemFactorial[type]->CreateTank();
+	Item* tempItem = itemFactory[type]->CreateTank();
 	tempItem->Init(type, tile, tank, enemyMgr, tileInfo, this);
 
 	itemTile = tile;
@@ -30,8 +26,9 @@ HRESULT ItemManager::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr
 
 	fortificationCount = 0;
 	bIsFortification = false;
-
 	this->tileInfo = tileInfo;
+	
+
     return S_OK;
 }
 
@@ -75,7 +72,7 @@ void ItemManager::Render(HDC hdc)
 
 void ItemManager::Release()
 {
-
+	item->Release();
 }
 
 void ItemManager::Fortification()
@@ -147,6 +144,11 @@ void ItemManager::DestoryFortification()
 
 	bIsFortification = false;
 	fortificationCount = 0;
+}
+
+void ItemManager::CreateItem()
+{
+	
 }
 
 

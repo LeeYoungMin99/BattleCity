@@ -18,6 +18,22 @@ void ImageManager::Init()
 	AddImage("Image/Text/Game_Over.bmp", 64, 30, 1, 1, true, RGB(255, 0, 255));
 	AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
 
+	//아이템
+	AddImage("Image/Item/Item1.bmp", 32, 32, true, RGB(255, 0, 255));
+	AddImage("Image/Item/Item2.bmp", 32, 32, true, RGB(255, 0, 255));
+	AddImage("Image/Item/Item3.bmp", 32, 32, true, RGB(255, 0, 255));
+	AddImage("Image/Item/Item4.bmp", 32, 32, true, RGB(255, 0, 255));
+	AddImage("Image/Item/Item5.bmp", 32, 32, true, RGB(255, 0, 255));
+	AddImage("Image/Item/Item6.bmp", 32, 32, true, RGB(255, 0, 255));
+	AddImage("Image/Item/Item7.bmp", 32, 32, true, RGB(255, 0, 255));
+
+	//점수텍스트
+	AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
+
+	//EnemyManager
+	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
+
+
 }
 
 void ImageManager::Release()

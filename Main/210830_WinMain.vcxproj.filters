@@ -114,7 +114,7 @@
     <ClCompile Include="Item.cpp">
       <Filter>MainGame\Item</Filter>
     </ClCompile>
-    <ClCompile Include="ItemFactorial.cpp">
+    <ClCompile Include="ItemFactory.cpp">
       <Filter>MainGame\Item</Filter>
     </ClCompile>
     <ClCompile Include="TankFactory.cpp">
@@ -203,7 +203,7 @@
     <ClInclude Include="Item.h">
       <Filter>MainGame\Item</Filter>
     </ClInclude>
-    <ClInclude Include="ItemFactorial.h">
+    <ClInclude Include="ItemFactory.h">
       <Filter>MainGame\Item</Filter>
     </ClInclude>
     <ClInclude Include="TankFactory.h">

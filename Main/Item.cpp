@@ -9,13 +9,6 @@
 
 HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo, ItemManager* itemManager)
 {
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item1.bmp", 32, 32, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item2.bmp", 32, 32, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item3.bmp", 32, 32, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item4.bmp", 32, 32, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item5.bmp", 32, 32, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item6.bmp", 32, 32, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Item/Item7.bmp", 32, 32, true, RGB(255, 0, 255));
 	itemImage[0] = ImageManager::GetSingleton()->FindImage("Image/Item/Item1.bmp");
 	itemImage[1] = ImageManager::GetSingleton()->FindImage("Image/Item/Item2.bmp");
 	itemImage[2] = ImageManager::GetSingleton()->FindImage("Image/Item/Item3.bmp");
@@ -54,6 +47,10 @@ void Item::Render(HDC hdc)
 
 void Item::Release()
 {
+	for (int i = 0; i < 7; i++)
+	{
+		SAFE_DELETE(itemImage[i]);
+	}
 }
 
 void Item::UseItem()
