@@ -89,6 +89,7 @@ HRESULT Stage::Init()
 	enemyMgr = new EnemyManager;
 
 	itemManager = new ItemManager;
+	itemManager->Init();
 
 	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager->GetAddressVecItem());
 	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
@@ -109,8 +110,8 @@ HRESULT Stage::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 2;
-	GameManager::GetSingleton()->remainMonster = 2;
+	GameManager::GetSingleton()->remainSpawnMonster = 18;
+	GameManager::GetSingleton()->remainMonster = 18;
 
 	stateElapsedCount = 0;
 	return S_OK;
@@ -234,7 +235,7 @@ void Stage::CreateItem()
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
 			int itemtype = rand() % 6;
-			itemManager->Init(itemtype, randtile, tank, enemyMgr, tileInfo);
+			itemManager->CreateItem(itemtype, randtile, tank, enemyMgr, tileInfo);
 			break;
 		}
 	}

@@ -31,9 +31,20 @@ void ImageManager::Init()
 	AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
 
 	//EnemyManager
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
 
-
+	//½ºÄÚ¾î¾À
+	AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+	AddImage("Image/Text/HISocre.bmp", 235 /*470*/, 25/*50*/, true, RGB(255, 0, 255));
+	AddImage("Image/Text/HISocreText.bmp", 133 /*266*/, 25/*50*/, true, RGB(255, 0, 255));
+	AddImage("Image/Text/TotalScore.bmp", 180 /*360*/, 20 /*40*/, true, RGB(255, 0, 255));
+	AddImage("Image/Text/Stage_w.bmp", 55 /*37*/, 10 /*7*/, true, RGB(255, 0, 255));
+	AddImage("Image/Text/Player1.bmp", 115 /*230*/, 20 /*40*/, true, RGB(255, 0, 255));
+	AddImage("Image/Text/ScoreNumber.bmp", 60 /*40*/, 21 /*14*/, 5, 2, true, RGB(255, 0, 255));
+	AddImage("Image/Text/Number_w.bmp", 60 /*40*/, 21 /*14*/, 5, 2, true, RGB(255, 0, 255));
+	AddImage("Image/Enemy/Enemy.bmp", 256 /*512*/, 192 /*384*/, 8, 6, true, RGB(255, 0, 255));
+	AddImage("Image/Icon/Arrow.bmp", 12 /*23*/, 10 /*20*/, true, RGB(255, 0, 255));
+	AddImage("Image/Text/PTS.bmp", 45 /*90*/, 20 /*40*/, true, RGB(255, 0, 255));
 }
 
 void ImageManager::Release()

@@ -5,7 +5,7 @@
 #include "EnemyManager.h"
 #include "ItemFactory.h"
 
-HRESULT ItemManager::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
+HRESULT ItemManager::Init()
 {
 	itemFactory[0] = new HelmetItemFactory;
 	itemFactory[1] = new ClockItemFactory;
@@ -18,16 +18,8 @@ HRESULT ItemManager::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr
 	itemScore = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 	itemPoint = false;
 
-	Item* tempItem = itemFactory[type]->CreateTank();
-	tempItem->Init(type, tile, tank, enemyMgr, tileInfo, this);
-
-	itemTile = tile;
-	vecItems.push_back(tempItem);
-
 	fortificationCount = 0;
 	bIsFortification = false;
-	this->tileInfo = tileInfo;
-	
 
     return S_OK;
 }
@@ -72,7 +64,10 @@ void ItemManager::Render(HDC hdc)
 
 void ItemManager::Release()
 {
-	item->Release();
+	for (int i = 0; i < 5; i++)
+	{
+		SAFE_DELETE(itemFactory[i])
+	}
 }
 
 void ItemManager::Fortification()
@@ -146,8 +141,16 @@ void ItemManager::DestoryFortification()
 	fortificationCount = 0;
 }
 
-void ItemManager::CreateItem()
+void ItemManager::CreateItem(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
 {
+	Item* tempItem = itemFactory[type]->CreateTank();
+	tempItem->Init(type, tile, tank, enemyMgr, tileInfo, this);
+
+	itemTile = tile;
+	vecItems.push_back(tempItem);
+	this->tileInfo = tileInfo;
+	
+	
 	
 }
 
