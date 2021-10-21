@@ -150,7 +150,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="Item.cpp" />
-    <ClCompile Include="ItemFactorial.cpp" />
+    <ClCompile Include="ItemFactory.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="LoadingScene.cpp" />
@@ -180,7 +180,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="ImageManager.h" />
     <ClInclude Include="Item.h" />
-    <ClInclude Include="ItemFactorial.h" />
+    <ClInclude Include="ItemFactory.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="LoadingScene.h" />

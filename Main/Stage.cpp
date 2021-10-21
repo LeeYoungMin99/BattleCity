@@ -45,6 +45,7 @@ HRESULT Stage::Init()
 	int nextStage =((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
 	Load(nextStage);
 
+	waterTilePos.clear();
 	for (int i = 0; i < TILE_COUNT_Y; i++)
 	{
 		for (int j = 0; j < TILE_COUNT_X; j++)
@@ -89,7 +90,7 @@ HRESULT Stage::Init()
 
 	itemManager = new ItemManager;
 
-	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager);
+	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager->GetAddressVecItem());
 	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
 	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr->GetAddresVecEnemys());
 	enemyTankAmmoManager->Init(tileInfo, tank);
@@ -210,6 +211,7 @@ void Stage::Render(HDC hdc)
 
 void Stage::Release()
 {
+	itemManager->Release();
 }
 
 void Stage::SpawnEnemy(TankType type)
@@ -413,7 +415,7 @@ void Stage::PlayerTankDestroyAnimation()
 				boomImg[0].bRenderBoomImg = false;
 				boomImg[0].BoomImgCurrFrame = 0;
 				if (GameManager::GetSingleton()->player1Life >= 0)
-					tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager);
+					tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager->GetAddressVecItem());
 			}
 		}
 	}

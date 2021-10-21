@@ -14,9 +14,6 @@ HRESULT EnemyManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMana
 	tileInfo = tile;
 	this->playerTank = playerTank;
 
-	ImageManager::GetSingleton()->AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
 	for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 	{
 		boomImg[i].BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");

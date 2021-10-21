@@ -133,7 +133,7 @@ void PlayerTank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{
@@ -333,7 +333,6 @@ DefensiveEnemyTank::DefensiveEnemyTank()
 
 void Tank::Update()
 {
-	cout << enforceCount << endl;
 	if (bIsAlive == false)	return;
 	SetShape();
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
@@ -401,7 +400,8 @@ void Tank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+
 	if (bCheckSpawnStatus)
 	{
 		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);

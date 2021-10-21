@@ -11,7 +11,7 @@ class Image;
 class Item;
 class Tank;
 class EnemyManager;
-class ItemFactorial;
+class ItemFactory;
 class ItemManager : public GameEntity
 {
 private:
@@ -30,7 +30,7 @@ private:
 
 	int fortificationCount;
 	bool bIsFortification;
-	ItemFactorial* itemFactorial[6];
+	ItemFactory* itemFactory[6];
 
 	TILE_INFO* tileInfo;
 
@@ -44,6 +44,7 @@ public:
 
 	void Fortification();
 	void DestoryFortification();
+	void CreateItem();
 	inline void SetItemPoint(bool itemPoint) { this->itemPoint = itemPoint; }
 
 	inline vector<Item*>* GetAddressVecItem() { return &(this->vecItems); }
