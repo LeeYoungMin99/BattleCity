@@ -68,9 +68,8 @@ void Item::ItemPoint()
 
 void HelmetItem::UseItem()
 {
-	GetTank()->bCheckShieldOn = true;
-	GetTank()->elapsedCount = 0;
-	
+	((PlayerTank*)GetTank())->SetCheckShieldOn(true);
+	GetTank()->SetElapsedCount(0.0f);
 }
 
 void ClockItem::UseItem()
@@ -85,9 +84,9 @@ void ShovelItem::UseItem()
 
 void StarItem::UseItem()
 {
-	if (GetTank()->enforceCount != 3)
+	if (GetTank()->GetEnforceCount() != 3)
 	{
-		GetTank()->enforceCount++;
+		GetTank()->AddEnforceCount(1);
 	}
 }
 

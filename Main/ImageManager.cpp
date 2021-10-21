@@ -3,6 +3,12 @@
 
 void ImageManager::Init()
 {
+	AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
+	AddImage("Image/Effect/Shield.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
+	AddImage("Image/Enemy/Enemy_Item.bmp", 128, 128, 8, 8, true, RGB(255, 0, 255));
+
 }
 
 void ImageManager::Release()
@@ -47,7 +53,7 @@ Image* ImageManager::AddImage(const char* fileName, int width, int height, bool 
 	return img;
 }
 
-Image* ImageManager::AddImage(const char* fileName, int width, int height, 
+Image* ImageManager::AddImage(const char* fileName, int width, int height,
 	int maxFrameX, int maxFrameY, bool isTrans, COLORREF transColor)
 {
 	if (FindImage(fileName))
@@ -56,7 +62,7 @@ Image* ImageManager::AddImage(const char* fileName, int width, int height,
 	}
 
 	Image* img = new Image;
-	if (FAILED(img->Init(fileName, width, height, maxFrameX, 
+	if (FAILED(img->Init(fileName, width, height, maxFrameX,
 		maxFrameY, isTrans, transColor)))
 	{
 		SAFE_RELEASE(img);

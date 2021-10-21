@@ -5,7 +5,7 @@
 
 #include "AmmoManager.h"
 #include "Tank.h"
-#include "TankFactorial.h"
+#include "TankFactory.h"
 #include "EnemyManager.h"
 #include "ItemManager.h"
 #include "Stage3Scene.h"
@@ -84,11 +84,11 @@ HRESULT Stage2Scene::Init()
 	spawnEnemyPos[2].y = tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2;
 
 	vecTankFactorial.resize(5);
-	vecTankFactorial[0] = new PlayerTankFactorial;
-	vecTankFactorial[1] = new NormalEnemyTankFactorial;
-	vecTankFactorial[2] = new SpeedEnemyTankFactorial;
-	vecTankFactorial[3] = new RapidEnemyTankFactorial;
-	vecTankFactorial[4] = new DefensiveEnemyTankFactorial;
+	vecTankFactorial[0] = new PlayerTankFactory;
+	vecTankFactorial[1] = new NormalEnemyTankFactory;
+	vecTankFactorial[2] = new SpeedEnemyTankFactory;
+	vecTankFactorial[3] = new RapidEnemyTankFactory;
+	vecTankFactorial[4] = new DefensiveEnemyTankFactory;
 
 	playerTankAmmoManager = new AmmoManager;
 	enemyTankAmmoManager = new AmmoManager;
@@ -98,9 +98,9 @@ HRESULT Stage2Scene::Init()
 
 	itemManager = new ItemManager;
 
-	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
+	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager);
 	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
-	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr);
+	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr->GetAddresVecEnemys());
 	enemyTankAmmoManager->Init(tileInfo, tank);
 
 	backGroundRect.left = STAGE_SIZE_X;
@@ -132,7 +132,7 @@ void Stage2Scene::Update()
 		CloseSlate(); // 게임 종료시 슬레이트 닫기
 
 	}
-	else if(GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
+	else if (GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus)
 	{
 		tank->Update();
 
@@ -168,7 +168,7 @@ void Stage2Scene::Update()
 
 		if (GameManager::GetSingleton()->player1Life >= 0)
 		{
-			if (!(boomImg[0].bRenderBoomImg) && tank->HP <= 0)
+			if (!(boomImg[0].bRenderBoomImg) && tank->GetHP() <= 0)
 			{
 				boomImg[0].bRenderBoomImg = true;
 				boomImg[0].imgPos = tank->GetPos();
@@ -176,7 +176,7 @@ void Stage2Scene::Update()
 				tank = vecTankFactorial[0]->CreateTank();
 				for (itEnemyTanks = enemyMgr->GetAddresVecEnemys()->begin(); itEnemyTanks != enemyMgr->GetAddresVecEnemys()->end(); itEnemyTanks++)
 				{
-					(*itEnemyTanks)->playerTank = tank;
+					(*itEnemyTanks)->SetPlayerTank(tank);
 				}
 				GameManager::GetSingleton()->player1Life--;
 			}
@@ -196,7 +196,7 @@ void Stage2Scene::Update()
 					boomImg[0].bRenderBoomImg = false;
 					boomImg[0].BoomImgCurrFrame = 0;
 					if (GameManager::GetSingleton()->player1Life >= 0)
-						tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr, tank, itemManager);
+						tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager);
 				}
 			}
 		}
@@ -244,7 +244,7 @@ void Stage2Scene::Update()
 				elapsedCount = 0;
 				GameManager::GetSingleton()->state = GameState::Done;
 				GameManager::GetSingleton()->spawnCount = 0;
-				GameManager::GetSingleton()->playerEnforceCount = tank->enforceCount;
+				GameManager::GetSingleton()->playerEnforceCount = tank->GetEnforceCount();
 				SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
 				SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			}
@@ -262,7 +262,7 @@ void Stage2Scene::Update()
 	}
 	else if (GameManager::GetSingleton()->state == GameState::GameOver)
 	{
-	RotateGameOverScene();
+		RotateGameOverScene();
 	}
 
 	itemManager->Update();

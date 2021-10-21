@@ -5,7 +5,7 @@
 // 우리가 구성할 게임 월드
 class Image;
 class Tank;
-class TankFactorial;
+class TankFactory;
 class MainGame : public GameEntity
 {
 private:

@@ -11,7 +11,7 @@ class Image;
 class EnemyManager;
 class AmmoManager;
 class Tank;
-class TankFactorial;
+class TankFactory;
 class ItemManager;
 class Stage3Scene : public GameEntity
 {
@@ -36,7 +36,7 @@ private:
 	int slate2;
 
 	Tank* tank = nullptr;
-	vector<TankFactorial*> vecTankFactorial = {};
+	vector<TankFactory*> vecTankFactorial = {};
 
 	AmmoManager* playerTankAmmoManager = nullptr;
 	AmmoManager* enemyTankAmmoManager = nullptr;

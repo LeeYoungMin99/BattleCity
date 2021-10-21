@@ -43,7 +43,7 @@ void EnemyManager::Update()
 	{
 		(*itEnemys)->Update();
 
-		if ((*itEnemys)->HP <= 0)
+		if ((*itEnemys)->GetHP() <= 0)
 		{
 			for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 			{
@@ -52,13 +52,13 @@ void EnemyManager::Update()
 					boomImg[i].bRenderBoomImg = true;
 					boomImg[i].imgPos = (*itEnemys)->GetPos();
 					boomImg[i].BoomImgCurrFrame = 0;
-					scoreImg[i].tankHP = (*itEnemys)->HP;
+					scoreImg[i].tankHP = (*itEnemys)->GetHP();
 					scoreImg[i].imgPos = (*itEnemys)->GetPos();
-					scoreImg[i].scoreFrame = (int)((*itEnemys)->type);
+					scoreImg[i].scoreFrame = (int)((*itEnemys)->GetType());
 					break;
 				}
 			}
-			if ((*itEnemys)->bItem)
+			if ((*itEnemys)->GetHaveItem())
 			{
 				int i = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
 				switch (i)
@@ -186,13 +186,12 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 {
 	tank->SetPos(pos);
 
-	tank->Init(ammoManager, targetAmmoManager, tileInfo, this, playerTank);
+	tank->Init(ammoManager, targetAmmoManager, tileInfo, &vecEnemys, playerTank);
 
-	int a=0, b= RANDOM_2(0, 3);
-	cout << a << " " << b << endl;
+	int a = 0, b = RANDOM_2(0, 3);
 	if (a == b)
 	{
-		tank->bItem = true;
+		tank->SetHaveItem(true);
 	}
 	vecEnemys.push_back(tank);
 }
@@ -203,7 +202,7 @@ void EnemyManager::BoomItem()
 		itEnemys != vecEnemys.end(); itEnemys++)
 	{
 		GameManager::GetSingleton()->remainMonster--;
-		(*itEnemys)->HP -= 5;
+		(*itEnemys)->SubtractHP(5);
 	}
 }
 

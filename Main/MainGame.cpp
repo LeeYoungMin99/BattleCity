@@ -12,7 +12,7 @@
 #include "ScoreScene.h"
 #include "GameOverScene.h"
 #include "Tank.h"
-#include "TankFactorial.h"
+#include "TankFactory.h"
 #include "GameManager.h"
 #include "LoadingScene.h"
 

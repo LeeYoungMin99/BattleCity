@@ -12,13 +12,12 @@ private:
 	int ammoMaxCount = 12;
 
 	Tank* playerTank = nullptr;
-	EnemyManager* enemyMgr = nullptr;
+	vector<Tank*>* enemyTanks;
 	TILE_INFO* tileInfo = nullptr;
 	vector<Ammo*> vecAmmos;
 	vector<Ammo*>::iterator itAmmos;
 public:
-
-	HRESULT Init(TILE_INFO* tileInfo, Tank* playerTank = nullptr, EnemyManager* enemyMgr = nullptr);
+	HRESULT Init(TILE_INFO* tileInfo, Tank* playerTank = nullptr, vector<Tank*>* enemyTanks = nullptr);
 	void Update();
 	void Render(HDC hdc);
 	void Release();

@@ -93,9 +93,6 @@
     <ClCompile Include="Tank.cpp">
       <Filter>MainGame</Filter>
     </ClCompile>
-    <ClCompile Include="TankFactorial.cpp">
-      <Filter>MainGame\TankFactorial</Filter>
-    </ClCompile>
     <ClCompile Include="Stage1Scene.cpp">
       <Filter>MainGame\Scene\Stage</Filter>
     </ClCompile>
@@ -128,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="ItemFactorial.cpp">
       <Filter>MainGame\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="TankFactory.cpp">
+      <Filter>MainGame\TankFactorial</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +188,6 @@
     <ClInclude Include="TilemapToolScene.h">
       <Filter>MainGame\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="TankFactorial.h">
-      <Filter>MainGame\TankFactorial</Filter>
-    </ClInclude>
     <ClInclude Include="Stage1Scene.h">
       <Filter>MainGame\Scene\Stage</Filter>
     </ClInclude>
@@ -223,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="ItemFactorial.h">
       <Filter>MainGame\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="TankFactory.h">
+      <Filter>MainGame\TankFactorial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

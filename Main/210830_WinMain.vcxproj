@@ -162,7 +162,7 @@
     <ClCompile Include="Stage2Scene.cpp" />
     <ClCompile Include="Stage3Scene.cpp" />
     <ClCompile Include="Tank.cpp" />
-    <ClCompile Include="TankFactorial.cpp" />
+    <ClCompile Include="TankFactory.cpp" />
     <ClCompile Include="TilemapToolScene.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
@@ -194,7 +194,7 @@
     <ClInclude Include="Stage2Scene.h" />
     <ClInclude Include="Stage3Scene.h" />
     <ClInclude Include="Tank.h" />
-    <ClInclude Include="TankFactorial.h" />
+    <ClInclude Include="TankFactory.h" />
     <ClInclude Include="TilemapToolScene.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
