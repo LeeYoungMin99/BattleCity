@@ -68,6 +68,13 @@ void ItemManager::Release()
 	{
 		SAFE_DELETE(itemFactory[i])
 	}
+
+	for (itItems = vecItems.begin();
+		itItems != vecItems.end(); itItems++)
+	{
+		SAFE_RELEASE((*itItems));
+	}
+	vecItems.clear();
 }
 
 void ItemManager::Fortification()

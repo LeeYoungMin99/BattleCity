@@ -34,36 +34,60 @@ public:
 	inline int GetType() { return this->itemType; }
 	inline ItemManager* GetItemManager() { return itemManager; }
 	
+	Item() {};
+	virtual ~Item() {} 
 };
 
 class HelmetItem : public Item
 {
 public:
 	virtual void UseItem() override;
+
+	HelmetItem() {};
+	virtual ~HelmetItem() {}
 };
 
 class ClockItem : public Item
 {
 public:
 	virtual void UseItem() override;
+
+	ClockItem() {};
+	virtual ~ClockItem() {}
 };
+
 class ShovelItem : public Item
 {
 public:
 	virtual void UseItem() override;
+
+	ShovelItem() {};
+	virtual ~ShovelItem() {}
 };
+
 class StarItem : public Item
 {
 public:
 	virtual void UseItem() override;
+
+	StarItem() {};
+	virtual ~StarItem() {}
 };
+
 class GrenadeItem : public Item
 {
 public:
 	virtual void UseItem() override;
+
+	GrenadeItem() {};
+	virtual ~GrenadeItem() {}
 };
+
 class TankLifeItem : public Item
 {
 public:
 	virtual void UseItem() override;
+
+	TankLifeItem() {};
+	virtual ~TankLifeItem() {}
 };
