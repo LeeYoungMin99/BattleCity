@@ -14,7 +14,7 @@ class EnemyManager;
 class ItemFactorial;
 class ItemManager : public GameEntity
 {
-public:
+private:
 	Image* itemScore;
 	int itemTile = 0;
 	vector<Item*> vecItems;
@@ -33,6 +33,10 @@ public:
 	ItemFactorial* itemFactorial[6];
 
 	TILE_INFO* tileInfo;
+
+
+public:
+	
 	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
 	void Update();
 	void Render(HDC hdc);
@@ -41,5 +45,8 @@ public:
 	void Fortification();
 	void DestoryFortification();
 	inline void SetItemPoint(bool itemPoint) { this->itemPoint = itemPoint; }
+
+	inline vector<Item*>* GetAddressVecItem() { return &(this->vecItems); }
+	inline vector<Item*> GetVecItem() { return this->vecItems; }
 };
 
