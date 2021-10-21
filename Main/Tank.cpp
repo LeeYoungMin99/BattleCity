@@ -415,11 +415,8 @@ void Tank::Move()
 
 		if (IsCollided() || shape.bottom > 416 + STAGE_SIZE_Y)
 		{
-			if (!bCheckSpawnCollided)
-			{
-				pos.y -= moveSpeed;
-				SetShape();
-			}
+			pos.y -= moveSpeed;
+			SetShape();
 		}
 		break;
 	default:
