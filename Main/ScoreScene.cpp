@@ -100,7 +100,7 @@ void ScoreScene::Update()
 				{
 					GameManager::GetSingleton()->ScoreSave();
 				}
-				SceneManager::GetSingleton()->ChangeScene(nextStage);
+				SceneManager::GetSingleton()->ChangeScene("Stage");
 				return;
 			}
 

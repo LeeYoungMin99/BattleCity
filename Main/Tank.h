@@ -25,7 +25,8 @@ protected:
 	TankType type = TankType::Player;
 	MoveDir moveDir = MoveDir::Up;
 	MoveDir previousDir = moveDir;
-	int enforceCount = GameManager::GetSingleton()->playerEnforceCount;
+	int enforceCount = 0;
+	
 
 	int checkMoveCount = 0;
 	int currFireNumberOfAmmo = 0;
