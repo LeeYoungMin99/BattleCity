@@ -93,20 +93,11 @@
     <ClCompile Include="Tank.cpp">
       <Filter>MainGame</Filter>
     </ClCompile>
-    <ClCompile Include="Stage1Scene.cpp">
-      <Filter>MainGame\Scene\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="ScoreScene.cpp">
       <Filter>MainGame\Scene</Filter>
     </ClCompile>
     <ClCompile Include="TitleScene.cpp">
       <Filter>MainGame\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage3Scene.cpp">
-      <Filter>MainGame\Scene\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage2Scene.cpp">
-      <Filter>MainGame\Scene\Stage</Filter>
     </ClCompile>
     <ClCompile Include="GameOverScene.cpp">
       <Filter>MainGame\Scene</Filter>
@@ -128,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="TankFactory.cpp">
       <Filter>MainGame\TankFactorial</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>MainGame\Scene\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,20 +182,11 @@
     <ClInclude Include="TilemapToolScene.h">
       <Filter>MainGame\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Stage1Scene.h">
-      <Filter>MainGame\Scene\Stage</Filter>
-    </ClInclude>
     <ClInclude Include="ScoreScene.h">
       <Filter>MainGame\Scene</Filter>
     </ClInclude>
     <ClInclude Include="TitleScene.h">
       <Filter>MainGame\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage2Scene.h">
-      <Filter>MainGame\Scene\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage3Scene.h">
-      <Filter>MainGame\Scene\Stage</Filter>
     </ClInclude>
     <ClInclude Include="GameOverScene.h">
       <Filter>MainGame\Scene</Filter>
@@ -223,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="TankFactory.h">
       <Filter>MainGame\TankFactorial</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>MainGame\Scene\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

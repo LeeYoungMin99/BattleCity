@@ -27,8 +27,10 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 	this->targetAmmoManager = targetAmmoManager;
 	this->enemyTanks = enemyTanks;
 
+
 	currFireNumberOfAmmo = 0;
 	this->stageInfo = stageInfo;
+	enforceCount = GameManager::GetSingleton()->playerEnforceCount;
 
 	SetShape();
 	if (IsCollided()) { bCheckSpawnCollided = true; }
@@ -329,6 +331,7 @@ DefensiveEnemyTank::DefensiveEnemyTank()
 
 void Tank::Update()
 {
+	cout << enforceCount << endl;
 	if (bIsAlive == false)	return;
 	SetShape();
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();

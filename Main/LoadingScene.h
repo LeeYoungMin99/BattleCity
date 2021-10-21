@@ -11,7 +11,6 @@ private:
 	Image* stageText;
 
 	int elapsedCount;
-	string nextStage;
 public:
 	HRESULT Init();
 	void Update();

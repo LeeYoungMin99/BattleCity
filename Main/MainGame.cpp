@@ -6,15 +6,13 @@
 #include "TilemapToolScene.h"
 #include "PixelCollisionScene.h"
 #include "AStarScene.h"
-#include "Stage1Scene.h"
-#include "Stage2Scene.h"
-#include "Stage3Scene.h"
 #include "ScoreScene.h"
 #include "GameOverScene.h"
 #include "Tank.h"
 #include "TankFactory.h"
 #include "GameManager.h"
 #include "LoadingScene.h"
+#include "Stage.h"
 
 HRESULT MainGame::Init()
 {
@@ -27,9 +25,7 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
 	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
 	SceneManager::GetSingleton()->AddScene("TilemapToolScene", new TilemapToolScene());
-	SceneManager::GetSingleton()->AddScene("Stage1", new Stage1Scene());
-	SceneManager::GetSingleton()->AddScene("Stage2", new Stage2Scene());
-	SceneManager::GetSingleton()->AddScene("Stage3", new Stage3Scene());
+	SceneManager::GetSingleton()->AddScene("Stage", new Stage());
 	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
 	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
 

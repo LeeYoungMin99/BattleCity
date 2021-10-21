@@ -24,7 +24,6 @@ HRESULT LoadingScene::Init()
 
 	elapsedCount = 0;
 
-	nextStage = "Stage" + to_string((GameManager::GetSingleton()->stageLevel-1)%3+1);
 	return S_OK;
 }
 
@@ -33,7 +32,7 @@ void LoadingScene::Update()
 	elapsedCount++;
 	if (elapsedCount >= 100)
 	{
-		SceneManager::GetSingleton()->ChangeScene(nextStage);
+		SceneManager::GetSingleton()->ChangeScene("Stage");
 		return;
 	}
 

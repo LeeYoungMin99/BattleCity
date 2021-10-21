@@ -6,8 +6,17 @@ void ImageManager::Init()
 	AddImage("Image/Player/Player.bmp", 256, 128, 8, 4, true, RGB(255, 0, 255));
 	AddImage("Image/Effect/Shield.bmp", 64, 32, 2, 1, true, RGB(255, 0, 255));
 	AddImage("Image/Effect/Spawn_Effect.bmp", 128, 32, 4, 1, true, RGB(255, 0, 255));
-	AddImage("Image/Enemy/Enemy.bmp", 512, 256, 8, 4, true, RGB(255, 0, 255));
+	AddImage("Image/Enemy/Enemy.bmp", 512, 384, 8, 6, true, RGB(255, 0, 255));
 	AddImage("Image/Enemy/Enemy_Item.bmp", 128, 128, 8, 8, true, RGB(255, 0, 255));
+
+	//스테이지
+	AddImage("Image/Icon/Icon_Enemy.bmp", 16, 16, 1, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Icon/player1Life.bmp", 35, 40, 1, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Icon/StageFlag.bmp", 35, 40, 1, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
+	AddImage("Image/mapImage.bmp", 1024, 768, 1, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Text/Game_Over.bmp", 64, 30, 1, 1, true, RGB(255, 0, 255));
+	AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
 
 }
 

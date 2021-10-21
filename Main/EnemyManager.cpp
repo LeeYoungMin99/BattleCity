@@ -2,9 +2,7 @@
 #include "Enemy.h"
 #include "Tank.h"
 #include "Image.h"
-#include "Stage1Scene.h"
-#include "Stage2Scene.h"
-#include "Stage3Scene.h"
+#include "Stage.h"
 #include "ItemManager.h"
 
 
@@ -60,25 +58,13 @@ void EnemyManager::Update()
 			}
 			if ((*itEnemys)->GetHaveItem())
 			{
-				int i = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
-				switch (i)
-				{
-				case 1:
-					((Stage1Scene*)stageInfo)->CreateItem();
-					break;
-				case 2:
-					((Stage2Scene*)stageInfo)->CreateItem();
-					break;
-				case 3:
-					((Stage3Scene*)stageInfo)->CreateItem();
-					break;
-				}
+				((Stage*)stageInfo)->CreateItem();
 			}
 
 			Tank* temp = (*itEnemys);
 			itEnemys = vecEnemys.erase(itEnemys);
 			delete temp;
-			((Stage1Scene*)stageInfo)->SubCurrSpawnEnemy();
+			((Stage*)stageInfo)->SubCurrSpawnEnemy();
 		}
 		else
 		{
