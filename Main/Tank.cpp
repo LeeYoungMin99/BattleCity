@@ -9,7 +9,7 @@
 #include "Stage3Scene.h"
 
 #pragma region PlyaerTank
-HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (shieldImg == nullptr) { cout << "ShieldImg nullptr" << endl;  return E_FAIL; }
@@ -22,7 +22,9 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 	moveSpeed = 2.0f;
 
 	this->tileInfo = tile;
-	this->itemManager = item;
+
+	this->ItemList = itemList;
+
 	this->ammoManager = ammoManager;
 	this->targetAmmoManager = targetAmmoManager;
 	this->enemyTanks = enemyTanks;
@@ -184,7 +186,7 @@ PlayerTank::PlayerTank()
 #pragma endregion
 
 #pragma region NormalEnemyTank
-HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
@@ -222,7 +224,7 @@ NormalEnemyTank::NormalEnemyTank()
 #pragma endregion
 
 #pragma region SpeedEnemyTank
-HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
@@ -257,7 +259,7 @@ SpeedEnemyTank::SpeedEnemyTank()
 #pragma endregion
 
 #pragma region RapidEnemyTank
-HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
@@ -292,7 +294,7 @@ RapidEnemyTank::RapidEnemyTank()
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
-HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, ItemManager* item, GameEntity* stageInfo)
+HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
@@ -619,13 +621,13 @@ void Tank::CheckItem()
 {
 	RECT temp = {};
 
-	for (itItemList = itemManager->vecItems.begin(); itItemList != itemManager->vecItems.end(); itItemList++)
+	for (itItemList = ItemList->begin(); itItemList != ItemList->end(); itItemList++)
 	{
 		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
 		{
 			(*itItemList)->UseItem();
 			(*itItemList)->ItemPoint();
-			itItemList = itemManager->vecItems.erase(itItemList);
+			itItemList = ItemList->erase(itItemList);
 			break;
 		}
 	}

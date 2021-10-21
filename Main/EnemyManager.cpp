@@ -54,7 +54,7 @@ void EnemyManager::Update()
 					boomImg[i].BoomImgCurrFrame = 0;
 					scoreImg[i].tankHP = (*itEnemys)->GetHP();
 					scoreImg[i].imgPos = (*itEnemys)->GetPos();
-					scoreImg[i].scoreFrame = (int)((*itEnemys)->GetType());
+					scoreImg[i].scoreFrame = ((int)((*itEnemys)->GetType())) - 1;
 					break;
 				}
 			}
