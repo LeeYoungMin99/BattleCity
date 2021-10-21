@@ -29,12 +29,12 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 	this->targetAmmoManager = targetAmmoManager;
 	this->enemyTanks = enemyTanks;
 
-
 	currFireNumberOfAmmo = 0;
 	this->stageInfo = stageInfo;
 	enforceCount = GameManager::GetSingleton()->playerEnforceCount;
 
 	SetShape();
+
 	if (IsCollided()) { bCheckSpawnCollided = true; }
 
 	moveDir = MoveDir::Up;
@@ -51,89 +51,23 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 
 void PlayerTank::Update()
 {
+	if (bIsAlive == false)	return;
+
 	if (KeyManager::GetSingleton()->IsOnceKeyDown('P')) { if (enforceCount <= 2) { enforceCount++; } }
 	else if (KeyManager::GetSingleton()->IsOnceKeyDown('O')) { if (enforceCount >= 1) { enforceCount--; } }
 
-	if (bIsAlive == false)	return;
+	SpwanAndShieldAnimation();
 
-	// 스폰 이미지와 쉴드 이미지 업데이트
-	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-	if (bCheckShieldOn || bCheckSpawnStatus)
-	{
-		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
-		// 타이머가 3초가 되면 쉴드 해제
-		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
-		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
-		// 타이머가 0.05초 간격으로 쉴드 이미지 갱신
-		if (bCheckSpawnStatus)
-		{
-			spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-			if (spawnElapsedCount > 0.125f)
-			{
-				spawnElapsedCount -= 0.125f;
-				if (bReverseSpawnImg) { spawnImgFrame--; }
-				else { spawnImgFrame++; }
-				if (spawnImgFrame == 3 || spawnImgFrame == 0)
-				{
-					bReverseSpawnImg = !bReverseSpawnImg;
-				}
-			}
-		}
+	SpawnCollided();
 
-		if (bCheckShieldOn)
-		{
-			shieldElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-			if (shieldElapsedCount > 0.05f)
-			{
-				bShieldImageChanged = !bShieldImageChanged;
-				shieldElapsedCount -= 0.05f;
-			}
-		}
-	}
-
-	if (bCheckSpawnCollided)
-	{
-		if (!IsCollided()) { bCheckSpawnCollided = false; }
-	}
-
-	SetShape();
-	if (!bCheckSpawnStatus)
-	{
-		if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
-		{
-			previousDir = moveDir;
-			moveDir = MoveDir::Left;
-			Move();
-		}
-		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
-		{
-			previousDir = moveDir;
-			moveDir = MoveDir::Right;
-			Move();
-		}
-		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
-		{
-			previousDir = moveDir;
-			moveDir = MoveDir::Up;
-			Move();
-		}
-		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
-		{
-			previousDir = moveDir;
-			moveDir = MoveDir::Down;
-			Move();
-		}
-
-		Fire();
-	}
+	Action();
 }
 
 void PlayerTank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{
@@ -178,6 +112,77 @@ void PlayerTank::Fire()
 	}
 }
 
+void PlayerTank::Action()
+{
+	if (!bCheckSpawnStatus)
+	{
+		if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_LEFT))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Left;
+			Move();
+		}
+		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_RIGHT))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Right;
+			Move();
+		}
+		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_UP))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Up;
+			Move();
+		}
+		else if (Singleton<KeyManager>::GetSingleton()->IsStayKeyDown(VK_DOWN))
+		{
+			previousDir = moveDir;
+			moveDir = MoveDir::Down;
+			Move();
+		}
+
+		Fire();
+	}
+}
+
+void PlayerTank::SpwanAndShieldAnimation()
+{
+	// 스폰 이미지와 쉴드 이미지 업데이트
+	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+	if (bCheckShieldOn || bCheckSpawnStatus)
+	{
+		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
+		// 타이머가 3초가 되면 쉴드 해제
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime() * 2;
+		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
+		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
+		// 타이머가 0.05초 간격으로 쉴드 이미지 갱신
+		if (bCheckSpawnStatus)
+		{
+			if (spawnElapsedCount > 0.125f)
+			{
+				spawnElapsedCount -= 0.125f;
+				if (bReverseSpawnImg) { spawnImgFrame--; }
+				else { spawnImgFrame++; }
+				if (spawnImgFrame == 3 || spawnImgFrame == 0)
+				{
+					bReverseSpawnImg = !bReverseSpawnImg;
+				}
+			}
+		}
+
+		if (bCheckShieldOn)
+		{
+			shieldElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
+			if (shieldElapsedCount > 0.05f)
+			{
+				bShieldImageChanged = !bShieldImageChanged;
+				shieldElapsedCount -= 0.05f;
+			}
+		}
+	}
+}
+
 PlayerTank::PlayerTank()
 {
 	bIsAlive = false;
@@ -190,6 +195,10 @@ PlayerTank::PlayerTank()
 #pragma region NormalEnemyTank
 HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
@@ -216,18 +225,15 @@ HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoM
 
 	return S_OK;
 }
-
-NormalEnemyTank::NormalEnemyTank()
-{
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-}
 #pragma endregion
 
 #pragma region SpeedEnemyTank
 HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
@@ -251,18 +257,15 @@ HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 
 	return S_OK;
 }
-
-SpeedEnemyTank::SpeedEnemyTank()
-{
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-}
 #pragma endregion
 
 #pragma region RapidEnemyTank
 HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
@@ -286,18 +289,15 @@ HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 
 	return S_OK;
 }
-
-RapidEnemyTank::RapidEnemyTank()
-{
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-}
 #pragma endregion
 
 #pragma region DefensiveEnemyTank
 HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)
 {
+	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
+	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
+	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
+
 	if (img == nullptr) { cout << "PlayerTankImg nullptr" << endl; return E_FAIL; }
 	if (spawnImg == nullptr) { cout << "SpawnImg nullptr" << endl;  return E_FAIL; }
 	if (itemTank == nullptr) { cout << "itemTankImg nullptr" << endl;  return E_FAIL; }
@@ -322,85 +322,28 @@ HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAm
 
 	return S_OK;
 }
-
-DefensiveEnemyTank::DefensiveEnemyTank()
-{
-	img = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	spawnImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Spawn_Effect.bmp");
-	itemTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy_Item.bmp");
-}
 #pragma endregion
 
 void Tank::Update()
 {
 	if (bIsAlive == false)	return;
-	SetShape();
+
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-	if (bCheckSpawnStatus)
-	{
-		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
-		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; }
 
-		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
-		if (spawnElapsedCount > 0.125f)
-		{
-			spawnElapsedCount -= 0.125f;
-			if (bReverseSpawnImg) { spawnImgFrame--; }
-			else { spawnImgFrame++; }
-			if (spawnImgFrame == 3 || spawnImgFrame == 0)
-			{
-				bReverseSpawnImg = !bReverseSpawnImg;
-			}
-		}
-	}
+	SpwanAnimation();
 
-	if (bCheckSpawnCollided)
-	{
-		if (!IsCollided()) { bCheckSpawnCollided = false; }
-	}
+	SpawnCollided();
 
-	if (!bCheckSpawnStatus)
-	{
-		if (!clockItem)
-		{
-			if (elapsedCount >= delay)
-			{
-				elapsedCount = 0;
-				delay = RANDOM(0, 3);
-				previousDir = moveDir;
-				moveDir = (MoveDir)(RANDOM(0, 3) * 2);
-			}
+	Action();
 
-			Move();
-
-			if (currFireNumberOfAmmo == 0)
-			{
-				Fire();
-			}
-			else if (type == TankType::Rapid && currFireNumberOfAmmo == 1)
-			{
-				Fire();
-			}
-		}
-	}
-
-	testelapsed_2++;  //아이템 탱크 깜빡깜빡
-	if (testelapsed_2 >= 10)
-	{
-		testelapsed_2 = 0;
-		if (checkMoveCount_2 == 0)
-			checkMoveCount_2 = 1;
-		else
-			checkMoveCount_2 = 0;
-	}
+	FlashItemTank();
 }
 
 void Tank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{
@@ -618,6 +561,76 @@ void Tank::SetShape()
 	shape.top = pos.y - (bodySize / 2);
 	shape.right = shape.left + bodySize / 2;
 	shape.bottom = shape.top + bodySize / 2;
+}
+
+void Tank::SpawnCollided()
+{
+	if (bCheckSpawnCollided)
+	{
+		if (!IsCollided()) { bCheckSpawnCollided = false; }
+	}
+}
+
+void Tank::Action()
+{
+	if (!bCheckSpawnStatus)
+	{
+		if (!clockItem)
+		{
+			if (elapsedCount >= delay)
+			{
+				elapsedCount = 0;
+				delay = RANDOM(0, 3);
+				previousDir = moveDir;
+				moveDir = (MoveDir)(RANDOM(0, 3) * 2);
+			}
+
+			Move();
+
+			if (currFireNumberOfAmmo == 0)
+			{
+				Fire();
+			}
+			else if (type == TankType::Rapid && currFireNumberOfAmmo == 1)
+			{
+				Fire();
+			}
+		}
+	}
+}
+
+void Tank::SpwanAnimation()
+{
+	if (bCheckSpawnStatus)
+	{
+		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
+		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime() * 2;
+		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; }
+
+		if (spawnElapsedCount > 0.125f)
+		{
+			spawnElapsedCount -= 0.125f;
+			if (bReverseSpawnImg) { spawnImgFrame--; }
+			else { spawnImgFrame++; }
+			if (spawnImgFrame == 3 || spawnImgFrame == 0)
+			{
+				bReverseSpawnImg = !bReverseSpawnImg;
+			}
+		}
+	}
+}
+
+void Tank::FlashItemTank()
+{
+	testelapsed_2++;  //아이템 탱크 깜빡깜빡
+	if (testelapsed_2 >= 10)
+	{
+		testelapsed_2 = 0;
+		if (checkMoveCount_2 == 0)
+			checkMoveCount_2 = 1;
+		else
+			checkMoveCount_2 = 0;
+	}
 }
 
 void Tank::CheckItem()
