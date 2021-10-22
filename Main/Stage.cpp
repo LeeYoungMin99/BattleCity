@@ -22,9 +22,6 @@ HRESULT Stage::Init()
 		return E_FAIL;
 	}
 
-	remainMonster = 18;
-	remainSpawnMonster = 18;
-
 	spawnMonsterImage = ImageManager::GetSingleton()->FindImage("Image/Icon/Icon_Enemy.bmp");
 
 	lifeImage = ImageManager::GetSingleton()->FindImage("Image/Icon/player1Life.bmp");
@@ -63,6 +60,7 @@ HRESULT Stage::Init()
 
 			if (tileInfo[i * TILE_COUNT_X + j].tileType == TileType::Water)
 			{
+				waterTilePos.emplace_back(i, j);
 				waterTilePos.push_back(make_pair(i, j));
 			}
 		}
@@ -75,20 +73,32 @@ HRESULT Stage::Init()
 	spawnEnemyPos[2].x = tileInfo[24].rc.right + STAGE_SIZE_X + 16;
 	spawnEnemyPos[2].y = tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2;
 
-	vecTankFactorial.resize(5);
-	vecTankFactorial[0] = new PlayerTankFactory;
-	vecTankFactorial[1] = new NormalEnemyTankFactory;
-	vecTankFactorial[2] = new SpeedEnemyTankFactory;
-	vecTankFactorial[3] = new RapidEnemyTankFactory;
-	vecTankFactorial[4] = new DefensiveEnemyTankFactory;
 
-	playerTankAmmoManager = new AmmoManager;
-	enemyTankAmmoManager = new AmmoManager;
+	tankFactory[0] = DBG_NEW PlayerTankFactory;
+	tankFactory[1] = DBG_NEW NormalEnemyTankFactory;
+	tankFactory[2] = DBG_NEW SpeedEnemyTankFactory;
+	tankFactory[3] = DBG_NEW RapidEnemyTankFactory;
+	tankFactory[4] = DBG_NEW DefensiveEnemyTankFactory;
 
-	tank = vecTankFactorial[0]->CreateTank();
-	enemyMgr = new EnemyManager;
+	//vecTankFactory.push_back(DBG_NEW PlayerTankFactory);
+	//vecTankFactory.push_back(DBG_NEW NormalEnemyTankFactory);
+	//vecTankFactory.push_back(DBG_NEW SpeedEnemyTankFactory);
+	//vecTankFactory.push_back(DBG_NEW RapidEnemyTankFactory);
+	//vecTankFactory.push_back(DBG_NEW DefensiveEnemyTankFactory);
 
-	itemManager = new ItemManager;
+	//vecTankFactory[0] = DBG_NEW PlayerTankFactory;
+	//vecTankFactory[1] = DBG_NEW NormalEnemyTankFactory;
+	//vecTankFactory[2] = DBG_NEW SpeedEnemyTankFactory;
+	//vecTankFactory[3] = DBG_NEW RapidEnemyTankFactory;
+	//vecTankFactory[4] = DBG_NEW DefensiveEnemyTankFactory;
+
+	playerTankAmmoManager = DBG_NEW AmmoManager;
+	enemyTankAmmoManager = DBG_NEW AmmoManager;
+
+	tank = tankFactory[0]->CreateTank();
+	enemyMgr = DBG_NEW EnemyManager;
+
+	itemManager = DBG_NEW ItemManager;
 	itemManager->Init();
 
 	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager->GetAddressVecItem());
@@ -110,8 +120,8 @@ HRESULT Stage::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 1;
-	GameManager::GetSingleton()->remainMonster = 1;
+	GameManager::GetSingleton()->remainSpawnMonster = 10;
+	GameManager::GetSingleton()->remainMonster = 10;
 
 	stateElapsedCount = 0;
 	return S_OK;
@@ -214,19 +224,24 @@ void Stage::Release()
 {
 	for (int i = 0; i < 5; i++)
 	{
-		SAFE_DELETE(vecTankFactorial[i]);
+		SAFE_DELETE(tankFactory[i]);
 	}
-	SAFE_DELETE(playerTankAmmoManager);
+	/*vecTankFactory.clear();
+	vector<TankFactory*>().swap(vecTankFactory);*/
 
-	SAFE_DELETE(enemyTankAmmoManager);
+	SAFE_RELEASE(tank);
+	SAFE_RELEASE(playerTankAmmoManager);
+	SAFE_RELEASE(enemyTankAmmoManager);
 	SAFE_RELEASE(enemyMgr);
-	SAFE_DELETE(itemManager);
+	SAFE_RELEASE(itemManager);
+
+	//waterTilePos.clear();
 
 }
 
 void Stage::SpawnEnemy(TankType type)
 {
-	enemyMgr->AddEnemy(vecTankFactorial[(int)type + 1]->CreateTank(), spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
+	enemyMgr->AddEnemy(tankFactory[(int)type + 1]->CreateTank(), spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
 
 	if (GameManager::GetSingleton()->spawnCount >= maxSpawnCount)
 	{
@@ -327,6 +342,7 @@ void Stage::WaterTileAnimation()
 		{
 			if (tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX + 1 == 7)
 				tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX = 3;
+
 			(tileInfo[waterTilePos[i].first * TILE_COUNT_X + waterTilePos[i].second].frameX) += 1;
 		}
 		waterElapsedCount = 0;
@@ -407,11 +423,13 @@ void Stage::PlayerTankDestroyAnimation()
 		{
 			boomImg[0].bRenderBoomImg = true;
 			boomImg[0].imgPos = tank->GetPos();
-			delete tank;
-			tank = vecTankFactorial[0]->CreateTank();
-			for (itEnemyTanks = enemyMgr->GetAddresVecEnemys()->begin(); itEnemyTanks != enemyMgr->GetAddresVecEnemys()->end(); itEnemyTanks++)
+			SAFE_DELETE( tank);
+			tank = tankFactory[0]->CreateTank();
+			for (auto iter = enemyMgr->GetAddresVecEnemys()->begin();
+				iter != enemyMgr->GetAddresVecEnemys()->end();
+				++iter)
 			{
-				(*itEnemyTanks)->SetPlayerTank(tank);
+				(*iter)->SetPlayerTank(tank);
 			}
 			GameManager::GetSingleton()->player1Life--;
 		}

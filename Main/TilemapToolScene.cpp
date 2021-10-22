@@ -285,8 +285,7 @@ void TilemapToolScene::Render(HDC hdc)
 
 void TilemapToolScene::Release()
 {
-    SAFE_RELEASE(loadBtn);
-    SAFE_RELEASE(saveBtn);
+
 }
 
 void TilemapToolScene::Save(int saveIndex)

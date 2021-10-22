@@ -33,7 +33,7 @@ void AmmoManager::Update()
 void AmmoManager::Render(HDC hdc)
 {
 	for (itAmmos = vecAmmos.begin();
-		itAmmos != vecAmmos.end(); itAmmos++)
+		itAmmos != vecAmmos.end(); ++itAmmos)
 	{
 		(*itAmmos)->Render(hdc);
 	}

@@ -17,6 +17,8 @@ private:
 	vector<Ammo*> vecAmmos;
 	vector<Ammo*>::iterator itAmmos;
 public:
+	virtual ~AmmoManager() = default;
+
 	HRESULT Init(TILE_INFO* tileInfo, Tank* playerTank = nullptr, vector<Tank*>* enemyTanks = nullptr);
 	void Update();
 	void Render(HDC hdc);

@@ -28,6 +28,14 @@ using namespace std;
 #define SAFE_RELEASE(p)	{ if (p) { p->Release(); delete p; p = nullptr; } }
 #define SAFE_DELETE(p)	{ if (p) { delete p; p = nullptr; } }
 
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 enum class MoveDir { Left = 2, Right = 6, Up = 0, Down = 4 };
 enum class TankType { Player, Normal, Speed, Rapid, Defensive };
 
@@ -88,7 +96,7 @@ typedef struct ArgumentFuncPtr
 {
 	string sceneName;
 	string loadingSceneName;
-	TILE_INFO* tileInfo;
+	/*TILE_INFO* tileInfo;
 	int saveIndex;
-	int loadIndex;
+	int loadIndex;*/
 } ARGUMENT_PTR, * LPARGUMENT_PTR;

@@ -24,6 +24,12 @@ void SceneManager::Init()
 
 void SceneManager::Release()
 {
+	for (auto& elem : mapScenes)
+	{
+		SAFE_RELEASE(elem.second);
+	}
+
+	mapScenes.clear();
 }
 
 void SceneManager::Update()
@@ -47,7 +53,9 @@ void SceneManager::AddScene(string key, GameEntity* scene)
 		return;
 	}
 
-	mapScenes.insert(pair<string, GameEntity*>(key, scene));
+	mapScenes[key] = scene;
+	//mapScenes.emplace(key, scene);
+	//mapScenes.insert(pair<string, GameEntity*>(key, scene));
 
 }
 
@@ -60,12 +68,13 @@ void SceneManager::AddLoadingScene(string key, GameEntity* scene)
 		return;
 	}
 
-	mapLoadingScenes.insert(pair<string, GameEntity*>(key, scene));
+	mapLoadingScenes[key] = scene;
+	//mapLoadingScenes.insert(pair<string, GameEntity*>(key, scene));
 }
 
 HRESULT SceneManager::ChangeScene(string sceneName)
 {
-	map<string, GameEntity*>::iterator it = mapScenes.find(sceneName);
+	auto it = mapScenes.find(sceneName);
 
 	if (it == mapScenes.end())
 		return E_FAIL;
@@ -85,13 +94,13 @@ HRESULT SceneManager::ChangeScene(string sceneName)
 
 HRESULT SceneManager::ChangeScene(string sceneName, string loadingSceneName)
 {
-	map<string, GameEntity*>::iterator it = mapScenes.find(sceneName);
+	auto it = mapScenes.find(sceneName);
 
 	if (it == mapScenes.end())
 		return E_FAIL;
 
 	// ·Îµù¾À È®ÀÎ
-	map<string, GameEntity*>::iterator itLoading = mapLoadingScenes.find(loadingSceneName);
+	auto itLoading = mapLoadingScenes.find(loadingSceneName);
 	if (itLoading == mapLoadingScenes.end())
 	{
 		return ChangeScene(sceneName);

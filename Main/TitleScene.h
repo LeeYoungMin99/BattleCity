@@ -20,6 +20,8 @@ private:
 	bool titleStart; //µð¹ö±ë¿ë
 
 public:
+	virtual ~TitleScene() = default;
+
 	virtual HRESULT Init() override;
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;

@@ -45,6 +45,8 @@ private:
 	vector<Tank*> vecEnemys;
 	vector<Tank*>::iterator itEnemys;
 public:
+	virtual ~EnemyManager() = default;
+
 	HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tilemap, Tank* playerTank, GameEntity* stageInfo);
 	void Update();
 	void Render(HDC hdc);

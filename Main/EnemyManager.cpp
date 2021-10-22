@@ -163,6 +163,8 @@ void EnemyManager::Release()
 		SAFE_RELEASE((*itEnemys));
 	}
 	vecEnemys.clear();
+
+	SAFE_RELEASE(itemManager);
 }
 
 void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)

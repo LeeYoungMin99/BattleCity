@@ -40,6 +40,6 @@ public:
 	inline RECT* GetShapeAddress() { return &this->shape; }
 
 	GameObject();
-	~GameObject();
+	virtual ~GameObject();
 };
 

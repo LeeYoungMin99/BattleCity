@@ -13,7 +13,7 @@ private:
 	HANDLE hTimer;
 
 	// UI
-	char text[128];
+	//char text[128];
 
 	int mousePosX;
 	int mousePosY;
