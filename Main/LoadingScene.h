@@ -6,11 +6,11 @@ class Image;
 class LoadingScene : public GameEntity
 {
 private:
-	Image* backGround;
-	Image* stageLevel;
-	Image* stageText;
+	Image* backGround = nullptr;
+	Image* stageLevel = nullptr;
+	Image* stageText = nullptr;
 
-	int elapsedCount;
+	int elapsedCount = 0;
 public:
 	virtual ~LoadingScene() = default;
 

@@ -187,18 +187,18 @@ void ScoreScene::Render(HDC hdc)
 	}
 
 	if (totalScore)
-		totalScore->Render(hdc, WIN_SIZE_X/3 + 35, WIN_SIZE_Y *0.8 - 15 );	//토탈스코어 텍스트
+		totalScore->Render(hdc, (int)(WIN_SIZE_X/3 + 35), (int)(WIN_SIZE_Y *0.8 - 15) );	//토탈스코어 텍스트
 
 	if (bTotalScore)													//토탈 누적 킬수
 	{
 		if (TK < 10)
 		{
-			number->Render(hdc, WIN_SIZE_X / 3 + 40, WIN_SIZE_Y * 0.8 - 15 , TK %5, TK /5);
+			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)(WIN_SIZE_Y * 0.8 - 15 ), TK %5, TK /5);
 		}
 		else
 		{
-			number->Render(hdc, WIN_SIZE_X / 3 + 40, WIN_SIZE_Y * 0.8 - 15 , (TK%10) % 5, (TK%10) / 5);
-			number->Render(hdc, WIN_SIZE_X / 3 + 25, WIN_SIZE_Y * 0.8 - 15 , (TK/10) % 5, (TK/10) / 5);
+			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)( WIN_SIZE_Y * 0.8 - 15 ), (TK%10) % 5, (TK%10) / 5);
+			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 25), (int)(WIN_SIZE_Y * 0.8 - 15 ), (TK/10) % 5, (TK/10) / 5);
 		}
 	}
 

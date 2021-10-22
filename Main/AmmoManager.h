@@ -12,7 +12,7 @@ private:
 	int ammoMaxCount = 12;
 
 	Tank* playerTank = nullptr;
-	vector<Tank*>* enemyTanks;
+	vector<Tank*>* enemyTanks = nullptr;
 	TILE_INFO* tileInfo = nullptr;
 	vector<Ammo*> vecAmmos;
 	vector<Ammo*>::iterator itAmmos;
@@ -29,6 +29,5 @@ public:
 	vector<Ammo*>::iterator* GetAddressItAmmos() { return &itAmmos; }
 	void SetAddressItAmmos(vector<Ammo*>* vecAmmos) { itAmmos = vecAmmos->begin(); }
 	void addAddressItAmmos() { itAmmos++; }
-
 };
 

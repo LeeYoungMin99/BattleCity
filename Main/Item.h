@@ -15,13 +15,13 @@ private:
 	int elapsedcount;
 
 	GameEntity* stageInfo = nullptr;
-	Tank* tank;
-	EnemyManager* enemyMgr;
+	Tank* tank = nullptr;
+	EnemyManager* enemyMgr = nullptr;
 
-	ItemManager* itemManager;
+	ItemManager* itemManager = nullptr;
 	
 public:
-	RECT rc;
+	RECT rc = {};
 	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo, ItemManager* itemManager);
 	void Update();
 	void Render(HDC hdc);

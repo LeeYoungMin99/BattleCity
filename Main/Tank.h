@@ -26,13 +26,13 @@ protected:
 	MoveDir moveDir = MoveDir::Up;
 	MoveDir previousDir = moveDir;
 	int enforceCount = 0;
-	
+
 
 	int checkMoveCount = 0;
 	int currFireNumberOfAmmo = 0;
 	POINTFLOAT barrelPos = {};
 
-	bool bCheckTankCollider;
+	bool bCheckTankCollider = false;
 
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
@@ -41,17 +41,17 @@ protected:
 	Tank* playerTank = nullptr;
 	vector<Tank*>* enemyTanks = nullptr;
 	vector<Tank*>::iterator itEnemyTanks = {};
-	ItemManager* itemManager;
-	vector<Item*>* ItemList;
+	ItemManager* itemManager = nullptr;
+	vector<Item*>* ItemList = nullptr;
 	vector<Item*>::iterator itItemList = {};
 
-	float delay = RANDOM(1, 3);
+	float delay = (float)RANDOM(1, 3);
 	float elapsedCount = 0.0f;
-	float delay_2 = RANDOM(10, 15);	//탱크 공격딜레이
-	int testelapsed;				//탱크 공격딜레이
-	int testelapsed_2;				//아이템탱크 번쩍번쩍
-	int checkMoveCount_2;			//아이템탱크 번쩍번쩍
-	bool bHaveItem = false;			//아이템 여부
+	float delay_2 = (float)RANDOM(10, 15);		
+	int testelapsed = 0;						
+	int testelapsed_2 = 0;						
+	int checkMoveCount_2 = 0;					
+	bool bHaveItem = false;						
 	bool clockItem = false;
 
 public:
@@ -73,7 +73,7 @@ public:
 
 	virtual bool IsCollided();
 	virtual void SetShape();
-	
+
 
 	virtual void SpawnCollided();
 	virtual void Action();

@@ -2,29 +2,29 @@
 #include "Config.h"
 #include "Singleton.h"
 
-static enum class GameState{Playing, Done, DestoryNexus, GameOver};
+enum class GameState{Playing, Done, DestoryNexus, GameOver};
 
 class GameManager : public Singleton<GameManager>
 {
 public:
-	int defeatNormalTank;
-	int defeatSpeedTank;
-	int defeatRapidTank;
-	int defeatDefensiveTank;
+	int defeatNormalTank = 0;
+	int defeatSpeedTank = 0;
+	int defeatRapidTank = 0;
+	int defeatDefensiveTank = 0;
 
-	int hightScore;	 // 최고 점수
-	int player1Score;
-	int player1Life;
+	int hightScore = 0;	 // 최고 점수
+	int player1Score = 0;
+	int player1Life = 0;
 	int playerEnforceCount = 0;
 
 
-	int remainSpawnMonster;
-	int remainMonster;
-	int spawnCount;
+	int remainSpawnMonster = 0;
+	int remainMonster = 0;
+	int spawnCount = 0;
 
-	int stageLevel;
+	int stageLevel = 0;
 
-	GameState state;
+	GameState state = {};
 
 public:
 	void Init();

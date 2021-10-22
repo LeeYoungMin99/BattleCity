@@ -1,3 +1,4 @@
+#pragma once
 #include "Ammo.h"
 #include "Tank.h"
 #include "Image.h"
@@ -7,9 +8,6 @@
 
 HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, vector<Tank*>* enemyTanks, Tank* playerTank)
 {
-	//float x = 10.0f, y = 20.0f, h = 0.0f;
-	//h = (float)sqrtf((x * x) + (y * y));
-
 	pos.x = 0.0f;
 	pos.y = 0.0f;
 
@@ -19,11 +17,10 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, vector<Tank*>* enemyTanks, 
 	shape.right = 0;
 	shape.bottom = 0;
 
-	moveSpeed = 200.0f;		// 초당 15픽셀 이동
+	moveSpeed = 200.0f;
 	moveAngle = 0.0f;
 
 	isFire = false;
-	//isAlive = true;
 
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Down.bmp", 6, 8, true, RGB(255, 0, 255));
 	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Left.bmp", 6, 8, true, RGB(255, 0, 255));
@@ -39,10 +36,10 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, vector<Tank*>* enemyTanks, 
 		return E_FAIL;
 	}
 
-	collision.left = pos.x - (bodySize / 2.0f);
-	collision.top = pos.y - (bodySize / 2.0f);
-	collision.right = pos.x + (bodySize / 2.0f);
-	collision.bottom = pos.y + (bodySize / 2.0f);
+	collision.left = (LONG)(pos.x - (bodySize / 2.0f));
+	collision.top = (LONG)(pos.y - (bodySize / 2.0f));
+	collision.right = (LONG)(pos.x + (bodySize / 2.0f));
+	collision.bottom = (LONG)(pos.y + (bodySize / 2.0f));
 
 	bulletDir = BulletDir::Up;
 
@@ -57,29 +54,25 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, vector<Tank*>* enemyTanks, 
 
 void Ammo::Update()
 {
-	//if (isAlive == false)	return;
-
 	if (isFire)
 	{
 		if (!bRenderBoomImg)
 		{
-			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();		// 프레임당 이동거리 -> 시간 당 이동거리
+			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();	
 			pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 		}
 
 		SetCollider();
 
-		int posIdX = (pos.x - STAGE_SIZE_X) / 16;
-		int posIdY = (pos.y - STAGE_SIZE_Y) / 16;
+		int posIdX = (int)((pos.x - STAGE_SIZE_X) / 16);
+		int posIdY = (int)((pos.y - STAGE_SIZE_Y) / 16);
 
-		// 화면을 벗어났는지 확인
 		if (collision.left > STAGE_SIZE_X + 416 || collision.right < STAGE_SIZE_X ||
 			collision.top > STAGE_SIZE_Y + 416 || collision.bottom < STAGE_SIZE_Y)
 		{
 			bRenderBoomImg = true;
 		}
 
-		// 타겟과의 충돌확인
 		if (CheckCollision(posIdX, posIdY))
 		{
 			bRenderBoomImg = true;
@@ -121,16 +114,13 @@ void Ammo::SetIsFire(bool fire)
 
 void Ammo::Render(HDC hdc)
 {
-	//if (isAlive == false)	return;
-
 	if (isFire)
 	{
 		Rectangle(hdc, collision.left, collision.top, collision.right, collision.bottom);
-		img->Render(hdc, pos.x, pos.y);
-		//Ellipse(hdc, shape.left, shape.top, shape.right, shape.bottom);
+		img->Render(hdc, (int)pos.x, (int)pos.y);
 		if (bRenderBoomImg)
 		{
-			boomImg->Render(hdc, pos.x, pos.y, boomImgCurrFrame, 0);
+			boomImg->Render(hdc, (int)pos.x, (int)pos.y, boomImgCurrFrame, 0);
 		}
 	}
 }
@@ -144,16 +134,12 @@ bool Ammo::CheckCollision(int idX, int idY)
 	RECT rc;
 	int check = false;
 
-	/*if (IntersectRect(&rc, &collision, &target->GetShape()))
-		return true;*/
 	if (ownerTank->GetEnforceCount() != 3)
 	{
 		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 		{
-
 			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 			{
-				// 벽 없애기
 				check = true;
 
 				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX - 1].tileType == TileType::Brick)
@@ -166,18 +152,14 @@ bool Ammo::CheckCollision(int idX, int idY)
 					tile[26 * (idY)+idX - 1].collider.bottom -= 8;
 					tile[26 * (idY)+idX - 1].bottomHit++;
 				}
-
-
 				if (tile[26 * (idY)+idX - 1].topHit + tile[26 * (idY)+idX - 1].bottomHit >= 2)
 				{
 					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
 					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
 				}
 			}
-
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// 벽 없애기
 				check = true;
 				if (bulletDir == BulletDir::Down && tile[26 * (idY)+idX].tileType == TileType::Brick)
 				{
@@ -195,14 +177,11 @@ bool Ammo::CheckCollision(int idX, int idY)
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
 				}
 			}
-
-
 		}
 		else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
 		{
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 			{
-				// 벽 없애기
 				check = true;
 				if (bulletDir == BulletDir::Left && tile[26 * (idY - 1) + idX].tileType == TileType::Brick)
 				{
@@ -222,7 +201,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// 벽 없애기
 				check = true;
 				if (bulletDir == BulletDir::Left && tile[26 * (idY)+idX].tileType == TileType::Brick)
 				{
@@ -240,18 +218,14 @@ bool Ammo::CheckCollision(int idX, int idY)
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
 				}
 			}
-
 		}
 	}
 	else
 	{
-
 		if (bulletDir == BulletDir::Up || bulletDir == BulletDir::Down)
 		{
-
 			if (IntersectRect(&rc, &collision, &(tile[26 * idY + idX - 1].collider)) && tile[26 * idY + idX - 1].tileType != TileType::Water)
 			{
-				// 벽 없애기
 				check = true;
 
 				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX - 1].tileType == TileType::Brick || tile[26 * (idY)+idX - 1].tileType == TileType::Wall))
@@ -274,7 +248,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// 벽 없애기
 				check = true;
 				if (bulletDir == BulletDir::Down && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
@@ -292,16 +265,12 @@ bool Ammo::CheckCollision(int idX, int idY)
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
 				}
 			}
-
-
 		}
 		else if (bulletDir == BulletDir::Left || bulletDir == BulletDir::Right)
 		{
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY - 1) + idX].collider)))
 			{
-				// 벽 없애기
 				check = true;
-				// 벽 없애기
 				if (bulletDir == BulletDir::Left && (tile[26 * (idY - 1) + idX].tileType == TileType::Brick || tile[26 * (idY - 1) + idX].tileType == TileType::Wall))
 				{
 					tile[26 * (idY - 1) + idX].collider.right -= 16;
@@ -320,7 +289,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
 			{
-				// 벽 없애기
 				check = true;
 				if (bulletDir == BulletDir::Left && (tile[26 * (idY)+idX].tileType == TileType::Brick || tile[26 * (idY)+idX].tileType == TileType::Wall))
 				{
@@ -341,7 +309,6 @@ bool Ammo::CheckCollision(int idX, int idY)
 
 		}
 	}
-	// 넥서스 충돌 처리
 	if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)) && GameManager::GetSingleton()->state != GameState::GameOver)
 	{
 
@@ -359,16 +326,15 @@ bool Ammo::CheckCollision(int idX, int idY)
 				}
 			}
 			GameManager::GetSingleton()->state = GameState::DestoryNexus;
-			//조건 처리
 		}
 	}
 
 
 	if (playerTank == nullptr)
-	{	// 플레이어 탱크면
+	{
 		for (itEnemyTanks = enemyTanks->begin();
 			itEnemyTanks != enemyTanks->end(); itEnemyTanks++)
-		{	// Enemy가 Spawn상태가 아니라면 충돌 처리
+		{	
 			if (!(*itEnemyTanks)->GetCheckSpawnStatus() && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
 				if (!CheckHitTank((*itEnemyTanks)))
@@ -387,7 +353,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 	}
 
 	if (playerTank != nullptr && !(playerTank->GetCheckSpawnStatus()))
-	{	// Player를 타겟으로 잡고있고 Player가 Spawn상태가 아니라면 충돌처리 
+	{	
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
 			if (((PlayerTank*)playerTank)->GetCheckShieldOn())
@@ -465,7 +431,7 @@ void Ammo::SetMoveDir(string dir)
 	{
 		bulletDir = BulletDir::Left;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Left.bmp");
-		SetMoveAngle(DEGREE_TO_RADIAN(180));
+		SetMoveAngle((float)DEGREE_TO_RADIAN(180));
 	}
 	else if (dir._Equal("Right"))
 	{
@@ -477,13 +443,13 @@ void Ammo::SetMoveDir(string dir)
 	{
 		bulletDir = BulletDir::Up;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
-		SetMoveAngle(DEGREE_TO_RADIAN(90));
+		SetMoveAngle((float)DEGREE_TO_RADIAN(90));
 	}
 	else if (dir._Equal("Down"))
 	{
 		bulletDir = BulletDir::Down;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Down.bmp");
-		SetMoveAngle(DEGREE_TO_RADIAN(270));
+		SetMoveAngle((float)DEGREE_TO_RADIAN(270));
 	}
 }
 
@@ -491,31 +457,31 @@ void Ammo::SetCollider()
 {
 	if (bulletDir == BulletDir::Left)
 	{
-		collision.left = pos.x - (bodySize / 2.0f) + 3;
-		collision.top = pos.y - (bodySize / 2.0f);
-		collision.right = pos.x + (bodySize / 2.0f) + 1;
-		collision.bottom = pos.y + (bodySize / 2.0f);
+		collision.left = (LONG)(pos.x - (bodySize / 2.0f) + 3);
+		collision.top = (LONG)(pos.y - (bodySize / 2.0f));
+		collision.right = (LONG)(pos.x + (bodySize / 2.0f) + 1);
+		collision.bottom = (LONG)(pos.y + (bodySize / 2.0f));
 	}
 	else if (bulletDir == BulletDir::Right)
 	{
-		collision.left = pos.x - (bodySize / 2.0f) - 1;
-		collision.top = pos.y - (bodySize / 2.0f);
-		collision.right = pos.x + (bodySize / 2.0f) - 3;
-		collision.bottom = pos.y + (bodySize / 2.0f);
+		collision.left = (LONG)(pos.x - (bodySize / 2.0f) - 1);
+		collision.top = (LONG)(pos.y - (bodySize / 2.0f));
+		collision.right = (LONG)(pos.x + (bodySize / 2.0f) - 3);
+		collision.bottom = (LONG)(pos.y + (bodySize / 2.0f));
 	}
 	else if (bulletDir == BulletDir::Down)
 	{
-		collision.left = pos.x - (bodySize / 2.0f);
-		collision.top = pos.y - (bodySize / 2.0f) - 1;
-		collision.right = pos.x + (bodySize / 2.0f);
-		collision.bottom = pos.y + (bodySize / 2.0f) - 3;
+		collision.left = (LONG)(pos.x - (bodySize / 2.0f));
+		collision.top = (LONG)(pos.y - (bodySize / 2.0f) - 1);
+		collision.right = (LONG)(pos.x + (bodySize / 2.0f));
+		collision.bottom = (LONG)(pos.y + (bodySize / 2.0f) - 3);
 	}
 	else if (bulletDir == BulletDir::Up)
 	{
-		collision.left = pos.x - (bodySize / 2.0f);
-		collision.top = pos.y - (bodySize / 2.0f) + 4;
-		collision.right = pos.x + (bodySize / 2.0f);
-		collision.bottom = pos.y + (bodySize / 2.0f) + 1;
+		collision.left = (LONG)(pos.x - (bodySize / 2.0f));
+		collision.top = (LONG)(pos.y - (bodySize / 2.0f) + 4);
+		collision.right = (LONG)(pos.x + (bodySize / 2.0f));
+		collision.bottom = (LONG)(pos.y + (bodySize / 2.0f) + 1);
 	}
 }
 

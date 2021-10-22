@@ -39,7 +39,7 @@ HRESULT Stage::Init()
 	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
 	gameOverPosY = WIN_SIZE_Y + 30;
 
-	int nextStage =((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
+	int nextStage = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
 	Load(nextStage);
 
 	waterTilePos.clear();
@@ -66,12 +66,12 @@ HRESULT Stage::Init()
 		}
 	}
 
-	spawnEnemyPos[0].x = tileInfo[0].rc.right + STAGE_SIZE_X + 16;
-	spawnEnemyPos[0].y = tileInfo[0].rc.bottom + STAGE_SIZE_Y * 2;
-	spawnEnemyPos[1].x = tileInfo[12].rc.right + STAGE_SIZE_X + 16;
-	spawnEnemyPos[1].y = tileInfo[12].rc.bottom + STAGE_SIZE_Y * 2;
-	spawnEnemyPos[2].x = tileInfo[24].rc.right + STAGE_SIZE_X + 16;
-	spawnEnemyPos[2].y = tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2;
+	spawnEnemyPos[0].x = (float)(tileInfo[0].rc.right + STAGE_SIZE_X + 16);
+	spawnEnemyPos[0].y = (float)(tileInfo[0].rc.bottom + STAGE_SIZE_Y * 2);
+	spawnEnemyPos[1].x = (float)(tileInfo[12].rc.right + STAGE_SIZE_X + 16);
+	spawnEnemyPos[1].y = (float)(tileInfo[12].rc.bottom + STAGE_SIZE_Y * 2);
+	spawnEnemyPos[2].x = (float)(tileInfo[24].rc.right + STAGE_SIZE_X + 16);
+	spawnEnemyPos[2].y = (float)(tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2);
 
 
 	tankFactory[0] = DBG_NEW PlayerTankFactory;
@@ -300,6 +300,7 @@ bool Stage::RotateGameOverScene()
 			return true;
 		}
 	}
+	return false;
 }
 
 void Stage::RotateToGameOverState()
@@ -354,7 +355,7 @@ void Stage::NexusDestoryAnimation()
 	if (tileInfo[636].frameX == 4)
 	{
 		boomImg[1].bRenderBoomImg = true;
-		POINTFLOAT temp = { (tileInfo[636].collider.right), (tileInfo[636].collider.bottom) };
+		POINTFLOAT temp = { (FLOAT)(tileInfo[636].collider.right), (FLOAT)(tileInfo[636].collider.bottom) };
 		boomImg[1].imgPos = temp;
 	}
 
@@ -547,7 +548,7 @@ void Stage::PlayerTankDestroyRender(HDC hdc)
 {
 	if (boomImg[0].bRenderBoomImg)
 	{
-		boomImg[0].BoomImg->Render(hdc, boomImg[0].imgPos.x - STAGE_SIZE_X / 2, boomImg[0].imgPos.y - STAGE_SIZE_Y, boomImg[0].BoomImgCurrFrame, 0);
+		boomImg[0].BoomImg->Render(hdc, (int)(boomImg[0].imgPos.x - STAGE_SIZE_X / 2), (int)(boomImg[0].imgPos.y - STAGE_SIZE_Y), boomImg[0].BoomImgCurrFrame, 0);
 	}
 }
 
@@ -555,7 +556,7 @@ void Stage::NexusDestroyRender(HDC hdc)
 {
 	if (boomImg[1].bRenderBoomImg)
 	{
-		boomImg[1].BoomImg->Render(hdc, boomImg[1].imgPos.x, boomImg[1].imgPos.y, boomImg[1].BoomImgCurrFrame, 0);
+		boomImg[1].BoomImg->Render(hdc, (int)(boomImg[1].imgPos.x), (int)(boomImg[1].imgPos.y), boomImg[1].BoomImgCurrFrame, 0);
 	}
 }
 

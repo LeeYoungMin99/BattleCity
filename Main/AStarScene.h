@@ -5,12 +5,12 @@
 #define ASTAR_TILE_SIZE 64
 #define ASTAR_TILE_COUNT 12
 
-enum AstarTileType { Start, Dest, Wall, None, Walkable, Curr, Closed, Path, End };
+enum class  AstarTileType { Start, Dest, Wall, None, Walkable, Curr, Closed, Path, End };
 
 class AstarTile : public GameEntity
 {
 private:
-	int idX, idY;
+	int idX = 0, idY;
 	RECT rc;
 	POINTFLOAT center;
 
@@ -25,7 +25,7 @@ private:
 
 	COLORREF color;
 	HBRUSH hBrush;
-	HBRUSH hTypeBrush[AstarTileType::End];
+	HBRUSH hTypeBrush[(unsigned long long)AstarTileType::End];
 	HBRUSH hOldBrush;
 	
 
@@ -41,7 +41,7 @@ public:
 
 
 	void SetType(AstarTileType type);
-	AstarTileType GetType() { return type; }
+	AstarTileType GetType() { return (AstarTileType)type; }
 
 	void SetParentTile(AstarTile* parent) { this->parentTile = parent; }
 	AstarTile* GetParentTile() { return this->parentTile; }

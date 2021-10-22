@@ -56,7 +56,7 @@ void Enemy::Update()
 
 void Enemy::Render(HDC hdc)
 {
-	img->Render(hdc, pos.x, pos.y, img->GetCurrFrameX(), img->GetCurrFrameY());
+	img->Render(hdc, (int)pos.x, (int)pos.y, img->GetCurrFrameX(), img->GetCurrFrameY());
 
 	ammoMgr->Render(hdc);
 }
