@@ -12,7 +12,6 @@
 #include "TankFactory.h"
 #include "GameManager.h"
 #include "LoadingScene.h"
-#include "StageScene.h"
 #include "Stage.h"
 
 HRESULT MainGame::Init()
@@ -26,12 +25,6 @@ HRESULT MainGame::Init()
 
 	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
 	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
-	//SceneManager::GetSingleton()->AddScene("TilemapToolScene", DBG_NEW TilemapToolScene()); // 누수
-
-	//_CrtMemState s1;
-	//_CrtCheckMemory(&s1);
-
-	//SceneManager::GetSingleton()->AddScene("StageScene", new StageScene()); //
 	SceneManager::GetSingleton()->AddScene("Stage", DBG_NEW Stage()); //
 	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
 	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
@@ -41,7 +34,6 @@ HRESULT MainGame::Init()
 
 	srand((unsigned int) time(nullptr));
 
-	// 타이머 셋팅
 	hTimer = (HANDLE)SetTimer(g_hWnd, 0, 10, NULL);
 
 	mousePosX = 0;
@@ -49,7 +41,6 @@ HRESULT MainGame::Init()
 	clickedMousePosX = 0; 
 	clickedMousePosY = 0; 
 
-	// 백버퍼
 	backBuffer = new Image;
 	int maxSizeX = WIN_SIZE_X > TILEMAPTOOL_SIZE_X ? WIN_SIZE_X : TILEMAPTOOL_SIZE_X;
 	int maxSizeY = WIN_SIZE_Y > TILEMAPTOOL_SIZE_Y ? WIN_SIZE_Y : TILEMAPTOOL_SIZE_Y;
@@ -83,24 +74,13 @@ void MainGame::Release()
 	SAFE_RELEASE(backBuffer);
 
 	TimerManager::GetSingleton()->Release();
-	//TimerManager::GetSingleton()->ReleaseSingleton();
 
 	ImageManager::GetSingleton()->Release();
-	//ImageManager::GetSingleton()->ReleaseSingleton();
 
 	KeyManager::GetSingleton()->Release();
-	//KeyManager::GetSingleton()->ReleaseSingleton();
-
-	
 
 	SceneManager::GetSingleton()->Release();
 
-	
-	//SceneManager::GetSingleton()->ReleaseSingleton();
-
-
-
-	// 타이머 객체 삭제
 	KillTimer(g_hWnd, 0);
 }
 

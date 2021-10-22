@@ -145,12 +145,12 @@ void EnemyManager::Render(HDC hdc)
 	{
 		if (boomImg[i].bRenderBoomImg)
 		{
-			boomImg[i].BoomImg->Render(hdc, boomImg[i].imgPos.x - STAGE_SIZE_X / 2, boomImg[i].imgPos.y - STAGE_SIZE_Y, boomImg[i].BoomImgCurrFrame, 0);
+			boomImg[i].BoomImg->Render(hdc, (int)(boomImg[i].imgPos.x - STAGE_SIZE_X / 2), (int)(boomImg[i].imgPos.y - STAGE_SIZE_Y), boomImg[i].BoomImgCurrFrame, 0);
 		}
 
 		if (scoreImg[i].bRenderScore)
 		{
-			scoreImg[i].scoreImg->Render(hdc, scoreImg[i].imgPos.x - STAGE_SIZE_X / 2, scoreImg[i].imgPos.y - STAGE_SIZE_Y, scoreImg[i].scoreFrame, 0);
+			scoreImg[i].scoreImg->Render(hdc, (int)(scoreImg[i].imgPos.x - STAGE_SIZE_X / 2), (int)(scoreImg[i].imgPos.y - STAGE_SIZE_Y), scoreImg[i].scoreFrame, 0);
 		}
 	}
 }
@@ -173,7 +173,7 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 
 	tank->Init(ammoManager, targetAmmoManager, tileInfo, &vecEnemys, playerTank);
 
-	int a = 0, b = RANDOM_2(0, 3);
+	int a = 0, b = RANDOM(0, 3);
 	if (a == b)
 	{
 		tank->SetHaveItem(true);

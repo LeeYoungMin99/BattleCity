@@ -13,15 +13,15 @@ HRESULT TitleScene::Init()
 
 	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	
+
 	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256/*512*/, 128/*256*/, 8, 4, true, RGB(255, 0, 255));
 	tankUi = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
 
 	pos.x = 150;
 	pos.y = 470;
 
-	pos.x = WIN_SIZE_X * 0.3;
-	pos.y = WIN_SIZE_Y * 0.59;
+	pos.x = (LONG)(WIN_SIZE_X * 0.3);
+	pos.y = (LONG)(WIN_SIZE_Y * 0.59);
 
 	// 매개변수 (어떤 씬으로, 어떤 로딩씬을)
 	arg = DBG_NEW ArgumentFuncPtr;
@@ -29,7 +29,7 @@ HRESULT TitleScene::Init()
 	arg->loadingSceneName = "로딩씬";
 
 	// 디버깅 용 
-	test = WIN_SIZE_Y*1.5;	//슬라이드 효과
+	test = (int)(WIN_SIZE_Y * 1.5);	//슬라이드 효과
 	titleStart = false;
 
 	selecTitle = selectedTitle::player_1;
@@ -44,14 +44,14 @@ void TitleScene::Update()
 		{
 			switch (selecTitle)
 			{
-			case player_1:
+			case selectedTitle::player_1:
 				selecTitle = selectedTitle::player_1;
 				SceneManager::GetSingleton()->ChangeScene("LoadingScene");
 				break;
-			case player_2:
+			case selectedTitle::player_2:
 				selecTitle = selectedTitle::player_1;
 				break;
-			case CONSTRUCTION:
+			case selectedTitle::CONSTRUCTION:
 				selecTitle = selectedTitle::player_2;
 				break;
 			}
@@ -65,13 +65,13 @@ void TitleScene::Update()
 
 			switch (selecTitle)
 			{
-			case player_1:
+			case selectedTitle::player_1:
 				selecTitle = selectedTitle::player_2;
 				break;
-			case player_2:
+			case selectedTitle::player_2:
 				selecTitle = selectedTitle::CONSTRUCTION;
 				break;
-			case CONSTRUCTION:
+			case selectedTitle::CONSTRUCTION:
 				selecTitle = selectedTitle::CONSTRUCTION;
 				break;
 			}
@@ -83,13 +83,13 @@ void TitleScene::Update()
 
 			switch (selecTitle)
 			{
-			case player_1:
+			case selectedTitle::player_1:
 				selecTitle = selectedTitle::player_1;
 				break;
-			case player_2:
+			case selectedTitle::player_2:
 				selecTitle = selectedTitle::player_1;
 				break;
-			case CONSTRUCTION:
+			case selectedTitle::CONSTRUCTION:
 				selecTitle = selectedTitle::player_2;
 				break;
 			}

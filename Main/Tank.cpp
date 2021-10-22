@@ -83,16 +83,16 @@ void PlayerTank::Render(HDC hdc)
 
 	if (bCheckSpawnStatus)
 	{
-		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);
+		spawnImg->Render(hdc, (int)(pos.x -bodySize * 0.25f), (int)(pos.y - bodySize * 0.25f), spawnImgFrame, 0, 1.0f);
 	}
 	else
 	{
-		img->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, (int)moveDir + checkMoveCount, enforceCount, 1.0f);
+		img->Render(hdc, (int)(pos.x - bodySize * 0.25f), (int)(pos.y - bodySize * 0.25f), (int)moveDir + checkMoveCount, enforceCount, 1.0f);
 	}
 
 	if (bCheckShieldOn)
 	{
-		shieldImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, bShieldImageChanged, 0, 1.0f);
+		shieldImg->Render(hdc, (int)(pos.x - bodySize * 0.25f), (int)(pos.y - bodySize * 0.25f), bShieldImageChanged, 0, 1.0f);
 	}
 }
 
@@ -159,16 +159,13 @@ void PlayerTank::Action()
 
 void PlayerTank::SpwanAndShieldAnimation()
 {
-	// 스폰 이미지와 쉴드 이미지 업데이트
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckShieldOn || bCheckSpawnStatus)
 	{
-		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
-		// 타이머가 3초가 되면 쉴드 해제
+		
 		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime() * 2;
 		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
 		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
-		// 타이머가 0.05초 간격으로 쉴드 이미지 갱신
 		if (bCheckSpawnStatus)
 		{
 			if (spawnElapsedCount > 0.125f)
@@ -369,17 +366,17 @@ void Tank::Render(HDC hdc)
 
 	if (bCheckSpawnStatus)
 	{
-		spawnImg->Render(hdc, pos.x - bodySize * 0.25f, pos.y - bodySize * 0.25f, spawnImgFrame, 0, 1.0f);
+		spawnImg->Render(hdc, (int)(pos.x - bodySize * 0.25f), (int)(pos.y - bodySize * 0.25f), spawnImgFrame, 0, 1.0f);
 	}
 	else
 	{
 		if (bHaveItem)
 		{
-			itemTank->Render(hdc, pos.x - bodySize * 0.33f, pos.y - bodySize * 0.33f, (int)moveDir + checkMoveCount, (((int)type - 1) * 2) + checkMoveCount_2, 2.0f);
+			itemTank->Render(hdc, (int)(pos.x - bodySize * 0.33f), (int)(pos.y - bodySize * 0.33f), (int)moveDir + checkMoveCount, (((int)type - 1) * 2) + checkMoveCount_2, 2.0f);
 		}
 		else
 		{
-			img->Render(hdc, pos.x, pos.y, (int)moveDir + checkMoveCount, ((int)type - 1) + (HP / 2), 0.5f);
+			img->Render(hdc, (int)pos.x, (int)pos.y, (int)moveDir + checkMoveCount, ((int)type - 1) + (HP / 2), 0.5f);
 		}
 	}
 }
@@ -461,7 +458,7 @@ void Tank::Fire()
 	if (testelapsed >= delay_2)
 	{
 		testelapsed = 0;
-		delay_2 = RANDOM_2(10, 15);
+		delay_2 = (float)(RANDOM(10, 15));
 
 		currFireNumberOfAmmo++;
 		ammoManager->Fire(this);
@@ -576,10 +573,10 @@ bool Tank::IsCollided()
 
 void Tank::SetShape()
 {
-	shape.left = pos.x - (bodySize / 2);
-	shape.top = pos.y - (bodySize / 2);
-	shape.right = shape.left + bodySize / 2;
-	shape.bottom = shape.top + bodySize / 2;
+	shape.left = (LONG)(pos.x - (bodySize / 2));
+	shape.top = (LONG)(pos.y - (bodySize / 2));
+	shape.right = (LONG)(shape.left + bodySize / 2);
+	shape.bottom = (LONG)(shape.top + bodySize / 2);
 }
 
 void Tank::SpawnCollided()
@@ -599,7 +596,7 @@ void Tank::Action()
 			if (elapsedCount >= delay)
 			{
 				elapsedCount = 0;
-				delay = RANDOM(0, 3);
+				delay = (float)RANDOM(0, 3);
 				previousDir = moveDir;
 				moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 			}
@@ -622,7 +619,6 @@ void Tank::SpwanAnimation()
 {
 	if (bCheckSpawnStatus)
 	{
-		// 타이머가 2초가 되면 리스폰 상태 해제, 경과시간 초기화
 		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime() * 2;
 		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; }
 

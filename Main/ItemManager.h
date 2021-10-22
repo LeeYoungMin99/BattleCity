@@ -15,23 +15,23 @@ class ItemFactory;
 class ItemManager : public GameEntity
 {
 private:
-	Image* itemScore;
+	Image* itemScore = nullptr;
 	int itemTile = 0;
 	vector<Item*> vecItems;
 
-	POINT pos;
+	POINT pos = {};
 
-	Item* item;
+	Item* item = nullptr;
 	int itemCount = 0;
-	int elapsedcount;
-	bool itemPoint;
+	int elapsedcount = 0;
+	bool itemPoint = false;
 
 
-	int fortificationCount;
-	bool bIsFortification;
-	ItemFactory* itemFactory[6];
+	int fortificationCount = 0;
+	bool bIsFortification = false;
+	ItemFactory* itemFactory[6] = {};
 
-	TILE_INFO* tileInfo;
+	TILE_INFO* tileInfo = nullptr;
 
 
 public:
