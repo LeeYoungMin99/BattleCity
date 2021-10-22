@@ -10,7 +10,7 @@
 	 7. 위에서 움직이는 큰 네모는 일정시간마다 미사일을 발사한다.
 	 8. 밑에서 움직이는 큰 네모(플레이어)도 적의 미사일을 맞으면 화면에서 사라진다.
 	 9. 각자 HP 3씩이 주어진다.
-	 10. 코드 리팩토링 
+	 10. 코드 리팩토링
 
 	 Q1. 가만히 있을 때 화면이 갱신되게 하는 방법 ( Timer객체를 만들어서 해결 )
 	 Q2. 좌우측 벽에 부딪혔는지 확인하는 방법 ( 체크해야 하는 변수를 알고 있으므로 할 수 있다 )
@@ -28,6 +28,10 @@
 #include <Windows.h>
 #include "CommonFunction.h"
 #include "MainGame.h"
+
+#ifdef _DEBUG
+#include <crtdbg.h>
+#endif
 
 #ifdef UNICODE
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
@@ -48,6 +52,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage,
 int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance,
 	LPSTR _lpszCmdParam, int nCmdShow)
 {
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+#endif
+	//_CrtSetBreakAlloc(382);
+	//_CrtSetBreakAlloc(379);
+	//_CrtSetBreakAlloc(481);
+	//_CrtSetBreakAlloc(417);
+
+
 	// 윈도우를 생성하기 위한 기본 셋팅
 	g_hInstance = _hInstance;
 	WNDCLASS wndClass;
@@ -66,7 +80,7 @@ int APIENTRY WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance,
 	RegisterClass(&wndClass);
 
 	// 윈도우 생성
-	g_hWnd = CreateWindow(g_lpszClass, g_lpszClass, WS_OVERLAPPEDWINDOW, 
+	g_hWnd = CreateWindow(g_lpszClass, g_lpszClass, WS_OVERLAPPEDWINDOW,
 		WIN_START_POS_X, WIN_START_POS_Y, WIN_SIZE_X, WIN_SIZE_Y,
 		NULL, NULL, _hInstance, NULL);
 
@@ -100,8 +114,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	PAINTSTRUCT ps;
 
-	static bool isUpdate = true;
-
 	switch (iMessage)
 	{
 	case WM_KEYDOWN:
@@ -113,10 +125,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_TIMER:
-		if (isUpdate)
-		{
-			g_mainGame.Update();		
-		}
+		g_mainGame.Update();
 
 		break;
 	case WM_PAINT:		// 윈도우 화면이 다시 그려지는 경우 발생하는 메시지
@@ -134,7 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_DESTROY:	// 닫기 버튼 메시지처리 (프로그램 종료)
 		PostQuitMessage(0);
-		break;
+		return 0;
 	}
 
 	return g_mainGame.MainProc(hWnd, iMessage, wParam, lParam);

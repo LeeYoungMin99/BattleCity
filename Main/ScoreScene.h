@@ -38,6 +38,8 @@ private:
 
 
 public:
+	virtual ~ScoreScene() = default;
+
 	virtual HRESULT Init() override;
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;

@@ -13,6 +13,8 @@ private:
 	int elapsedcount;
 
 public:
+	virtual ~GameOverScene() = default;
+
 	virtual HRESULT Init() override;
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;

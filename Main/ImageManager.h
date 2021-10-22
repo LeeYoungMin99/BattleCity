@@ -24,6 +24,8 @@ private:
 	*/
 
 public:
+	virtual ~ImageManager() = default;
+
 	void Init();
 	void Release();
 

@@ -3,11 +3,11 @@
 
 typedef struct BoomImageInfo
 {
-	POINTFLOAT imgPos = {};
-	bool bRenderBoomImg = false;
-	Image* BoomImg = nullptr;
-	int elapsedCount = 0;
-	int addImgFrameCount = 5;
-	int BoomImgCurrFrame = 0;
-	int BoomImgMaxFrame = 5;
+	bool bRenderBoomImg			= false;
+	int elapsedCount			= 0;
+	int addImgFrameCount		= 5;
+	int BoomImgCurrFrame		= 0;
+	int BoomImgMaxFrame			= 5;
+	Image* BoomImg				= nullptr;
+	POINTFLOAT imgPos			= {};
 }BOOM_IMAGE_INFO;

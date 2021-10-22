@@ -1,15 +1,18 @@
 #pragma once
 #include "Config.h"
 #include "Singleton.h"
+#include <unordered_map>
 
 class GameEntity;
 class SceneManager : public Singleton<SceneManager>
 {
 private:
-	map<string, GameEntity*>	mapScenes;
-	map<string, GameEntity*>	mapLoadingScenes;
+	std::unordered_map<string, GameEntity*>	mapScenes;
+	std::unordered_map<string, GameEntity*>	mapLoadingScenes;
 
 public:
+	virtual ~SceneManager() = default;
+
 	static GameEntity* currScene;		// 현재 출력 중인 씬
 	static GameEntity* readyScene;		// 준비 중인 씬
 	static GameEntity* loadingScene;	// 로딩 씬

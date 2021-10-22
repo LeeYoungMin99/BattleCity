@@ -12,6 +12,7 @@
 #include "TankFactory.h"
 #include "GameManager.h"
 #include "LoadingScene.h"
+#include "StageScene.h"
 #include "Stage.h"
 
 HRESULT MainGame::Init()
@@ -22,15 +23,18 @@ HRESULT MainGame::Init()
 	SceneManager::GetSingleton()->Init();
 	GameManager::GetSingleton()->Init();
 
+
 	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
 	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
-	SceneManager::GetSingleton()->AddScene("TilemapToolScene", new TilemapToolScene());
-	SceneManager::GetSingleton()->AddScene("Stage", new Stage());
+	//SceneManager::GetSingleton()->AddScene("TilemapToolScene", DBG_NEW TilemapToolScene()); // 누수
+
+	//_CrtMemState s1;
+	//_CrtCheckMemory(&s1);
+
+	//SceneManager::GetSingleton()->AddScene("StageScene", new StageScene()); //
+	SceneManager::GetSingleton()->AddScene("Stage", DBG_NEW Stage()); //
 	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
 	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
-
-
-
 	SceneManager::GetSingleton()->ChangeScene("TitleScene");
 
 
@@ -79,16 +83,22 @@ void MainGame::Release()
 	SAFE_RELEASE(backBuffer);
 
 	TimerManager::GetSingleton()->Release();
-	TimerManager::GetSingleton()->ReleaseSingleton();
+	//TimerManager::GetSingleton()->ReleaseSingleton();
 
 	ImageManager::GetSingleton()->Release();
-	ImageManager::GetSingleton()->ReleaseSingleton();
+	//ImageManager::GetSingleton()->ReleaseSingleton();
 
 	KeyManager::GetSingleton()->Release();
-	KeyManager::GetSingleton()->ReleaseSingleton();
+	//KeyManager::GetSingleton()->ReleaseSingleton();
+
+	
 
 	SceneManager::GetSingleton()->Release();
-	SceneManager::GetSingleton()->ReleaseSingleton();
+
+	
+	//SceneManager::GetSingleton()->ReleaseSingleton();
+
+
 
 	// 타이머 객체 삭제
 	KillTimer(g_hWnd, 0);

@@ -49,7 +49,6 @@ private:
 	int maxSpawnEnemy = 6;
 	POINTFLOAT spawnEnemyPos[3] = {};
 	EnemyManager* enemyMgr = nullptr;
-	vector<Tank*>::iterator itEnemyTanks = {};
 
 	POINTFLOAT spawnPos[3];
 

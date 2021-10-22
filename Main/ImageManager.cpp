@@ -49,12 +49,11 @@ void ImageManager::Init()
 
 void ImageManager::Release()
 {
-	map<string, Image*>::iterator it;
-	for (it = mapImages.begin(); it != mapImages.end(); /*it++*/)
+	for (auto& elem : mapImages)
 	{
-		SAFE_RELEASE(it->second);
-		it = mapImages.erase(it);	// 다음 원소의 주소(iterator)가 갱신된다.
+		SAFE_RELEASE(elem.second);
 	}
+
 	mapImages.clear();
 }
 

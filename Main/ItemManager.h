@@ -18,7 +18,6 @@ private:
 	Image* itemScore;
 	int itemTile = 0;
 	vector<Item*> vecItems;
-	vector<Item*>::iterator itItems;
 
 	POINT pos;
 
@@ -36,7 +35,8 @@ private:
 
 
 public:
-	
+	virtual ~ItemManager() = default;
+
 	HRESULT Init();
 	void Update();
 	void Render(HDC hdc);

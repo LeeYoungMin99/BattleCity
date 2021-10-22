@@ -46,6 +46,7 @@ void LoadingScene::Render(HDC hdc)
 
 
 	stageText->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 2 - 10);
+
 	if (GameManager::GetSingleton()->stageLevel < 10)
 	{
 		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 60, WIN_SIZE_Y / 2 - 10, GameManager::GetSingleton()->stageLevel % 5, GameManager::GetSingleton()->stageLevel / 5);

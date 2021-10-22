@@ -48,10 +48,9 @@ void ItemManager::Update()
 
 void ItemManager::Render(HDC hdc)
 {
-	for (itItems = vecItems.begin();
-		itItems != vecItems.end(); itItems++)
+	for (int i = 0; i < vecItems.size(); ++i)
 	{
-		(*itItems)->Render(hdc);
+		vecItems[i]->Render(hdc);
 	}
 
 	if (itemPoint)
@@ -64,17 +63,18 @@ void ItemManager::Render(HDC hdc)
 
 void ItemManager::Release()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i=0; i<6; i++)
 	{
-		SAFE_DELETE(itemFactory[i])
+		SAFE_DELETE(itemFactory[i]);
 	}
 
-	for (itItems = vecItems.begin();
-		itItems != vecItems.end(); itItems++)
+	for (int i = 0; i < vecItems.size(); ++i)
 	{
-		SAFE_RELEASE((*itItems));
+		SAFE_RELEASE(vecItems[i]);
 	}
 	vecItems.clear();
+
+	tileInfo = nullptr;
 }
 
 void ItemManager::Fortification()

@@ -4,6 +4,8 @@
 #include "Button.h"
 #include "ButtonFunction.h"
 
+
+
 HRESULT TitleScene::Init()
 {
 	ImageManager::GetSingleton()->AddImage("Image/Title.bmp", WIN_SIZE_X, WIN_SIZE_Y);
@@ -22,7 +24,7 @@ HRESULT TitleScene::Init()
 	pos.y = WIN_SIZE_Y * 0.59;
 
 	// ¸Å°³º¯¼ö (¾î¶² ¾ÀÀ¸·Î, ¾î¶² ·Îµù¾ÀÀ»)
-	arg = new ArgumentFuncPtr;
+	arg = DBG_NEW ArgumentFuncPtr;
 	arg->sceneName = "ÀüÅõ¾À";
 	arg->loadingSceneName = "·Îµù¾À";
 
@@ -127,6 +129,5 @@ void TitleScene::Render(HDC hdc)
 
 void TitleScene::Release()
 {
-
 	SAFE_DELETE(arg);
 }

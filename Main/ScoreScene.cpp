@@ -67,9 +67,6 @@ void ScoreScene::Update()
 				GameManager::GetSingleton()->defeatRapidTank = 0;
 				GameManager::GetSingleton()->defeatSpeedTank = 0;
 
-				string nextStage = "Stage";
-				nextStage += to_string( (GameManager::GetSingleton()->stageLevel-1)%3+1 );
-
 				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
 				{
 					GameManager::GetSingleton()->ScoreSave();
@@ -80,6 +77,7 @@ void ScoreScene::Update()
 
 			if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::GameOver)
 				gameOver = true;
+
 
 			if (gameOver)
 			{

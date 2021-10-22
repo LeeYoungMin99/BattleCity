@@ -14,13 +14,6 @@ private:
 	SAMPLE_TILE_INFO sampleTileInfo[SAMPLE_TILE_COUNT_Y * SAMPLE_TILE_COUNT_X];
 	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X];
 	Image* sampleImage;
-	Image* sampleImage_SmallPixel;
-
-	ButtonFunction* btnFunction;
-
-	Button* saveBtn;
-	Button* loadBtn;
-	ArgumentFuncPtr* arg;
 
 	SAMPLE_TILE_INFO	selectedSampleTile;
 
@@ -34,6 +27,8 @@ private:
 	bool bShowNoneWalkable;
 	bool bShowBodyCollider;
 public:
+	virtual ~TilemapToolScene() = default;
+
 	virtual HRESULT Init() override;
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
@@ -42,4 +37,3 @@ public:
 	void Save(int saveIndex=0);
 	void Load(int loadIndex=0);
 };
-
