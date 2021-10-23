@@ -9,10 +9,12 @@ class ItemManager;
 class Item : public GameObject
 {
 private:
-	Image* itemImage;
+	Image* itemImage = nullptr;
+	Image* itemScore = nullptr;
 	int itemType = 0;
 	int itemTile = 0;
-	int elapsedcount;
+	int elapsedcount = 0;
+	bool useItem = false;
 
 	GameEntity* stageInfo = nullptr;
 	Tank* tank = nullptr;
@@ -27,13 +29,14 @@ public:
 	void Render(HDC hdc);
 	void Release();
 	virtual void UseItem() = 0;
-	void ItemPoint();
 
 	inline Tank* GetTank() { return tank; }
 	inline EnemyManager* GetEnemyManager() { return enemyMgr; };
 	inline int GetType() { return this->itemType; }
 	inline ItemManager* GetItemManager() { return itemManager; }
-	
+	inline void SetUseItem(bool useItem) { this->useItem = useItem; }
+	inline bool GetUseItem() { return this->useItem; }
+
 	Item() {};
 	virtual ~Item() {} 
 };
