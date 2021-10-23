@@ -362,7 +362,7 @@ void Tank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-		Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+		//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{
@@ -656,8 +656,11 @@ void Tank::CheckItem()
 	{
 		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
 		{
-			(*itItemList)->UseItem();
-			(*itItemList)->SetUseItem(true);
+			if (!(*itItemList)->GetUseItem())
+			{
+				(*itItemList)->UseItem();
+				(*itItemList)->SetUseItem(true);
+			}
 			break;
 		}
 	}
