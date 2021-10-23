@@ -15,8 +15,8 @@ HRESULT ItemManager::Init()
 	itemFactory[5] = new TankLifeItemFactory;
 
 
-	itemScore = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
-	itemPoint = false;
+
+	
 
 	fortificationCount = 0;
 	bIsFortification = false;
@@ -26,21 +26,17 @@ HRESULT ItemManager::Init()
 
 void ItemManager::Update()
 {
+	for (int i = 0; i < vecItems.size(); ++i)
+	{
+		vecItems[i]->Update();
+	}
+
 	if (bIsFortification)
 	{
 		fortificationCount++;
 		if (fortificationCount > 300)
 		{
 			DestoryFortification();
-		}
-	}
-	if (itemPoint)
-	{
-		elapsedcount++;
-		if (elapsedcount >= 40)
-		{
-			elapsedcount = 0;
-			itemPoint = false;
 		}
 	}
 	
@@ -51,13 +47,6 @@ void ItemManager::Render(HDC hdc)
 	for (int i = 0; i < vecItems.size(); ++i)
 	{
 		vecItems[i]->Render(hdc);
-	}
-
-	if (itemPoint)
-	{
-		itemScore->Render(hdc,
-			((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
-			((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y, 4, 0);
 	}
 }
 
@@ -153,12 +142,24 @@ void ItemManager::CreateItem(int type, int tile, Tank* tank, EnemyManager* enemy
 	Item* tempItem = itemFactory[type]->CreateTank();
 	tempItem->Init(type, tile, tank, enemyMgr, tileInfo, this);
 
-	itemTile = tile;
 	vecItems.push_back(tempItem);
 	this->tileInfo = tileInfo;
-	
-	
-	
+}
+
+void ItemManager::UseItem()
+{
+	for (int i = 0; i < vecItems.size(); ++i)
+	{
+		if (vecItems[i]->GetUseItem())
+		{
+			SAFE_DELETE(vecItems[i]);
+			vecItems.erase(vecItems.begin() + i);
+
+			/*Item* tempItem = (*itItemList);
+			itItemList = ItemList->erase(itItemList);
+			SAFE_DELETE(tempItem);*/
+		}
+	}
 }
 
 

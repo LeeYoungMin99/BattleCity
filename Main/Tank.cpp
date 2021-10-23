@@ -656,11 +656,8 @@ void Tank::CheckItem()
 	{
 		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
 		{
-			Item* tempItem = (*itItemList);
 			(*itItemList)->UseItem();
-			(*itItemList)->ItemPoint();
-			itItemList = ItemList->erase(itItemList);
-			SAFE_DELETE(tempItem);
+			(*itItemList)->SetUseItem(true);
 			break;
 		}
 	}

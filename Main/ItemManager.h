@@ -15,16 +15,11 @@ class ItemFactory;
 class ItemManager : public GameEntity
 {
 private:
-	Image* itemScore = nullptr;
-	int itemTile = 0;
 	vector<Item*> vecItems;
 
 	POINT pos = {};
 
 	Item* item = nullptr;
-	int itemCount = 0;
-	int elapsedcount = 0;
-	bool itemPoint = false;
 
 
 	int fortificationCount = 0;
@@ -45,7 +40,7 @@ public:
 	void Fortification();
 	void DestoryFortification();
 	void CreateItem(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
-	inline void SetItemPoint(bool itemPoint) { this->itemPoint = itemPoint; }
+	void UseItem();
 
 	inline vector<Item*>* GetAddressVecItem() { return &(this->vecItems); }
 	inline vector<Item*> GetVecItem() { return this->vecItems; }

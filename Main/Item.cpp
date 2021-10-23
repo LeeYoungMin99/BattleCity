@@ -14,6 +14,7 @@ HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_
 	itemName += ".bmp";
 
 	itemImage = ImageManager::GetSingleton()->FindImage(itemName.c_str());
+	itemScore = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 
 	itemType = type;
 	itemTile = tile;
@@ -32,15 +33,31 @@ HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_
 
 void Item::Update()
 {
-
+	if (useItem)
+	{
+		elapsedcount++;
+		if (elapsedcount >= 30)
+		{
+			GetItemManager()->UseItem();
+			elapsedcount = 0;
+		}
+	}
 }
 
 void Item::Render(HDC hdc)
 {
-
-	itemImage->Render(hdc,
-		((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
-		((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y);
+	if (!useItem)
+	{
+		itemImage->Render(hdc,
+			((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
+			((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y);
+	}
+	else
+	{
+		itemScore->Render(hdc,
+			((itemTile % 26) * 16) + 32 / 2 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16,
+			((itemTile / 26) * 16) + 32 / 2 + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y,4 , 0);
+	}
 }
 
 void Item::Release()
@@ -50,11 +67,6 @@ void Item::Release()
 void Item::UseItem()
 {
 
-}
-
-void Item::ItemPoint()
-{
-	GetItemManager()->SetItemPoint(true);
 }
 
 void HelmetItem::UseItem()
