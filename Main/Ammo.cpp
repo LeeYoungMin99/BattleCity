@@ -22,13 +22,9 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, vector<Tank*>* enemyTanks, 
 
 	isFire = false;
 
-	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Down.bmp", 6, 8, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Left.bmp", 6, 8, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Right.bmp", 6, 8, true, RGB(255, 0, 255));
-	ImageManager::GetSingleton()->AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
+
 	img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
 
-	ImageManager::GetSingleton()->AddImage("Image/Effect/Boom_Effect.bmp", 96, 32, 3, 1, true, RGB(255, 0, 255));
 	boomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Boom_Effect.bmp");
 
 	if (img == nullptr)
@@ -58,11 +54,10 @@ void Ammo::Update()
 	{
 		if (!bRenderBoomImg)
 		{
-			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();	
+			pos.x += cos(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
 			pos.y -= sin(moveAngle) * moveSpeed * TimerManager::GetSingleton()->GetDeltaTime();
+			SetCollider();
 		}
-
-		SetCollider();
 
 		int posIdX = (int)((pos.x - STAGE_SIZE_X) / 16);
 		int posIdY = (int)((pos.y - STAGE_SIZE_Y) / 16);
@@ -76,6 +71,10 @@ void Ammo::Update()
 		if (CheckCollision(posIdX, posIdY))
 		{
 			bRenderBoomImg = true;
+			collision.left = 0;
+			collision.top = 0;
+			collision.right = 0;
+			collision.bottom = 0;
 		}
 
 		if (bRenderBoomImg)
@@ -127,6 +126,11 @@ void Ammo::Render(HDC hdc)
 
 void Ammo::Release()
 {
+	tile = nullptr;
+	ownerTank = nullptr;
+	playerTank = nullptr;
+	img = nullptr;
+	boomImg = nullptr;
 }
 
 bool Ammo::CheckCollision(int idX, int idY)
@@ -334,7 +338,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 	{
 		for (itEnemyTanks = enemyTanks->begin();
 			itEnemyTanks != enemyTanks->end(); itEnemyTanks++)
-		{	
+		{
 			if (!(*itEnemyTanks)->GetCheckSpawnStatus() && IntersectRect(&rc, (*itEnemyTanks)->GetShapeAddress(), &collision))
 			{
 				if (!CheckHitTank((*itEnemyTanks)))
@@ -353,7 +357,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 	}
 
 	if (playerTank != nullptr && !(playerTank->GetCheckSpawnStatus()))
-	{	
+	{
 		if (IntersectRect(&rc, playerTank->GetShapeAddress(), &collision))
 		{
 			if (((PlayerTank*)playerTank)->GetCheckShieldOn())
@@ -365,6 +369,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				collision.bottom = -10;
 				pos.x = -10;
 				pos.y = -10;
+				bRenderBoomImg = false;
 				ownerTank->SubtractCurrFireNumberOfAmmo(1);
 			}
 			else
@@ -390,6 +395,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				collision.bottom = -10;
 				pos.x = -10;
 				pos.y = -10;
+				bRenderBoomImg = false;
 				ownerTank->SubtractCurrFireNumberOfAmmo(1);
 				(*itAmmos)->isFire = false;
 				(*itAmmos)->collision.left = -50;
@@ -399,6 +405,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				(*itAmmos)->pos.x = -50;
 				(*itAmmos)->pos.y = -50;
 				(*itAmmos)->ownerTank->SubtractCurrFireNumberOfAmmo(1);
+				(*itAmmos)->bRenderBoomImg = false;
 			}
 		}
 	}
@@ -486,9 +493,5 @@ void Ammo::SetCollider()
 }
 
 Ammo::Ammo()
-{
-}
-
-Ammo::~Ammo()
 {
 }

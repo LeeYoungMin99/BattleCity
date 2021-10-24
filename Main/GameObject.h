@@ -18,20 +18,15 @@
 class Image;
 class GameObject : public GameEntity
 {
-//private:	// 외부 클래스에 노출시키지 않는다.
-protected:	// 상속된 클래스에 노출시킨다.
-//public:		// 모든 외부 클래스에 노출시킨다.
-	POINTFLOAT pos;
-	RECT shape;
-	float moveSpeed;
-	int bodySize;
+protected:
+	POINTFLOAT pos = {};
+	RECT shape = {};
+	float moveSpeed = 0.0f;
+	int bodySize = 0;
 
-	Image* img;
+	Image* img = nullptr;
 
 public:
-	void Move();
-
-	// this가 nullptr이다. 코드상으로 함수를 객체가 호출했지만 객체가 없다. 에러
 	inline void SetPos(POINTFLOAT pos) { this->pos = pos; }
 	inline POINTFLOAT GetPos() { return this->pos; }
 	inline void SetMoveSpeed(float speed) { this->moveSpeed = speed; }
@@ -39,7 +34,7 @@ public:
 	inline RECT GetShape() { return this->shape; }
 	inline RECT* GetShapeAddress() { return &this->shape; }
 
-	GameObject();
-	virtual ~GameObject();
+	GameObject() = default;
+	virtual ~GameObject() = default;
 };
 

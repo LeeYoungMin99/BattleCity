@@ -59,8 +59,8 @@ private:
 	Image* backGround = nullptr;
 
 	Image* slate = nullptr;
-	int slate1;
-	int slate2;
+	int slate1 = 0;
+	int slate2 = 0;
 
 	Tank* tank = nullptr;
 	TankFactory* tankFactory[5] = {};

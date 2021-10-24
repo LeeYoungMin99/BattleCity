@@ -27,6 +27,8 @@ public:
 	GameState state = {};
 
 public:
+	virtual ~GameManager() = default;
+
 	void Init();
 	void ScoreSave();
 	void ScoreLoad();

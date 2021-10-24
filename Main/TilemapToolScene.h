@@ -11,21 +11,21 @@ class ButtonFunction;
 class TilemapToolScene : public GameEntity
 {
 private:
-	SAMPLE_TILE_INFO sampleTileInfo[SAMPLE_TILE_COUNT_Y * SAMPLE_TILE_COUNT_X];
-	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X];
-	Image* sampleImage;
+	SAMPLE_TILE_INFO sampleTileInfo[SAMPLE_TILE_COUNT_Y * SAMPLE_TILE_COUNT_X] = {};
+	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X] = {};
+	Image* sampleImage = nullptr;
 
-	SAMPLE_TILE_INFO	selectedSampleTile;
+	SAMPLE_TILE_INFO	selectedSampleTile = {};
 
 	vector<SAMPLE_TILE_INFO> selectedSampleTiles;
 
-	int selectedIdX, selectedIdY;
-	int posX, posY;
-	State state;
-	TileType tileType;
+	int selectedIdX = 0, selectedIdY = 0;
+	int posX = 0 , posY = 0;
+	State state = {};
+	TileType tileType = {};
 
-	bool bShowNoneWalkable;
-	bool bShowBodyCollider;
+	bool bShowNoneWalkable = false;
+	bool bShowBodyCollider = false;
 public:
 	virtual ~TilemapToolScene() = default;
 

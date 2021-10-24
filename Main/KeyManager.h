@@ -29,6 +29,8 @@ private:
 	bitset<KEY_MAX_COUNT>	keyDown;// 키가 눌린 상태인지 아닌지
 
 public:
+	virtual ~KeyManager() = default;
+
 	void Init();
 	void Release();
 
