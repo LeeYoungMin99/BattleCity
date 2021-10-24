@@ -28,8 +28,8 @@ private:
 
 	int tlqkf = 0;
 
-	BOOM_IMAGE_INFO boomImg[NUMBER_OF_IMAGES];
-	SCORE_INFO scoreImg[NUMBER_OF_IMAGES];
+	BOOM_IMAGE_INFO boomImg[NUMBER_OF_IMAGES] = {};
+	SCORE_INFO scoreImg[NUMBER_OF_IMAGES] = {};
 
 	TILE_INFO* tileInfo = nullptr;
 
@@ -38,7 +38,7 @@ private:
 	ItemManager* itemManager = nullptr;
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
-	string nextStage;
+	string nextStage = {};
 	bool clockItem = false;
 	int elapsedcount_2 = 0;
 

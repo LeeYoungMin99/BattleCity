@@ -216,6 +216,8 @@ HRESULT NormalEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoM
 	moveSpeed = 2.0f;
 	type = TankType::Normal;
 
+	currFireNumberOfAmmo = 0;
+
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
 	this->ammoManager = ammoManager;
@@ -251,6 +253,8 @@ HRESULT SpeedEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 	moveSpeed = 4.0f;
 	type = TankType::Speed;
 
+	currFireNumberOfAmmo = 0;
+
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
 	this->ammoManager = ammoManager;
@@ -282,6 +286,8 @@ HRESULT RapidEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMa
 	bodySize = 64;
 	moveSpeed = 2.0f;
 	type = TankType::Rapid;
+
+	currFireNumberOfAmmo = 0;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
@@ -315,6 +321,8 @@ HRESULT DefensiveEnemyTank::Init(AmmoManager* ammoManager, AmmoManager* targetAm
 	moveSpeed = 2.0f;
 	HP = 4;
 	type = TankType::Defensive;
+
+	currFireNumberOfAmmo = 0;
 
 	this->tileInfo = tile;
 	this->playerTank = playerTank;
@@ -547,7 +555,7 @@ bool Tank::IsCollided()
 		}
 		if (IntersectRect(&temp, &((*itEnemyTanks)->shape), &shape))
 		{
-			if ((*itEnemyTanks)->bCheckSpawnCollided && ((*itEnemyTanks)->moveDir != moveDir || (*itEnemyTanks)->bCheckSpawnStatus))
+			if ((*itEnemyTanks)->bCheckSpawnCollided &&  (*itEnemyTanks)->bCheckSpawnStatus)
 			{
 				return false;
 			}
@@ -637,7 +645,7 @@ void Tank::SpwanAnimation()
 
 void Tank::FlashItemTank()
 {
-	testelapsed_2++;  //아이템 탱크 깜빡깜빡
+	testelapsed_2++;
 	if (testelapsed_2 >= 10)
 	{
 		testelapsed_2 = 0;

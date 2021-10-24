@@ -9,7 +9,7 @@ class EnemyManager;
 class AmmoManager : public GameEntity
 {
 private:
-	int ammoMaxCount = 12;
+	int ammoMaxCount = 24;
 
 	Tank* playerTank = nullptr;
 	vector<Tank*>* enemyTanks = nullptr;

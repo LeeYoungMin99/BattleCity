@@ -61,9 +61,9 @@ public:
 	//LPIMAGE_INFO imageInfo3;
 
 private:
-	LPIMAGE_INFO imageInfo;
-	bool isTransparent;
-	COLORREF transColor;
+	LPIMAGE_INFO imageInfo = nullptr;
+	bool isTransparent = false;
+	COLORREF transColor = {};
 
 public:
 	HRESULT Init(int width, int height);	// 빈 비트맵 이미지 생성(Empty)

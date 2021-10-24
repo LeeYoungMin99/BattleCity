@@ -60,6 +60,6 @@ public:
 	void SetCollider();
 
 	Ammo();
-	~Ammo();
+	virtual ~Ammo() = default;
 };
 

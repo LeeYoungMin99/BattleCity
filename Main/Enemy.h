@@ -6,13 +6,15 @@ class AmmoManager;
 class Enemy : public GameObject
 {
 private:
-	int elapsedCount;
-	AmmoManager* ammoMgr;
+	int elapsedCount = 0;
+	AmmoManager* ammoMgr = nullptr;
 
-	int fireDelay;
-	int fireTimer;
+	int fireDelay = 0;
+	int fireTimer = 0;
 
 public:
+	virtual ~Enemy() = default;
+
 	HRESULT Init();
 	void Update();
 	void Render(HDC hdc);
