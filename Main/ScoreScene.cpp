@@ -16,18 +16,18 @@ HRESULT ScoreScene::Init()
 	pts = ImageManager::GetSingleton()->FindImage("Image/Text/PTS.bmp");
 
 
-	KNE = GameManager::GetSingleton()->defeatNormalTank;
-	KSE = GameManager::GetSingleton()->defeatSpeedTank;
-	KRE = GameManager::GetSingleton()->defeatRapidTank;
-	KBE = GameManager::GetSingleton()->defeatDefensiveTank;
+	killNormalTank = GameManager::GetSingleton()->defeatNormalTank;
+	killSpeedTank = GameManager::GetSingleton()->defeatSpeedTank;
+	killRapidTank = GameManager::GetSingleton()->defeatRapidTank;
+	killDefensiveTank = GameManager::GetSingleton()->defeatDefensiveTank;
 	round = GameManager::GetSingleton()->stageLevel;
-	
-	CNE = CSE = CRE = CBE = 0;
-	SNE = SSE = SRE = SBE = 0;
-	bSNE = bSSE = bSRE = bSBE = false;
+
+	normalTankCount = speedTankCount = rapidTankCount = defensiveTankCount = 0;
+	normalTankScore = speedTankScore = rapidTankScore = defensiveTankScore = 0;
+	bNormalTankScoreFinish = bSpeedTankScoreFinish = bRapidTankScoreFinish = bDefensiveTankScoreFinish = false;
 	bTotalScore = false;
-	gameOver = false;
-	TK = 0;
+	bGameOver = false;
+	totalKill = 0;
 	elapsedcount = 0;
 	player1Score = 0;
 	hightScore = 0;
@@ -36,12 +36,12 @@ HRESULT ScoreScene::Init()
 
 void ScoreScene::Update()
 {
-	if (!bSNE)
+	if (!bNormalTankScoreFinish)
 	{
-		hightScore = GameManager::GetSingleton()->GetHightScore();		
-		
-		bSNE = true; 
-		player1Score = KNE + (KSE * 2) + (KRE * 3) + (KBE * 4) + GameManager::GetSingleton()->GetScore();
+		hightScore = GameManager::GetSingleton()->GetHightScore();
+
+		bNormalTankScoreFinish = true;
+		player1Score = killNormalTank + (killSpeedTank * 2) + (killRapidTank * 3) + (killDefensiveTank * 4) + GameManager::GetSingleton()->GetScore();
 	}
 
 	if (!bTotalScore)
@@ -51,12 +51,12 @@ void ScoreScene::Update()
 	{
 		hightScore = player1Score;
 	}
-	
+
 	if (bTotalScore)
 	{
 		elapsedcount++;
 		if (elapsedcount >= 100)
-		{	
+		{
 			if (GameManager::GetSingleton()->player1Life >= 0 && GameManager::GetSingleton()->state != GameState::GameOver)
 			{
 
@@ -76,10 +76,10 @@ void ScoreScene::Update()
 			}
 
 			if (GameManager::GetSingleton()->player1Life < 0 || GameManager::GetSingleton()->state == GameState::GameOver)
-				gameOver = true;
+				bGameOver = true;
 
 
-			if (gameOver)
+			if (bGameOver)
 			{
 				GameManager::GetSingleton()->defeatDefensiveTank = 0;
 				GameManager::GetSingleton()->defeatNormalTank = 0;
@@ -90,7 +90,7 @@ void ScoreScene::Update()
 
 					GameManager::GetSingleton()->ScoreSave();
 				}
-				player1Score = 0;	
+				player1Score = 0;
 				GameManager::GetSingleton()->SetScore(player1Score);	//게임이 끝나면 점수초기화
 				SceneManager::GetSingleton()->ChangeScene("GameOverScene");
 			}
@@ -119,14 +119,14 @@ void ScoreScene::Render(HDC hdc)
 	else
 	{
 		if (hiScore)																//하이스코어 있을 때.
-			hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y/7);
+			hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y / 7);
 
 		playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);		//하이스코어 점수 1,10...10000자리
 		if (hightScore >= 1)
 		{
 			playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
 			playerScore->Render(hdc, WIN_SIZE_X / 2 + 10, WIN_SIZE_Y / 7, (hightScore % 10) % 5, (hightScore % 10) / 5);
-			if(hightScore >=10)
+			if (hightScore >= 10)
 				playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((hightScore % 100) / 10) % 5, ((hightScore % 100) / 10) / 5);
 			if (hightScore >= 100)
 			{
@@ -137,7 +137,7 @@ void ScoreScene::Render(HDC hdc)
 
 
 	if (stage)
-		stage->Render(hdc, WIN_SIZE_X / 2 -30 , WIN_SIZE_Y / 5);		//스테이지 텍스트
+		stage->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 5);		//스테이지 텍스트
 
 	if (round < 10)
 	{
@@ -156,12 +156,12 @@ void ScoreScene::Render(HDC hdc)
 
 	if (playerScore)
 	{
-		playerScore->Render(hdc, WIN_SIZE_X / 4+30, WIN_SIZE_Y / 4 + 15, 0, 0);	//플레이어 누적 점수 1,10...10000자리
+		playerScore->Render(hdc, WIN_SIZE_X / 4 + 30, WIN_SIZE_Y / 4 + 15, 0, 0);	//플레이어 누적 점수 1,10...10000자리
 		if (player1Score >= 1)
 		{
 			playerScore->Render(hdc, WIN_SIZE_X / 4 + 20, WIN_SIZE_Y / 4 + 15, 0, 0);
 			playerScore->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 4 + 15, (player1Score % 10) % 5, (player1Score % 10) / 5);
-			if(player1Score >=10)
+			if (player1Score >= 10)
 				playerScore->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 4 + 15, ((player1Score % 100) / 10) % 5, ((player1Score % 100) / 10) / 5);
 			if (player1Score >= 100)
 				playerScore->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 4 + 15, (player1Score / 100) % 5, (player1Score / 100) / 5);
@@ -187,145 +187,145 @@ void ScoreScene::Render(HDC hdc)
 	}
 
 	if (totalScore)
-		totalScore->Render(hdc, (int)(WIN_SIZE_X/3 + 35), (int)(WIN_SIZE_Y *0.8 - 15) );	//토탈스코어 텍스트
+		totalScore->Render(hdc, (int)(WIN_SIZE_X / 3 + 35), (int)(WIN_SIZE_Y * 0.8 - 15));	//토탈스코어 텍스트
 
 	if (bTotalScore)													//토탈 누적 킬수
 	{
-		if (TK < 10)
+		if (totalKill < 10)
 		{
-			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)(WIN_SIZE_Y * 0.8 - 15 ), TK %5, TK /5);
+			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)(WIN_SIZE_Y * 0.8 - 15), totalKill % 5, totalKill / 5);
 		}
 		else
 		{
-			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)( WIN_SIZE_Y * 0.8 - 15 ), (TK%10) % 5, (TK%10) / 5);
-			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 25), (int)(WIN_SIZE_Y * 0.8 - 15 ), (TK/10) % 5, (TK/10) / 5);
+			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)(WIN_SIZE_Y * 0.8 - 15), (totalKill % 10) % 5, (totalKill % 10) / 5);
+			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 25), (int)(WIN_SIZE_Y * 0.8 - 15), (totalKill / 10) % 5, (totalKill / 10) / 5);
 		}
 	}
 
 	// 점수 계산
-	if (bSNE)		//노말
+	if (bNormalTankScoreFinish)		//노말
 	{
 		// 잡은 마리수 표기
-		if (CNE < 10)	//1의자리
+		if (normalTankCount < 10)	//1의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, CNE % 5, CNE / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, normalTankCount % 5, normalTankCount / 5);
 		}
 		else //10의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, (CNE %10) % 5, (CNE%10) / 5);
-			number->Render(hdc, WIN_SIZE_X / 2 - 50, WIN_SIZE_Y / 3 + 20, (CNE /10) % 5, (CNE/10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, (normalTankCount % 10) % 5, (normalTankCount % 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 50, WIN_SIZE_Y / 3 + 20, (normalTankCount / 10) % 5, (normalTankCount / 10) / 5);
 		}
 
 		//점수-> 순서대로 1, 10, 100 ,1000 자리
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 3 + 20, 0, 0);
-		if (!CNE == 0)
+		if (!normalTankCount == 0)
 		{
-			number->Render(hdc, WIN_SIZE_X / 4 , WIN_SIZE_Y / 3 + 20, 0, 0);
-			if (CNE < 10)
+			number->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 3 + 20, 0, 0);
+			if (normalTankCount < 10)
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10 , WIN_SIZE_Y / 3 + 20, CNE % 5, CNE / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 3 + 20, normalTankCount % 5, normalTankCount / 5);
 			}
 			else
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 3 + 20, (CNE %10) % 5, (CNE %10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, WIN_SIZE_Y / 3 + 20, (CNE /10) % 5, (CNE /10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 3 + 20, (normalTankCount % 10) % 5, (normalTankCount % 10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 22, WIN_SIZE_Y / 3 + 20, (normalTankCount / 10) % 5, (normalTankCount / 10) / 5);
 			}
-				
+
 		}
 
 	}
 
-	if (bSSE)		//스피드
+	if (bSpeedTankScoreFinish)		//스피드
 	{
 		// 잡은 마리수 표기
-		if (CSE < 10)	//1의자리
+		if (speedTankCount < 10)	//1의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) +45 , CSE % 5, CSE / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 45, speedTankCount % 5, speedTankCount / 5);
 		}
 		else //10의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) +45, (CSE % 10) % 5, (CSE % 10) / 5);
-			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) +45, (CSE / 10) % 5, (CSE / 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankCount % 10) % 5, (speedTankCount % 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankCount / 10) % 5, (speedTankCount / 10) / 5);
 		}
 
 		//점수 순서대로 1, 10, 100 ,1000 자리
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
-		if (!CSE == 0)
+		if (!speedTankCount == 0)
 		{
-			number->Render(hdc, WIN_SIZE_X / 4 , (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
-			if (SSE < 10)
+			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
+			if (speedTankScore < 10)
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, SSE % 5, SSE / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, speedTankScore % 5, speedTankScore / 5);
 			}
 			else
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, (SSE%10) % 5, (SSE%10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 45, (SSE/10) % 5, (SSE/10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankScore % 10) % 5, (speedTankScore % 10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankScore / 10) % 5, (speedTankScore / 10) / 5);
 			}
 		}
 	}
 
-	if (bSRE)		//래피드
+	if (bRapidTankScoreFinish)		//래피드
 	{
 		// 잡은 마리수 표기
-		if (CRE < 10)	//1의자리
+		if (rapidTankCount < 10)	//1의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 90, CRE % 5, CRE / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 90, rapidTankCount % 5, rapidTankCount / 5);
 		}
 		else //10의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 90, (CRE % 10) % 5, (CRE % 10) / 5);
-			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 90, (CRE / 10) % 5, (CRE / 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankCount % 10) % 5, (rapidTankCount % 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankCount / 10) % 5, (rapidTankCount / 10) / 5);
 		}
 
 		//점수 순서대로 1, 10, 100 ,1000 자리
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
-		if (!CRE == 0)
+		if (!rapidTankCount == 0)
 		{
 			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
-			
-			if (SRE < 9)
+
+			if (rapidTankScore < 9)
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, SRE % 5, SRE / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, rapidTankScore % 5, rapidTankScore / 5);
 			}
 			else
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, (SRE%10) % 5, (SRE%10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 90, (SRE/10) % 5, (SRE/10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankScore % 10) % 5, (rapidTankScore % 10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankScore / 10) % 5, (rapidTankScore / 10) / 5);
 			}
-				
+
 		}
 	}
 
-	if (bSBE)		//보스
+	if (bDefensiveTankScoreFinish)		//보스
 	{
 		// 잡은 마리수 표기
-		if (CBE < 10)	//1의자리
+		if (defensiveTankCount < 10)	//1의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 135, CBE % 5, CBE / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 135, defensiveTankCount % 5, defensiveTankCount / 5);
 		}
 		else //10의자리
 		{
-			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 135, (CBE % 10) % 5, (CBE % 10) / 5);
-			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 135, (CBE / 10) % 5, (CBE / 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankCount % 10) % 5, (defensiveTankCount % 10) / 5);
+			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankCount / 10) % 5, (defensiveTankCount / 10) / 5);
 		}
 
 		//점수 순서대로 1, 10, 100 ,1000 자리
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
-		if (!CBE == 0)
+		if (!defensiveTankCount == 0)
 		{
-			number->Render(hdc, WIN_SIZE_X / 4 , (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
-			
-			if (SBE < 9)
+			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
+
+			if (defensiveTankScore < 9)
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, SBE % 5, SBE / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, defensiveTankScore % 5, defensiveTankScore / 5);
 			}
 			else
 			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, (SBE%10) % 5, (SBE%10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 135, (SBE/10) % 5, (SBE/10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankScore % 10) % 5, (defensiveTankScore % 10) / 5);
+				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankScore / 10) % 5, (defensiveTankScore / 10) / 5);
 			}
-				
+
 		}
 	}
 }
@@ -336,79 +336,79 @@ void ScoreScene::Release()
 
 void ScoreScene::ScoreCalculate()
 {
-	
+
 	elapsedcount++;
-	if (CNE < KNE)		//일반 탱크
+	if (normalTankCount < killNormalTank)		//일반 탱크
 	{
 		if (elapsedcount >= elapsedTest)
 		{
-			CNE++;
+			normalTankCount++;
 			elapsedcount = 0;
 		}
 	}
 
-	if (bSSE && CSE < KSE)	//스피드 탱크
+	if (bSpeedTankScoreFinish && speedTankCount < killSpeedTank)	//스피드 탱크
 	{
 		if (elapsedcount >= elapsedTest)
 		{
-			CSE++;
-			SSE += 2;
+			speedTankCount++;
+			speedTankScore += 2;
 			elapsedcount = 0;
 		}
 	}
 
-	if (bSRE && CRE < KRE)	//레피드 탱크
+	if (bRapidTankScoreFinish && rapidTankCount < killRapidTank)	//레피드 탱크
 	{
 		if (elapsedcount >= elapsedTest)
 		{
-			CRE++;
+			rapidTankCount++;
 			elapsedcount = 0;
-			SRE += 3;
+			rapidTankScore += 3;
 		}
 	}
 
-	if (bSBE && CBE < KBE)	//보스 탱크
+	if (bDefensiveTankScoreFinish && defensiveTankCount < killDefensiveTank)	//보스 탱크
 	{
 		if (elapsedcount >= elapsedTest)
 		{
-			CBE++;
+			defensiveTankCount++;
 			elapsedcount = 0;
-			SBE += 4;
+			defensiveTankScore += 4;
 		}
 	}
 
 
-	if (CNE == KNE && bSSE == false)	//노말 점수 끝
+	if (normalTankCount == killNormalTank && bSpeedTankScoreFinish == false)	//노말 점수 끝
 	{
 		if (elapsedcount >= elapsedTest * 2)
 		{
-			bSSE = true;
+			bSpeedTankScoreFinish = true;
 			elapsedcount = 0;
 		}
 	}
-	else if (CSE == KSE && bSRE == false)	//두번째 점수 계산끝
+	else if (speedTankCount == killSpeedTank && bRapidTankScoreFinish == false)	//두번째 점수 계산끝
 	{
 		if (elapsedcount >= elapsedTest * 2)
 		{
-			bSRE = true;
+			bRapidTankScoreFinish = true;
 			elapsedcount = 0;
 		}
 	}
-	else if (CRE == KRE && bSBE == false)	//세번째 점수 계산 끝
+	else if (rapidTankCount == killRapidTank && bDefensiveTankScoreFinish == false)	//세번째 점수 계산 끝
 	{
 		if (elapsedcount >= elapsedTest * 2)
 		{
-			bSBE = true;
+			bDefensiveTankScoreFinish = true;
 			elapsedcount = 0;
 		}
 	}
-	else if (CBE == KBE && bTotalScore == false)
+	else if (defensiveTankCount == killDefensiveTank && bTotalScore == false)
 	{
 		if (elapsedcount >= elapsedTest * 2)
 		{
 			bTotalScore = true;
 			elapsedcount = 0;
-			TK = KNE + KSE + KRE + KBE;
+			totalKill = killNormalTank + killSpeedTank + killRapidTank + killDefensiveTank;
 		}
 
 	}
