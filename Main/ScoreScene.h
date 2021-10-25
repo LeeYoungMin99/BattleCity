@@ -25,10 +25,11 @@ private:
 	int hightScore = 0;
 	int player1Score = 0;
 
-	int KNE = 0, KSE = 0, KRE = 0, KBE = 0;				//종류별 죽인 탱크수
-	int CNE = 0, CSE = 0, CRE = 0, CBE = 0;				//죽인 탱크를 1씩 카운트하기위한 변수
-	int SNE = 0, SSE = 0, SRE = 0, SBE = 0;				//스코어 점수
-	int bSNE = 0, bSSE = 0, bSRE = 0, bSBE = 0;			//순서대로 점수계산을 위한 불타입
+	int killNormalTank = 0, killSpeedTank = 0, killRapidTank = 0, killDefensiveTank = 0;				//종류별 죽인 탱크수
+	int normalTankCount = 0, speedTankCount = 0, rapidTankCount = 0, defensiveTankCount = 0;				//죽인 탱크를 1씩 카운트하기위한 변수
+	int normalTankScore = 0, speedTankScore = 0, rapidTankScore = 0, defensiveTankScore = 0;				//스코어 점수
+
+	bool bSNE = false, bSSE = false, bSRE = false, bSBE = false;			//순서대로 점수계산을 위한 불타입
 
 	int TK = 0;								//토탈 킬수
 	int bTotalScore = 0;					// 점수계산 끝나고 토탈점수 
