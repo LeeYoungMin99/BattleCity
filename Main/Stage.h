@@ -4,16 +4,12 @@
 #include "BoomImage.h"
 #include <vector>
 
-
-
-
 class Image;
 class EnemyManager;
 class AmmoManager;
 class Tank;
 class TankFactory;
 class ItemManager;
-
 class Stage : public GameEntity
 {
 public:
@@ -59,8 +55,8 @@ private:
 	Image* backGround = nullptr;
 
 	Image* slate = nullptr;
-	int slate1 = 0;
-	int slate2 = 0;
+	int overSlatePos = 0;
+	int lowSlatePos = 0;
 
 	Tank* tank = nullptr;
 	TankFactory* tankFactory[5] = {};
@@ -82,10 +78,6 @@ private:
 	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X] = {};
 	BOOM_IMAGE_INFO boomImg[2] = {};
 
-
-
-
-
 	RECT backGroundRect = {};
 
 	bool check = false;
@@ -93,11 +85,9 @@ private:
 
 	ItemManager* itemManager = nullptr;
 
-
 	//물 타일 이미지
 	vector<pair<int,int>> waterTilePos;
 	int waterElapsedCount = 0;
-
 
 	//GameOver
 	Image* gameOver = nullptr;

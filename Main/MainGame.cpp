@@ -4,8 +4,6 @@
 #include "BattleScene.h"
 #include "LoadingScene.h"
 #include "TilemapToolScene.h"
-#include "PixelCollisionScene.h"
-#include "AStarScene.h"
 #include "ScoreScene.h"
 #include "GameOverScene.h"
 #include "Tank.h"

@@ -11,11 +11,11 @@ HRESULT GameOverScene::Init()
 
 	elapsedcount = 0;
 
-	//test_1 = -(backGround->GetHeight())+200;
-	//test_2 = (backGround->GetHeight()*2)-200;//backGround->GetHeight();	//´Ý
+	//overSlatePos = -(backGround->GetHeight())+200;
+	//lowSlatePos = (backGround->GetHeight()*2)-200;//backGround->GetHeight();	//´Ý
 
-	test_1 = 0;
-	test_2 = WIN_SIZE_Y ;	//¿­
+	overSlatePos = 0;
+	lowSlatePos = WIN_SIZE_Y ;	//¿­
 	return S_OK;
 }
 
@@ -28,15 +28,15 @@ void GameOverScene::Update()
 		SceneManager::GetSingleton()->ChangeScene("TitleScene");
 		return;
 	}
-	//test_1 += 1;
-	//test_2 -= 1;	//´Ý
+	//overSlatePos += 1;
+	//lowSlatePos -= 1;	//´Ý
 
-	test_1 -= 3;
-	test_2 += 3;	//¿­
+	overSlatePos -= 3;
+	lowSlatePos += 3;	//¿­
 
-	/*if (test_1 >= 0)
+	/*if (overSlatePos >= 0)
 	{
-		test_1 = 0;
+		overSlatePos = 0;
 	}*/
 
 }
@@ -45,8 +45,8 @@ void GameOverScene::Render(HDC hdc)
 {
 	gameOver->Render(hdc);
 
-	backGround->Render(hdc, backGround->GetWidth() / 2, test_1);
-	backGround->Render(hdc, backGround->GetWidth() / 2, test_2);
+	backGround->Render(hdc, backGround->GetWidth() / 2, overSlatePos);
+	backGround->Render(hdc, backGround->GetWidth() / 2, lowSlatePos);
 }
 
 void GameOverScene::Release()
