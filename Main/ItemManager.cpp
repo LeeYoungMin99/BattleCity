@@ -2,7 +2,7 @@
 #include "Image.h"
 #include "Item.h"
 #include "Tank.h"
-#include "EnemyManager.h"
+#include "TankManager.h"
 #include "ItemFactory.h"
 
 HRESULT ItemManager::Init()
@@ -137,10 +137,10 @@ void ItemManager::DestoryFortification()
 	fortificationCount = 0;
 }
 
-void ItemManager::CreateItem(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo)
+void ItemManager::CreateItem(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo)
 {
 	Item* tempItem = itemFactory[type]->CreateTank();
-	tempItem->Init(type, tile, tank, enemyMgr, tileInfo, this);
+	tempItem->Init(type, tile, tank, tankMgr, tileInfo, this);
 
 	vecItems.push_back(tempItem);
 	this->tileInfo = tileInfo;

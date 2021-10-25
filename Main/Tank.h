@@ -4,7 +4,7 @@
 #include "Ammo.h"
 
 class AmmoManager;
-class EnemyManager;
+class TankManager;
 class ItemManager;
 class Item;
 class Tank : public GameObject

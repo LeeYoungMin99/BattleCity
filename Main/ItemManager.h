@@ -10,7 +10,7 @@
 class Image;
 class Item;
 class Tank;
-class EnemyManager;
+class TankManager;
 class ItemFactory;
 class ItemManager : public GameEntity
 {
@@ -34,7 +34,7 @@ public:
 
 	void Fortification();
 	void DestoryFortification();
-	void CreateItem(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo);
+	void CreateItem(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo);
 	void UseItem();
 
 	inline vector<Item*>* GetAddressVecItem() { return &(this->vecItems); }

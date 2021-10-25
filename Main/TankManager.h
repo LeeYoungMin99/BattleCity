@@ -11,51 +11,56 @@ typedef struct scoreInfo
 	int elapsedCount = 0;
 	int maxElapsedCount = 50;
 	int scoreFrame = 0;
-	int tankHP = -1;
+	int tankHP = 1;
 }SCORE_INFO;
 
-#define NUMBER_OF_IMAGES 6
+#define NUMBER_OF_IMAGES 7
 
 class Image;
 class Tank;
+class Item;
+class TankFactory;
 class ItemManager;
 class AmmoManager;
-class EnemyManager : public GameEntity
+class TankManager : public GameEntity
 {
 private:
 	int enemyMaxCount = 0;
 	int elapsedcount = 0;
-
-	int tlqkf = 0;
 
 	BOOM_IMAGE_INFO boomImg[NUMBER_OF_IMAGES] = {};
 	SCORE_INFO scoreImg[NUMBER_OF_IMAGES] = {};
 
 	TILE_INFO* tileInfo = nullptr;
 
+	TankFactory* tankFactory[5] = {};
+
 	Tank* playerTank = nullptr;
 	GameEntity* stageInfo = nullptr;
-	ItemManager* itemManager = nullptr;
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
-	string nextStage = {};
 	bool clockItem = false;
 	int elapsedcount_2 = 0;
 
 	vector<Tank*> vecEnemys;
 	vector<Tank*>::iterator itEnemys;
-public:
-	virtual ~EnemyManager() = default;
 
-	HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tilemap, Tank* playerTank, GameEntity* stageInfo);
+	vector<Item*>* addressVecItems = nullptr;
+public:
+	virtual ~TankManager() = default;
+
+	HRESULT Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tilemap, GameEntity* stageInfo, vector<Item*>* vecItems);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 
-	void AddEnemy(Tank* tank, POINTFLOAT pos);
+	void AddEnemy(TankType type, POINTFLOAT pos);
 	inline void SetClockItem(bool clockItem) { this->clockItem = clockItem; }
 	void BoomItem();
+	void PlayerTankDestroyAnimation();
 
 	inline vector<Tank*>* GetAddresVecEnemys() { return &vecEnemys; }
+	inline Tank* GetPlayerTank() { return playerTank; }
+	inline TankFactory** GetTankFactory() { return tankFactory; }
 };
 
