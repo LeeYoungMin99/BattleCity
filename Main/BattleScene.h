@@ -1,7 +1,7 @@
 #pragma once
 #include "GameEntity.h"
 
-class EnemyManager;
+class TankManager;
 class Tank;
 class Image;
 class BattleScene : public GameEntity
@@ -11,7 +11,7 @@ private:
 	Tank* rocket;
 
 	// 적 UFO
-	EnemyManager* enemyMgr;
+	TankManager* tankMgr;
 
 	// 배경 이미지
 	Image* backGround;

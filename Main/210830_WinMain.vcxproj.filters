@@ -63,7 +63,7 @@
     <ClCompile Include="Image.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyManager.cpp">
+    <ClCompile Include="TankManager.cpp">
       <Filter>MainGame\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Ammo.cpp">
@@ -152,7 +152,7 @@
     <ClInclude Include="Image.h">
       <Filter>2D Framework</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyManager.h">
+    <ClInclude Include="TankManager.h">
       <Filter>MainGame\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Ammo.h">

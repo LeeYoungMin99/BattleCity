@@ -4,7 +4,7 @@
 
 class Image;
 class Tank;
-class EnemyManager;
+class TankManager;
 class ItemManager;
 class Item : public GameObject
 {
@@ -18,20 +18,20 @@ private:
 
 	GameEntity* stageInfo = nullptr;
 	Tank* tank = nullptr;
-	EnemyManager* enemyMgr = nullptr;
+	TankManager* tankMgr = nullptr;
 
 	ItemManager* itemManager = nullptr;
 	
 public:
 	RECT rc = {};
-	HRESULT Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo, ItemManager* itemManager);
+	HRESULT Init(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo, ItemManager* itemManager);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 	virtual void UseItem() = 0;
 
 	inline Tank* GetTank() { return tank; }
-	inline EnemyManager* GetEnemyManager() { return enemyMgr; };
+	inline TankManager* GetEnemyManager() { return tankMgr; };
 	inline int GetType() { return this->itemType; }
 	inline ItemManager* GetItemManager() { return itemManager; }
 	inline void SetUseItem(bool useItem) { this->useItem = useItem; }

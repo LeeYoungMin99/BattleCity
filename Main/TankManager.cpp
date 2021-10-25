@@ -1,17 +1,18 @@
-#include "EnemyManager.h"
+#include "TankManager.h"
 #include "Tank.h"
 #include "Image.h"
 #include "Stage.h"
+#include "TankFactory.h"
 #include "ItemManager.h"
+#include "Item.h"
 
 
-HRESULT EnemyManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, Tank* playerTank, GameEntity* stageInfo)
+HRESULT TankManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, GameEntity* stageInfo, vector<Item*>* vecItems)
 {
 	enemyMaxCount = 6;
 	vecEnemys.reserve(enemyMaxCount);
 
 	tileInfo = tile;
-	this->playerTank = playerTank;
 
 	for (int i = 0; i < NUMBER_OF_IMAGES; i++)
 	{
@@ -19,18 +20,29 @@ HRESULT EnemyManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoMana
 		scoreImg[i].scoreImg = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 	}
 
+	tankFactory[0] = DBG_NEW PlayerTankFactory;
+	tankFactory[1] = DBG_NEW NormalEnemyTankFactory;
+	tankFactory[2] = DBG_NEW SpeedEnemyTankFactory;
+	tankFactory[3] = DBG_NEW RapidEnemyTankFactory;
+	tankFactory[4] = DBG_NEW DefensiveEnemyTankFactory;
+
+	this->playerTank = tankFactory[0]->CreateTank();
 	this->tileInfo = tile;
 	this->stageInfo = stageInfo;
 	this->ammoManager = ammoManager;
 	this->targetAmmoManager = targetAmmoManager;
+	this->addressVecItems = vecItems;
 
-	itemManager = new ItemManager;
+	this->playerTank->Init(targetAmmoManager, ammoManager, tileInfo, &vecEnemys, nullptr, addressVecItems);
 
 	return S_OK;
 }
 
-void EnemyManager::Update()
+void TankManager::Update()
 {
+	playerTank->Update();
+
+	PlayerTankDestroyAnimation();
 
 	for (itEnemys = vecEnemys.begin();
 		itEnemys != vecEnemys.end();)
@@ -39,7 +51,7 @@ void EnemyManager::Update()
 
 		if ((*itEnemys)->GetHP() <= 0)
 		{
-			for (int i = 0; i < NUMBER_OF_IMAGES; i++)
+			for (int i = 1; i < NUMBER_OF_IMAGES; i++)
 			{
 				if (boomImg[i].bRenderBoomImg == false)
 				{
@@ -68,7 +80,7 @@ void EnemyManager::Update()
 		}
 	}
 
-	for (int i = 0; i < NUMBER_OF_IMAGES; i++)
+	for (int i = 1; i < NUMBER_OF_IMAGES; i++)
 	{
 		if (boomImg[i].bRenderBoomImg)
 		{
@@ -132,8 +144,10 @@ void EnemyManager::Update()
 }
 
 
-void EnemyManager::Render(HDC hdc)
+void TankManager::Render(HDC hdc)
 {
+	playerTank->Render(hdc);
+
 	for (itEnemys = vecEnemys.begin();
 		itEnemys != vecEnemys.end(); itEnemys++)
 	{
@@ -154,40 +168,85 @@ void EnemyManager::Render(HDC hdc)
 	}
 }
 
-void EnemyManager::Release()
+void TankManager::Release()
 {
+	SAFE_RELEASE(playerTank);
+
+	for (int i = 0; i < 5; i++)
+	{
+		SAFE_DELETE(tankFactory[i]);
+	}
+
 	for (itEnemys = vecEnemys.begin();
 		itEnemys != vecEnemys.end(); itEnemys++)
 	{
 		SAFE_RELEASE((*itEnemys));
 	}
 	vecEnemys.clear();
-
-	SAFE_RELEASE(itemManager);
 }
 
-void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
+void TankManager::AddEnemy(TankType type, POINTFLOAT pos)
 {
-	tank->SetPos(pos);
+	Tank* enemyTank = tankFactory[(int)type]->CreateTank();
+	enemyTank->SetPos(pos);
 
-	tank->Init(ammoManager, targetAmmoManager, tileInfo, &vecEnemys, playerTank);
+	enemyTank->Init(ammoManager, targetAmmoManager, tileInfo, &vecEnemys, playerTank);
 
-	/*int a = 0, b = RANDOM(0, 3);
+	int a = 0, b = RANDOM(0, 3);
 	if (a == b)
 	{
 		tank->SetHaveItem(true);
-	}*/
-	tank->SetHaveItem(true);
-	vecEnemys.push_back(tank);
+	}
+	vecEnemys.push_back(enemyTank);
 }
 
-void EnemyManager::BoomItem()
+void TankManager::BoomItem()
 {
 	for (itEnemys = vecEnemys.begin();
 		itEnemys != vecEnemys.end(); itEnemys++)
 	{
 		GameManager::GetSingleton()->remainMonster--;
 		(*itEnemys)->SubtractHP(5);
+	}
+}
+
+void TankManager::PlayerTankDestroyAnimation()
+{
+	if (GameManager::GetSingleton()->player1Life >= 0)
+	{
+		if (!(boomImg[0].bRenderBoomImg) && playerTank->GetHP() <= 0)
+		{
+			boomImg[0].bRenderBoomImg = true;
+			boomImg[0].imgPos = playerTank->GetPos();
+			SAFE_DELETE(playerTank);
+			playerTank = tankFactory[0]->CreateTank();
+			for (auto iter = vecEnemys.begin();
+				iter != vecEnemys.end();
+				++iter)
+			{
+				(*iter)->SetPlayerTank(playerTank);
+			}
+			GameManager::GetSingleton()->player1Life--;
+		}
+	}
+
+	if (boomImg[0].bRenderBoomImg)
+	{
+		boomImg[0].elapsedCount++;
+
+		if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
+		{
+			boomImg[0].elapsedCount = 0;
+			boomImg[0].BoomImgCurrFrame++;
+
+			if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
+			{
+				boomImg[0].bRenderBoomImg = false;
+				boomImg[0].BoomImgCurrFrame = 0;
+				if (GameManager::GetSingleton()->player1Life >= 0)
+					playerTank->Init(targetAmmoManager, ammoManager, tileInfo, &vecEnemys, nullptr, addressVecItems);
+			}
+		}
 	}
 }
 

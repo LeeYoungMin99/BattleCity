@@ -1,6 +1,6 @@
 #include "Tank.h"
 #include "Image.h"
-#include "EnemyManager.h"
+#include "TankManager.h"
 #include "ItemManager.h"
 #include "AmmoManager.h"
 #include "Item.h"

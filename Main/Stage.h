@@ -5,7 +5,7 @@
 #include <vector>
 
 class Image;
-class EnemyManager;
+class TankManager;
 class AmmoManager;
 class Tank;
 class TankFactory;
@@ -20,7 +20,6 @@ public:
 	virtual void Update() override;
 	virtual void Render(HDC hdc) override;
 	virtual void Release() override;
-	void SpawnEnemy(TankType type);
 	void CreateItem();
 
 	//Update()
@@ -42,13 +41,12 @@ public:
 	void GrassTileRender(HDC hdc);
 	void PlayerLifeRender(HDC hdc);
 	void StageLevelRender(HDC hdc);
-	void PlayerTankDestroyRender(HDC hdc);
 	void NexusDestroyRender(HDC hdc);
 
 private:
 	Image* sampleImage = nullptr;
 	Image* spawnMonsterImage = nullptr;
-	
+
 	Image* lifeImage = nullptr;
 	Image* stageImage = nullptr;
 	Image* stageLevel = nullptr;
@@ -58,13 +56,10 @@ private:
 	int overSlatePos = 0;
 	int lowSlatePos = 0;
 
-	Tank* tank = nullptr;
-	TankFactory* tankFactory[5] = {};
-	
 	AmmoManager* playerTankAmmoManager = nullptr;
 	AmmoManager* enemyTankAmmoManager = nullptr;
 
-	EnemyManager* enemyMgr = nullptr;
+	TankManager* tankMgr = nullptr;
 	float elapsedCount = 0.0f;
 	float spawmElapsedCount = 5.0f;
 	int spawnCount = 0;
@@ -76,7 +71,7 @@ private:
 	POINTFLOAT spawnPos[3] = {};
 
 	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X] = {};
-	BOOM_IMAGE_INFO boomImg[2] = {};
+	BOOM_IMAGE_INFO boomImg = {};
 
 	RECT backGroundRect = {};
 

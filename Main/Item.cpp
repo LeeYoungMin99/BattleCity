@@ -1,10 +1,10 @@
 #include "Item.h"
 #include "Image.h"
 #include "Tank.h"
-#include "EnemyManager.h"
+#include "TankManager.h"
 #include "ItemManager.h"
 
-HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_INFO* tileInfo, ItemManager* itemManager)
+HRESULT Item::Init(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo, ItemManager* itemManager)
 {
 	string itemName = "Image/Item/Item";
 	itemName += to_string(type+1);
@@ -16,7 +16,7 @@ HRESULT Item::Init(int type, int tile, Tank* tank, EnemyManager* enemyMgr, TILE_
 	itemType = type;
 	itemTile = tile;
 	this->tank = tank;
-	this->enemyMgr = enemyMgr;
+	this->tankMgr = tankMgr;
 	rc.left = ((itemTile % 26) * 16) + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;
 	rc.top = ((itemTile / 26) * 16) + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
 	rc.right = ((itemTile % 26) * 16) + 32 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;

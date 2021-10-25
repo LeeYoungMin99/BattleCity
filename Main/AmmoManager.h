@@ -5,7 +5,7 @@
 class GameObject;
 class Ammo;
 class Tank;
-class EnemyManager;
+class TankManager;
 class AmmoManager : public GameEntity
 {
 private:

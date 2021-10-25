@@ -6,7 +6,7 @@
 #include "AmmoManager.h"
 #include "Tank.h"
 #include "TankFactory.h"
-#include "EnemyManager.h"
+#include "TankManager.h"
 #include "ItemManager.h"
 #include "ScoreScene.h"
 
@@ -74,12 +74,6 @@ HRESULT Stage::Init()
 	spawnEnemyPos[2].y = (float)(tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2);
 
 
-	tankFactory[0] = DBG_NEW PlayerTankFactory;
-	tankFactory[1] = DBG_NEW NormalEnemyTankFactory;
-	tankFactory[2] = DBG_NEW SpeedEnemyTankFactory;
-	tankFactory[3] = DBG_NEW RapidEnemyTankFactory;
-	tankFactory[4] = DBG_NEW DefensiveEnemyTankFactory;
-
 	//vecTankFactory.push_back(DBG_NEW PlayerTankFactory);
 	//vecTankFactory.push_back(DBG_NEW NormalEnemyTankFactory);
 	//vecTankFactory.push_back(DBG_NEW SpeedEnemyTankFactory);
@@ -95,26 +89,22 @@ HRESULT Stage::Init()
 	playerTankAmmoManager = DBG_NEW AmmoManager;
 	enemyTankAmmoManager = DBG_NEW AmmoManager;
 
-	tank = tankFactory[0]->CreateTank();
-	enemyMgr = DBG_NEW EnemyManager;
+	tankMgr = DBG_NEW TankManager;
 
 	itemManager = DBG_NEW ItemManager;
 	itemManager->Init();
 
-	tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager->GetAddressVecItem());
-	enemyMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, tank, this);
-	playerTankAmmoManager->Init(tileInfo, nullptr, enemyMgr->GetAddresVecEnemys());
-	enemyTankAmmoManager->Init(tileInfo, tank);
+	tankMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, this, itemManager->GetAddressVecItem());
+	playerTankAmmoManager->Init(tileInfo, nullptr, tankMgr->GetAddresVecEnemys());
+	enemyTankAmmoManager->Init(tileInfo, tankMgr->GetPlayerTank());
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
 	backGroundRect.right = STAGE_SIZE_X + 416;
 	backGroundRect.bottom = STAGE_SIZE_Y + 416;
 
-	for (int i = 0; i < 2; i++)
-	{
-		boomImg[i].BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
-	}
+
+	boomImg.BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
 
 	elapsedCount = 0;
 
@@ -137,11 +127,9 @@ void Stage::Update()
 	}
 	else if (GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus) //게임 진행중
 	{
-		tank->Update();
-
 		//SpawnEnemyTank
 		SpawnEnemyTank();
-		
+
 		//ShowBulletCollider
 		ShowBulletCollider();
 
@@ -156,14 +144,14 @@ void Stage::Update()
 
 		//WaterTileAnimation
 		WaterTileAnimation();
-	
+
 		//RotateToScoreScene
 		if (RotateToScoreScene()) return;
 
 		//RotateToGameOverState
 		RotateToGameOverState();
 	}
-	else if (GameManager::GetSingleton()->state == GameState::GameOver) 
+	else if (GameManager::GetSingleton()->state == GameState::GameOver)
 	{
 		if (RotateGameOverScene()) return;
 	}
@@ -171,7 +159,7 @@ void Stage::Update()
 	itemManager->Update();
 	playerTankAmmoManager->Update();
 	enemyTankAmmoManager->Update();
-	enemyMgr->Update();
+	tankMgr->Update();
 }
 
 void Stage::Render(HDC hdc)
@@ -192,8 +180,7 @@ void Stage::Render(HDC hdc)
 	//RemainEnemyRender
 	RemainEnemyRender(hdc);
 
-	tank->Render(hdc);
-	enemyMgr->Render(hdc);
+	tankMgr->Render(hdc);
 	itemManager->Render(hdc);
 	playerTankAmmoManager->Render(hdc);
 	enemyTankAmmoManager->Render(hdc);
@@ -208,8 +195,6 @@ void Stage::Render(HDC hdc)
 	stageImage->Render(hdc, 480, 370);
 	StageLevelRender(hdc);
 
-	PlayerTankDestroyRender(hdc);
-
 	NexusDestroyRender(hdc);
 
 
@@ -222,31 +207,12 @@ void Stage::Render(HDC hdc)
 
 void Stage::Release()
 {
-	for (int i = 0; i < 5; i++)
-	{
-		SAFE_DELETE(tankFactory[i]);
-	}
-	/*vecTankFactory.clear();
-	vector<TankFactory*>().swap(vecTankFactory);*/
-
-	SAFE_RELEASE(tank);
 	SAFE_RELEASE(playerTankAmmoManager);
 	SAFE_RELEASE(enemyTankAmmoManager);
-	SAFE_RELEASE(enemyMgr);
+	SAFE_RELEASE(tankMgr);
 	SAFE_RELEASE(itemManager);
 
 	//waterTilePos.clear();
-
-}
-
-void Stage::SpawnEnemy(TankType type)
-{
-	enemyMgr->AddEnemy(tankFactory[(int)type + 1]->CreateTank(), spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
-
-	if (GameManager::GetSingleton()->spawnCount >= maxSpawnCount)
-	{
-		GameManager::GetSingleton()->spawnCount -= maxSpawnCount;
-	}
 
 }
 
@@ -259,7 +225,7 @@ void Stage::CreateItem()
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
 			int itemtype = rand() % 6;
-			itemManager->CreateItem(itemtype, randtile, tank, enemyMgr, tileInfo);
+			itemManager->CreateItem(itemtype, randtile, tankMgr->GetPlayerTank(), tankMgr, tileInfo);
 			break;
 		}
 	}
@@ -325,7 +291,7 @@ bool Stage::RotateToScoreScene()
 			elapsedCount = 0;
 			GameManager::GetSingleton()->state = GameState::Done;
 			GameManager::GetSingleton()->spawnCount = 0;
-			GameManager::GetSingleton()->playerEnforceCount = tank->GetEnforceCount();
+			GameManager::GetSingleton()->playerEnforceCount = tankMgr->GetPlayerTank()->GetEnforceCount();
 			SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
 			SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			return true;
@@ -354,24 +320,24 @@ void Stage::NexusDestoryAnimation()
 {
 	if (tileInfo[636].frameX == 4)
 	{
-		boomImg[1].bRenderBoomImg = true;
+		boomImg.bRenderBoomImg = true;
 		POINTFLOAT temp = { (FLOAT)(tileInfo[636].collider.right), (FLOAT)(tileInfo[636].collider.bottom) };
-		boomImg[1].imgPos = temp;
+		boomImg.imgPos = temp;
 	}
 
 
-	if (boomImg[1].bRenderBoomImg)
+	if (boomImg.bRenderBoomImg)
 	{
-		boomImg[1].elapsedCount++;
+		boomImg.elapsedCount++;
 
-		if (boomImg[1].elapsedCount >= boomImg[1].addImgFrameCount)
+		if (boomImg.elapsedCount >= boomImg.addImgFrameCount)
 		{
-			boomImg[1].elapsedCount = 0;
-			boomImg[1].BoomImgCurrFrame++;
+			boomImg.elapsedCount = 0;
+			boomImg.BoomImgCurrFrame++;
 
-			if (boomImg[1].BoomImgCurrFrame == boomImg[1].BoomImgMaxFrame)
+			if (boomImg.BoomImgCurrFrame == boomImg.BoomImgMaxFrame)
 			{
-				boomImg[1].bRenderBoomImg = false;
+				boomImg.bRenderBoomImg = false;
 			}
 		}
 	}
@@ -411,49 +377,20 @@ void Stage::SpawnEnemyTank()
 		GameManager::GetSingleton()->remainSpawnMonster--;
 		currSpawnEnemy++;
 		elapsedCount -= spawmElapsedCount;
-		int randomType = RANDOM(0, 3);
-		SpawnEnemy((TankType)randomType);
+		int randomType = RANDOM(1, 4);
+
+		tankMgr->AddEnemy((TankType)randomType, spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
+
+		if (GameManager::GetSingleton()->spawnCount >= maxSpawnCount)
+		{
+			GameManager::GetSingleton()->spawnCount -= maxSpawnCount;
+		}
 	}
 }
 
 void Stage::PlayerTankDestroyAnimation()
 {
-	if (GameManager::GetSingleton()->player1Life >= 0)
-	{
-		if (!(boomImg[0].bRenderBoomImg) && tank->GetHP() <= 0)
-		{
-			boomImg[0].bRenderBoomImg = true;
-			boomImg[0].imgPos = tank->GetPos();
-			SAFE_DELETE( tank);
-			tank = tankFactory[0]->CreateTank();
-			for (auto iter = enemyMgr->GetAddresVecEnemys()->begin();
-				iter != enemyMgr->GetAddresVecEnemys()->end();
-				++iter)
-			{
-				(*iter)->SetPlayerTank(tank);
-			}
-			GameManager::GetSingleton()->player1Life--;
-		}
-	}
 
-	if (boomImg[0].bRenderBoomImg)
-	{
-		boomImg[0].elapsedCount++;
-
-		if (boomImg[0].elapsedCount >= boomImg[0].addImgFrameCount)
-		{
-			boomImg[0].elapsedCount = 0;
-			boomImg[0].BoomImgCurrFrame++;
-
-			if (boomImg[0].BoomImgCurrFrame == boomImg[0].BoomImgMaxFrame)
-			{
-				boomImg[0].bRenderBoomImg = false;
-				boomImg[0].BoomImgCurrFrame = 0;
-				if (GameManager::GetSingleton()->player1Life >= 0)
-					tank->Init(playerTankAmmoManager, enemyTankAmmoManager, tileInfo, enemyMgr->GetAddresVecEnemys(), tank, itemManager->GetAddressVecItem());
-			}
-		}
-	}
 }
 
 void Stage::TileRender(HDC hdc)
@@ -544,19 +481,11 @@ void Stage::StageLevelRender(HDC hdc)
 	}
 }
 
-void Stage::PlayerTankDestroyRender(HDC hdc)
-{
-	if (boomImg[0].bRenderBoomImg)
-	{
-		boomImg[0].BoomImg->Render(hdc, (int)(boomImg[0].imgPos.x - STAGE_SIZE_X / 2), (int)(boomImg[0].imgPos.y - STAGE_SIZE_Y), boomImg[0].BoomImgCurrFrame, 0);
-	}
-}
-
 void Stage::NexusDestroyRender(HDC hdc)
 {
-	if (boomImg[1].bRenderBoomImg)
+	if (boomImg.bRenderBoomImg)
 	{
-		boomImg[1].BoomImg->Render(hdc, (int)(boomImg[1].imgPos.x), (int)(boomImg[1].imgPos.y), boomImg[1].BoomImgCurrFrame, 0);
+		boomImg.BoomImg->Render(hdc, (int)(boomImg.imgPos.x), (int)(boomImg.imgPos.y), boomImg.BoomImgCurrFrame, 0);
 	}
 }
 

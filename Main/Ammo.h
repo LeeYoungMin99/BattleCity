@@ -6,7 +6,7 @@ enum class BulletDir { Left, Right, Up, Down };
 
 class Image;
 class Tank;		// 전방선언 (Tank라는 클래스가 있다)
-class EnemyManager;
+class TankManager;
 class AmmoManager;
 class Ammo : public GameObject
 {
