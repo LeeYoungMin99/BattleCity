@@ -1,8 +1,5 @@
 #include "TitleScene.h"
-//#include "Config.h"
 #include "Image.h"
-#include "Button.h"
-#include "ButtonFunction.h"
 
 
 
@@ -29,7 +26,7 @@ HRESULT TitleScene::Init()
 	arg->loadingSceneName = "로딩씬";
 
 	// 디버깅 용 
-	test = (int)(WIN_SIZE_Y * 1.5);	//슬라이드 효과
+	slidePos = (int)(WIN_SIZE_Y * 1.5);	//슬라이드 효과
 	titleStart = false;
 
 	selecTitle = selectedTitle::player_1;
@@ -96,8 +93,8 @@ void TitleScene::Update()
 		}
 	}
 	// 디버깅 용
-	if (test >= WIN_SIZE_Y / 2)
-		test -= 3;
+	if (slidePos >= WIN_SIZE_Y / 2)
+		slidePos -= 3;
 	else
 		titleStart = true;
 
@@ -115,7 +112,7 @@ void TitleScene::Render(HDC hdc)
 	if (!titleStart)
 	{
 		if (title)
-			title->Render(hdc, title->GetWidth() / 2, test);
+			title->Render(hdc, title->GetWidth() / 2, slidePos);
 	}
 	else
 	{

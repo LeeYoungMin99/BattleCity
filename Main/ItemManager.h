@@ -16,18 +16,13 @@ class ItemManager : public GameEntity
 {
 private:
 	vector<Item*> vecItems;
-
 	POINT pos = {};
-
 	Item* item = nullptr;
-
 
 	int fortificationCount = 0;
 	bool bIsFortification = false;
 	ItemFactory* itemFactory[6] = {};
-
 	TILE_INFO* tileInfo = nullptr;
-
 
 public:
 	virtual ~ItemManager() = default;

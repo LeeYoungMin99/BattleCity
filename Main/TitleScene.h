@@ -16,7 +16,7 @@ private:
 
 	LPARGUMENT_PTR arg = {};
 	selectedTitle selecTitle = {};
-	int test = 0; //슬라이드효과 테스트
+	int slidePos = 0; //슬라이드효과 테스트
 	bool titleStart = false; //디버깅용
 
 public:

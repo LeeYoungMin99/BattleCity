@@ -1,8 +1,5 @@
 #include "Item.h"
 #include "Image.h"
-#include "Stage1Scene.h"
-#include "Stage2Scene.h"
-#include "Stage3Scene.h"
 #include "Tank.h"
 #include "EnemyManager.h"
 #include "ItemManager.h"

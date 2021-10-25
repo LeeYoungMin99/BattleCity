@@ -1,5 +1,4 @@
 #include "EnemyManager.h"
-#include "Enemy.h"
 #include "Tank.h"
 #include "Image.h"
 #include "Stage.h"
@@ -173,11 +172,12 @@ void EnemyManager::AddEnemy(Tank* tank, POINTFLOAT pos)
 
 	tank->Init(ammoManager, targetAmmoManager, tileInfo, &vecEnemys, playerTank);
 
-	int a = 0, b = RANDOM(0, 3);
+	/*int a = 0, b = RANDOM(0, 3);
 	if (a == b)
 	{
 		tank->SetHaveItem(true);
-	}
+	}*/
+	tank->SetHaveItem(true);
 	vecEnemys.push_back(tank);
 }
 

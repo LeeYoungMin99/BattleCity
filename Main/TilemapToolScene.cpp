@@ -1,8 +1,6 @@
 #include "TilemapToolScene.h"
 #include "Image.h"
 #include "CommonFunction.h"
-#include "Button.h"
-#include "ButtonFunction.h"
 
 HRESULT TilemapToolScene::Init()
 {

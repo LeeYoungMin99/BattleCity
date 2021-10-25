@@ -4,9 +4,6 @@
 #include "ItemManager.h"
 #include "AmmoManager.h"
 #include "Item.h"
-#include "Stage1Scene.h"
-#include "Stage2Scene.h"
-#include "Stage3Scene.h"
 
 #pragma region PlyaerTank
 HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, vector<Tank*>* enemyTanks, Tank* playerTank, vector<Item*>* itemList, GameEntity* stageInfo)

@@ -12,7 +12,7 @@
 
 HRESULT Stage::Init()
 {
-	SetWindowSize(20, 20, WIN_SIZE_X, WIN_SIZE_Y);
+	SetWindowSize(WIN_START_POS_X, WIN_START_POS_Y, WIN_SIZE_X, WIN_SIZE_Y);
 	ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
 		128, 32, 8, 2, true, RGB(255, 0, 255));
 	sampleImage = ImageManager::GetSingleton()->FindImage("Image/Tile3.bmp");
@@ -33,8 +33,8 @@ HRESULT Stage::Init()
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	slate1 = -(backGround->GetHeight()) + 200;
-	slate2 = backGround->GetHeight() + 210;	//´İ
+	overSlatePos = -(backGround->GetHeight()) + 200;
+	lowSlatePos = backGround->GetHeight() + 210;	//´İ
 
 	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
 	gameOverPosY = WIN_SIZE_Y + 30;
@@ -213,8 +213,8 @@ void Stage::Render(HDC hdc)
 	NexusDestroyRender(hdc);
 
 
-	slate->Render(hdc, backGround->GetWidth() / 2, slate1);
-	slate->Render(hdc, backGround->GetWidth() / 2, slate2);
+	slate->Render(hdc, backGround->GetWidth() / 2, overSlatePos);
+	slate->Render(hdc, backGround->GetWidth() / 2, lowSlatePos);
 
 
 	gameOver->Render(hdc, STAGE_SIZE_X + 208, gameOverPosY);
@@ -267,18 +267,18 @@ void Stage::CreateItem()
 
 bool Stage::CloseSlate()
 {
-	slate1 += 10;
-	slate2 -= 10;	//´İ
+	overSlatePos += 10;
+	lowSlatePos -= 10;	//´İ
 
-	if (slate1 >= 0)
+	if (overSlatePos >= 0)
 	{
 		GameManager::GetSingleton()->state = GameState::Playing;
 		GameManager::GetSingleton()->stageLevel++;
 
 		SceneManager::GetSingleton()->ChangeScene("LoadingScene");
 
-		slate1 = -(backGround->GetHeight()) + 200;
-		slate2 = backGround->GetHeight() + 200;	//´İ
+		overSlatePos = -(backGround->GetHeight()) + 200;
+		lowSlatePos = backGround->GetHeight() + 200;	//´İ
 
 		return true;
 	}
