@@ -17,6 +17,8 @@ private:
 	unsigned long fps = 0;
 
 public:
+	~Timer() = default;
+
 	void Init();
 	void Tick();
 

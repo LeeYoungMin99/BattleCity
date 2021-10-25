@@ -195,7 +195,7 @@ void TankManager::AddEnemy(TankType type, POINTFLOAT pos)
 	int a = 0, b = RANDOM(0, 3);
 	if (a == b)
 	{
-		tank->SetHaveItem(true);
+		enemyTank->SetHaveItem(true);
 	}
 	vecEnemys.push_back(enemyTank);
 }
