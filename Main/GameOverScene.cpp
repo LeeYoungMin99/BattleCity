@@ -3,12 +3,17 @@
 
 HRESULT GameOverScene::Init()
 {
-	ImageManager::GetSingleton()->AddImage("Image/GameOver.bmp", WIN_SIZE_X, WIN_SIZE_Y);
 	gameOver = ImageManager::GetSingleton()->FindImage("Image/GameOver.bmp");
-	
-	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
-	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	if (gameOver == nullptr)
+	{
+		return E_FAIL;
+	}
 
+	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	if (backGround == nullptr)
+	{
+		return E_FAIL;
+	}
 	elapsedcount = 0;
 
 	//overSlatePos = -(backGround->GetHeight())+200;

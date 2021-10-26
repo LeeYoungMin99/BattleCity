@@ -82,9 +82,8 @@ void AmmoManager::Fire(Tank* tank, float moveSpeed)
 			break;
 		}
 
-		//ammoPack[i].SetIsAlive(true);
 		(*itAmmos)->SetPos(tank->GetBarrelPos());	// 미사일 위치 변경
-		(*itAmmos)->SetIsFire(true);	// 미사일 상태 변경
+		(*itAmmos)->SetIsFire(true);				// 미사일 상태 변경
 
 		break;
 	}

@@ -3,24 +3,23 @@
 
 HRESULT LoadingScene::Init()
 {
-	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	
-	ImageManager::GetSingleton()->AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
-	stageLevel = ImageManager::GetSingleton()->FindImage("Image/Text/Number.bmp");
-
-	ImageManager::GetSingleton()->AddImage("Image/Text/Stage.bmp", 74 /*40*/, 14 /*14*/, 5, 2, true, RGB(255, 0, 255));
-	stageText = ImageManager::GetSingleton()->FindImage("Image/Text/Stage.bmp");
-
 	if (backGround == nullptr)
+	{
 		return E_FAIL;
-
+	}
+	
+	stageLevel = ImageManager::GetSingleton()->FindImage("Image/Text/Number.bmp");
 	if (stageLevel == nullptr)
+	{
 		return E_FAIL;
+	}
 
+	stageText = ImageManager::GetSingleton()->FindImage("Image/Text/Stage.bmp");
 	if (stageText == nullptr)
+	{
 		return E_FAIL;
-
+	}
 
 	elapsedCount = 0;
 
@@ -55,7 +54,6 @@ void LoadingScene::Render(HDC hdc)
 	{
 		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 60, WIN_SIZE_Y / 2 - 10, GameManager::GetSingleton()->stageLevel / 10, GameManager::GetSingleton()->stageLevel / 50);
 		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 72, WIN_SIZE_Y / 2 - 10, (GameManager::GetSingleton()->stageLevel % 10) % 5, (GameManager::GetSingleton()->stageLevel%10) / 5);
-
 	}
 
 }
