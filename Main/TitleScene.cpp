@@ -5,28 +5,25 @@
 
 HRESULT TitleScene::Init()
 {
+	ImageManager::GetSingleton()->AddImage("Image/Title.bmp", WIN_SIZE_X, WIN_SIZE_Y);
 	title = ImageManager::GetSingleton()->FindImage("Image/Title.bmp");
-	if (title == nullptr)
-	{
-		return E_FAIL;
-	}
 
-
+	ImageManager::GetSingleton()->AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	if (backGround == nullptr)
-	{
-		return E_FAIL;
-	}
 
-
+	ImageManager::GetSingleton()->AddImage("Image/Player/Player.bmp", 256/*512*/, 128/*256*/, 8, 4, true, RGB(255, 0, 255));
 	tankUi = ImageManager::GetSingleton()->FindImage("Image/Player/Player.bmp");
-	if (tankUi == nullptr)
-	{
-		return E_FAIL;
-	}
+
+	pos.x = 150;
+	pos.y = 470;
 
 	pos.x = (LONG)(WIN_SIZE_X * 0.3);
 	pos.y = (LONG)(WIN_SIZE_Y * 0.59);
+
+	// 매개변수 (어떤 씬으로, 어떤 로딩씬을)
+	arg = DBG_NEW ArgumentFuncPtr;
+	arg->sceneName = "전투씬";
+	arg->loadingSceneName = "로딩씬";
 
 	// 디버깅 용 
 	slidePos = (int)(WIN_SIZE_Y * 1.5);	//슬라이드 효과
@@ -129,4 +126,5 @@ void TitleScene::Render(HDC hdc)
 
 void TitleScene::Release()
 {
+	SAFE_DELETE(arg);
 }

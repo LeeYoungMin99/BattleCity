@@ -1,7 +1,6 @@
 #pragma once
 #include "Config.h"
 #include "GameObject.h"
- 
 
 class Image;
 class Tank;
@@ -19,26 +18,24 @@ private:
 
 	GameEntity* stageInfo = nullptr;
 	Tank* tank = nullptr;
-	TankManager* tankManager = nullptr;
+	TankManager* tankMgr = nullptr;
 
 	ItemManager* itemManager = nullptr;
-	RECT rc = {};
 	
 public:
-	HRESULT Init(int type, int tile, Tank* tank, TankManager* tankManager, TILE_INFO* tileInfo, ItemManager* itemManager);
+	RECT rc = {};
+	HRESULT Init(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo, ItemManager* itemManager);
 	void Update();
 	void Render(HDC hdc);
 	void Release();
 	virtual void UseItem() = 0;
 
 	inline Tank* GetTank() { return tank; }
-	inline TankManager* GetEnemyManager() { return tankManager; };
+	inline TankManager* GetEnemyManager() { return tankMgr; };
 	inline int GetType() { return this->itemType; }
 	inline ItemManager* GetItemManager() { return itemManager; }
 	inline void SetUseItem(bool useItem) { this->useItem = useItem; }
 	inline bool GetUseItem() { return this->useItem; }
-	inline RECT* GetAddressRect() { return &this->rc; }
-	inline RECT GetRect() { return this->rc; }
 
 	Item() {};
 	virtual ~Item() {} 

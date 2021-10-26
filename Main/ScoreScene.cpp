@@ -4,70 +4,16 @@
 HRESULT ScoreScene::Init()
 {
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
-	if (backGround == nullptr)
-	{
-		return E_FAIL;
-	}
-	
 	noneHiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocre.bmp");
-	if (noneHiScore == nullptr)
-	{
-		return E_FAIL;
-	}
-
 	hiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocreText.bmp");
-	if (hiScore == nullptr)
-	{
-		return E_FAIL;
-	}
-
 	totalScore = ImageManager::GetSingleton()->FindImage("Image/Text/TotalScore.bmp");
-	if (totalScore == nullptr)
-	{
-		return E_FAIL;
-	}
-
 	stage = ImageManager::GetSingleton()->FindImage("Image/Text/Stage_w.bmp");
-	if (stage == nullptr)
-	{
-		return E_FAIL;
-	}
-
 	player = ImageManager::GetSingleton()->FindImage("Image/Text/Player1.bmp");
-	if (player == nullptr)
-	{
-		return E_FAIL;
-	}
-
 	playerScore = ImageManager::GetSingleton()->FindImage("Image/Text/ScoreNumber.bmp");
-	if (playerScore == nullptr)
-	{
-		return E_FAIL;
-	}
-	
 	number = ImageManager::GetSingleton()->FindImage("Image/Text/Number_w.bmp");
-	if (number == nullptr)
-	{
-		return E_FAIL;
-	}
-	
 	enemyTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
-	if (enemyTank == nullptr)
-	{
-		return E_FAIL;
-	}
-	
 	arrow = ImageManager::GetSingleton()->FindImage("Image/Icon/Arrow.bmp");
-	if (arrow == nullptr)
-	{
-		return E_FAIL;
-	}
-	
 	pts = ImageManager::GetSingleton()->FindImage("Image/Text/PTS.bmp");
-	if (pts == nullptr)
-	{
-		return E_FAIL;
-	}
 
 
 	killNormalTank = GameManager::GetSingleton()->defeatNormalTank;
@@ -95,8 +41,7 @@ void ScoreScene::Update()
 		hightScore = GameManager::GetSingleton()->GetHightScore();
 
 		bNormalTankScoreFinish = true;
-		player1Score = killNormalTank + (killSpeedTank * 2) + (killRapidTank * 3) + (killDefensiveTank * 4) + GameManager::GetSingleton()->GetScore() + 
-				GameManager::GetSingleton()->player1GetItemCount*5;
+		player1Score = killNormalTank + (killSpeedTank * 2) + (killRapidTank * 3) + (killDefensiveTank * 4) + GameManager::GetSingleton()->GetScore();
 	}
 
 	if (!bTotalScore)
@@ -121,7 +66,6 @@ void ScoreScene::Update()
 				GameManager::GetSingleton()->defeatNormalTank = 0;
 				GameManager::GetSingleton()->defeatRapidTank = 0;
 				GameManager::GetSingleton()->defeatSpeedTank = 0;
-				GameManager::GetSingleton()->player1GetItemCount = 0;
 
 				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
 				{
@@ -141,7 +85,6 @@ void ScoreScene::Update()
 				GameManager::GetSingleton()->defeatNormalTank = 0;
 				GameManager::GetSingleton()->defeatRapidTank = 0;
 				GameManager::GetSingleton()->defeatSpeedTank = 0;
-				GameManager::GetSingleton()->player1GetItemCount = 0;
 				if (GameManager::GetSingleton()->player1Score > GameManager::GetSingleton()->GetHightScore())
 				{
 
@@ -341,7 +284,7 @@ void ScoreScene::Render(HDC hdc)
 		{
 			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
 
-			if (rapidTankScore < 10)
+			if (rapidTankScore < 9)
 			{
 				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, rapidTankScore % 5, rapidTankScore / 5);
 			}

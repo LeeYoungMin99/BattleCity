@@ -2,7 +2,7 @@
 #include "GameEntity.h"
 #include "Config.h"
 #include "BoomImage.h"
- 
+#include <vector>
 
 class Image;
 class TankManager;
@@ -59,7 +59,7 @@ private:
 	AmmoManager* playerTankAmmoManager = nullptr;
 	AmmoManager* enemyTankAmmoManager = nullptr;
 
-	TankManager* tankManager = nullptr;
+	TankManager* tankMgr = nullptr;
 	float elapsedCount = 0.0f;
 	float spawmElapsedCount = 5.0f;
 	int spawnCount = 0;
@@ -67,7 +67,9 @@ private:
 	int currSpawnEnemy = 0;
 	int maxSpawnEnemy = 6;
 
-	POINTFLOAT spawnEnemyPos[3] = { {64.0f,48.0f} ,{256.0f,48.0f}, {448.0f,48.0f} };
+	POINTFLOAT spawnEnemyPos[3] = {};
+	POINTFLOAT spawnPos[3] = {};
+
 	TILE_INFO tileInfo[TILE_COUNT_Y * TILE_COUNT_X] = {};
 	BOOM_IMAGE_INFO boomImg = {};
 
@@ -79,7 +81,7 @@ private:
 	ItemManager* itemManager = nullptr;
 
 	//물 타일 이미지
-	vector<pair<int, int>> waterTilePos;
+	vector<pair<int,int>> waterTilePos;
 	int waterElapsedCount = 0;
 
 	//GameOver

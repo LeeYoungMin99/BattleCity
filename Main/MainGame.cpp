@@ -1,8 +1,16 @@
 #include "MainGame.h"
 #include "Image.h"
+#include "TitleScene.h"
+#include "BattleScene.h"
+#include "LoadingScene.h"
+#include "TilemapToolScene.h"
+#include "ScoreScene.h"
+#include "GameOverScene.h"
 #include "Tank.h"
 #include "TankFactory.h"
 #include "GameManager.h"
+#include "LoadingScene.h"
+#include "Stage.h"
 
 HRESULT MainGame::Init()
 {
@@ -11,12 +19,25 @@ HRESULT MainGame::Init()
 	TimerManager::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
 	GameManager::GetSingleton()->Init();
-	
+
+
+	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
+	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
+	SceneManager::GetSingleton()->AddScene("Stage", DBG_NEW Stage()); //
+	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
+	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
 	SceneManager::GetSingleton()->ChangeScene("TitleScene");
+
+
 
 	srand((unsigned int) time(nullptr));
 
 	hTimer = (HANDLE)SetTimer(g_hWnd, 0, 10, NULL);
+
+	mousePosX = 0;
+	mousePosY = 0;
+	clickedMousePosX = 0; 
+	clickedMousePosY = 0; 
 
 	backBuffer = new Image;
 	int maxSizeX = WIN_SIZE_X > TILEMAPTOOL_SIZE_X ? WIN_SIZE_X : TILEMAPTOOL_SIZE_X;
@@ -83,12 +104,16 @@ LRESULT MainGame::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 		break;
 
 	case WM_LBUTTONDOWN:
+		clickedMousePosX = LOWORD(lParam);
+		clickedMousePosY = HIWORD(lParam);
 		break;
 	case WM_LBUTTONUP:
 		break;
 	case WM_RBUTTONDOWN:
 		break;
 	case WM_MOUSEMOVE:
+		g_ptMouse.x = LOWORD(lParam);
+		g_ptMouse.y = HIWORD(lParam);
 		break;
 	}
 	return DefWindowProc(hWnd, iMessage, wParam, lParam);
