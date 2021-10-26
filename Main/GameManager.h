@@ -16,6 +16,7 @@ public:
 	int player1Score = 0;
 	int player1Life = 0;
 	int playerEnforceCount = 0;
+	int player1GetItemCount = 0;
 
 
 	int remainSpawnMonster = 0;

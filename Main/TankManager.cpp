@@ -6,7 +6,6 @@
 #include "ItemManager.h"
 #include "Item.h"
 
-
 HRESULT TankManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManager, TILE_INFO* tile, GameEntity* stageInfo, vector<Item*>* vecItems)
 {
 	enemyMaxCount = 6;
@@ -128,10 +127,10 @@ void TankManager::Update()
 			(*itEnemys)->SetClockItem(true);
 		}
 
-		elapsedcount_2++;
-		if (elapsedcount_2 >= 200)
+		fireElapsedCount++;
+		if (fireElapsedCount >= 200)
 		{
-			elapsedcount_2 = 0;
+			fireElapsedCount = 0;
 			for (itEnemys = vecEnemys.begin();
 				itEnemys != vecEnemys.end(); itEnemys++)
 			{

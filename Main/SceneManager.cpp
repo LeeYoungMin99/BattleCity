@@ -1,5 +1,11 @@
 #include "SceneManager.h"
 #include "GameEntity.h"
+#include "LoadingScene.h"
+#include "GameOverScene.h"
+#include "ScoreScene.h"
+#include "LoadingScene.h"
+#include "TitleScene.h"
+#include "Stage.h"
 
 GameEntity* SceneManager::currScene = nullptr;
 GameEntity* SceneManager::readyScene = nullptr;
@@ -20,6 +26,11 @@ DWORD CALLBACK LoadingThread(LPVOID pvParam)
 
 void SceneManager::Init()
 {
+	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
+	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
+	SceneManager::GetSingleton()->AddScene("Stage", DBG_NEW Stage()); //
+	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
+	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
 }
 
 void SceneManager::Release()
