@@ -2,7 +2,6 @@
 #include "ImageManager.h"
 #include "Image.h"
 #include "CommonFunction.h"
-
 #include "AmmoManager.h"
 #include "Tank.h"
 #include "TankFactory.h"
@@ -12,31 +11,59 @@
 
 HRESULT Stage::Init()
 {
+
 	SetWindowSize(WIN_START_POS_X, WIN_START_POS_Y, WIN_SIZE_X, WIN_SIZE_Y);
 	ImageManager::GetSingleton()->AddImage("Image/Tile3.bmp",
 		128, 32, 8, 2, true, RGB(255, 0, 255));
 	sampleImage = ImageManager::GetSingleton()->FindImage("Image/Tile3.bmp");
 	if (sampleImage == nullptr)
 	{
-		cout << "Image/Tile3.bmp 로드 실패!!" << endl;
 		return E_FAIL;
 	}
 
 	spawnMonsterImage = ImageManager::GetSingleton()->FindImage("Image/Icon/Icon_Enemy.bmp");
-
+	if (spawnMonsterImage == nullptr)
+	{
+		return E_FAIL;
+	}
 	lifeImage = ImageManager::GetSingleton()->FindImage("Image/Icon/player1Life.bmp");
+	if (lifeImage == nullptr)
+	{
+		return E_FAIL;
+	}
 
 	stageImage = ImageManager::GetSingleton()->FindImage("Image/Icon/StageFlag.bmp");
+	if (stageImage == nullptr)
+	{
+		return E_FAIL;
+	}
 
 	stageLevel = ImageManager::GetSingleton()->FindImage("Image/Text/Number.bmp");
+	if (stageLevel == nullptr)
+	{
+		return E_FAIL;
+	}
 
 	backGround = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	if (backGround == nullptr)
+	{
+		return E_FAIL;
+	}
 
 	slate = ImageManager::GetSingleton()->FindImage("Image/mapImage.bmp");
+	if (slate == nullptr)
+	{
+		return E_FAIL;
+	}
+	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
+	if (gameOver == nullptr)
+	{
+		return E_FAIL;
+	}
+
 	overSlatePos = -(backGround->GetHeight()) + 200;
 	lowSlatePos = backGround->GetHeight() + 210;	//닫
 
-	gameOver = ImageManager::GetSingleton()->FindImage("Image/Text/Game_Over.bmp");
 	gameOverPosY = WIN_SIZE_Y + 30;
 
 	int nextStage = ((GameManager::GetSingleton()->stageLevel - 1) % 3 + 1);
@@ -66,37 +93,17 @@ HRESULT Stage::Init()
 		}
 	}
 
-	spawnEnemyPos[0].x = (float)(tileInfo[0].rc.right + STAGE_SIZE_X + 16);
-	spawnEnemyPos[0].y = (float)(tileInfo[0].rc.bottom + STAGE_SIZE_Y * 2);
-	spawnEnemyPos[1].x = (float)(tileInfo[12].rc.right + STAGE_SIZE_X + 16);
-	spawnEnemyPos[1].y = (float)(tileInfo[12].rc.bottom + STAGE_SIZE_Y * 2);
-	spawnEnemyPos[2].x = (float)(tileInfo[24].rc.right + STAGE_SIZE_X + 16);
-	spawnEnemyPos[2].y = (float)(tileInfo[24].rc.bottom + STAGE_SIZE_Y * 2);
-
-
-	//vecTankFactory.push_back(DBG_NEW PlayerTankFactory);
-	//vecTankFactory.push_back(DBG_NEW NormalEnemyTankFactory);
-	//vecTankFactory.push_back(DBG_NEW SpeedEnemyTankFactory);
-	//vecTankFactory.push_back(DBG_NEW RapidEnemyTankFactory);
-	//vecTankFactory.push_back(DBG_NEW DefensiveEnemyTankFactory);
-
-	//vecTankFactory[0] = DBG_NEW PlayerTankFactory;
-	//vecTankFactory[1] = DBG_NEW NormalEnemyTankFactory;
-	//vecTankFactory[2] = DBG_NEW SpeedEnemyTankFactory;
-	//vecTankFactory[3] = DBG_NEW RapidEnemyTankFactory;
-	//vecTankFactory[4] = DBG_NEW DefensiveEnemyTankFactory;
-
 	playerTankAmmoManager = DBG_NEW AmmoManager;
 	enemyTankAmmoManager = DBG_NEW AmmoManager;
 
-	tankMgr = DBG_NEW TankManager;
+	tankManager = DBG_NEW TankManager;
 
 	itemManager = DBG_NEW ItemManager;
-	itemManager->Init();
+	itemManager->Init(tileInfo);
 
-	tankMgr->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, this, itemManager->GetAddressVecItem());
-	playerTankAmmoManager->Init(tileInfo, nullptr, tankMgr->GetAddresVecEnemys());
-	enemyTankAmmoManager->Init(tileInfo, tankMgr->GetPlayerTank());
+	tankManager->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, this, itemManager->GetAddressVecItem());
+	playerTankAmmoManager->Init(tileInfo, nullptr, tankManager->GetAddresVecEnemys());
+	enemyTankAmmoManager->Init(tileInfo, tankManager->GetPlayerTank());
 
 	backGroundRect.left = STAGE_SIZE_X;
 	backGroundRect.top = STAGE_SIZE_Y;
@@ -105,13 +112,16 @@ HRESULT Stage::Init()
 
 
 	boomImg.BoomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Integrated_Boom_Effect.bmp");
-
+	if (boomImg.BoomImg == nullptr)
+	{
+		return E_FAIL;
+	}
 	elapsedCount = 0;
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 10;
-	GameManager::GetSingleton()->remainMonster = 10;
+	GameManager::GetSingleton()->remainSpawnMonster = 3;
+	GameManager::GetSingleton()->remainMonster = 3;
 
 	stateElapsedCount = 0;
 	return S_OK;
@@ -119,6 +129,8 @@ HRESULT Stage::Init()
 
 void Stage::Update()
 {
+	cout << GameManager::GetSingleton()->player1GetItemCount << endl;
+
 	//게임 끝났을 때 
 	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
@@ -159,7 +171,7 @@ void Stage::Update()
 	itemManager->Update();
 	playerTankAmmoManager->Update();
 	enemyTankAmmoManager->Update();
-	tankMgr->Update();
+	tankManager->Update();
 }
 
 void Stage::Render(HDC hdc)
@@ -180,7 +192,7 @@ void Stage::Render(HDC hdc)
 	//RemainEnemyRender
 	RemainEnemyRender(hdc);
 
-	tankMgr->Render(hdc);
+	tankManager->Render(hdc);
 	itemManager->Render(hdc);
 	playerTankAmmoManager->Render(hdc);
 	enemyTankAmmoManager->Render(hdc);
@@ -209,7 +221,7 @@ void Stage::Release()
 {
 	SAFE_RELEASE(playerTankAmmoManager);
 	SAFE_RELEASE(enemyTankAmmoManager);
-	SAFE_RELEASE(tankMgr);
+	SAFE_RELEASE(tankManager);
 	SAFE_RELEASE(itemManager);
 
 	//waterTilePos.clear();
@@ -218,14 +230,14 @@ void Stage::Release()
 
 void Stage::CreateItem()
 {
-	for (int i = 0; i < 1; )
+	int randtile = 0;
+	while (true)
 	{
-		int randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
-
+		randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
 		if (tileInfo[randtile].tileType == TileType::Ground)
 		{
 			int itemtype = rand() % 6;
-			itemManager->CreateItem(itemtype, randtile, tankMgr->GetPlayerTank(), tankMgr, tileInfo);
+			itemManager->CreateItem(itemtype, randtile, tankManager->GetPlayerTank(), tankManager);
 			break;
 		}
 	}
@@ -291,7 +303,7 @@ bool Stage::RotateToScoreScene()
 			elapsedCount = 0;
 			GameManager::GetSingleton()->state = GameState::Done;
 			GameManager::GetSingleton()->spawnCount = 0;
-			GameManager::GetSingleton()->playerEnforceCount = tankMgr->GetPlayerTank()->GetEnforceCount();
+			GameManager::GetSingleton()->playerEnforceCount = tankManager->GetPlayerTank()->GetEnforceCount();
 			SceneManager::GetSingleton()->AddScene("scoreScene", new ScoreScene());
 			SceneManager::GetSingleton()->ChangeScene("scoreScene");
 			return true;
@@ -377,9 +389,9 @@ void Stage::SpawnEnemyTank()
 		GameManager::GetSingleton()->remainSpawnMonster--;
 		currSpawnEnemy++;
 		elapsedCount -= spawmElapsedCount;
-		int randomType = RANDOM(1, 4);
+		int randomType = RANDOM(3, 3);
 
-		tankMgr->AddEnemy((TankType)randomType, spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
+		tankManager->AddEnemy((TankType)randomType, spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
 
 		if (GameManager::GetSingleton()->spawnCount >= maxSpawnCount)
 		{

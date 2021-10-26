@@ -22,9 +22,6 @@
     <Filter Include="MainGame">
       <UniqueIdentifier>{76040367-e9ec-435c-8de8-182b0e7703ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainGame\Enemy">
-      <UniqueIdentifier>{602713da-07b3-49cb-9d52-7db0a54cea47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MainGame\Ammo">
       <UniqueIdentifier>{eca8ebfb-567f-49a3-be93-1c4fc60442ec}</UniqueIdentifier>
     </Filter>
@@ -63,9 +60,6 @@
     <ClCompile Include="Image.cpp">
       <Filter>2D Framework</Filter>
     </ClCompile>
-    <ClCompile Include="TankManager.cpp">
-      <Filter>MainGame\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Ammo.cpp">
       <Filter>MainGame\Ammo</Filter>
     </ClCompile>
@@ -86,9 +80,6 @@
     </ClCompile>
     <ClCompile Include="TilemapToolScene.cpp">
       <Filter>MainGame\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Tank.cpp">
-      <Filter>MainGame</Filter>
     </ClCompile>
     <ClCompile Include="ScoreScene.cpp">
       <Filter>MainGame\Scene</Filter>
@@ -120,6 +111,12 @@
     <ClCompile Include="Stage.cpp">
       <Filter>MainGame\Scene\Stage</Filter>
     </ClCompile>
+    <ClCompile Include="Tank.cpp">
+      <Filter>MainGame\TankFactorial</Filter>
+    </ClCompile>
+    <ClCompile Include="TankManager.cpp">
+      <Filter>MainGame\TankFactorial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -146,14 +143,8 @@
     <ClInclude Include="MainGame.h">
       <Filter>MainGame</Filter>
     </ClInclude>
-    <ClInclude Include="Tank.h">
-      <Filter>MainGame</Filter>
-    </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>2D Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="TankManager.h">
-      <Filter>MainGame\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Ammo.h">
       <Filter>MainGame\Ammo</Filter>
@@ -205,6 +196,12 @@
     </ClInclude>
     <ClInclude Include="Stage.h">
       <Filter>MainGame\Scene\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Tank.h">
+      <Filter>MainGame\TankFactorial</Filter>
+    </ClInclude>
+    <ClInclude Include="TankManager.h">
+      <Filter>MainGame\TankFactorial</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

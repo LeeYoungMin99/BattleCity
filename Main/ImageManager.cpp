@@ -12,8 +12,8 @@ void ImageManager::Init()
 
 	//총알관련
 	AddImage("Image/Bullet/Missile_Down.bmp", 6, 8, true, RGB(255, 0, 255));
-	AddImage("Image/Bullet/Missile_Left.bmp", 6, 8, true, RGB(255, 0, 255));
-	AddImage("Image/Bullet/Missile_Right.bmp", 6, 8, true, RGB(255, 0, 255));
+	AddImage("Image/Bullet/Missile_Left.bmp", 8, 6, true, RGB(255, 0, 255));
+	AddImage("Image/Bullet/Missile_Right.bmp", 8, 6, true, RGB(255, 0, 255));
 	AddImage("Image/Bullet/Missile_Up.bmp", 6, 8, true, RGB(255, 0, 255));
 	AddImage("Image/Effect/Boom_Effect.bmp", 96, 32, 3, 1, true, RGB(255, 0, 255));
 
@@ -38,11 +38,13 @@ void ImageManager::Init()
 	//점수텍스트
 	AddImage("Image/Icon/Point.bmp", 120, 24, 5, 1, true, RGB(255, 0, 255));
 
+	//게임 오버
+	AddImage("Image/GameOver.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+
 	//EnemyManager
 	AddImage("Image/Effect/Integrated_Boom_Effect.bmp", 320, 64, 5, 1, true, RGB(255, 0, 255));
 
-	//스코어씬
-	AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+	//스코어 씬
 	AddImage("Image/Text/HISocre.bmp", 235 /*470*/, 25/*50*/, true, RGB(255, 0, 255));
 	AddImage("Image/Text/HISocreText.bmp", 133 /*266*/, 25/*50*/, true, RGB(255, 0, 255));
 	AddImage("Image/Text/TotalScore.bmp", 180 /*360*/, 20 /*40*/, true, RGB(255, 0, 255));
@@ -53,6 +55,16 @@ void ImageManager::Init()
 	AddImage("Image/Enemy/Enemy.bmp", 256 /*512*/, 192 /*384*/, 8, 6, true, RGB(255, 0, 255));
 	AddImage("Image/Icon/Arrow.bmp", 12 /*23*/, 10 /*20*/, true, RGB(255, 0, 255));
 	AddImage("Image/Text/PTS.bmp", 45 /*90*/, 20 /*40*/, true, RGB(255, 0, 255));
+	
+	//타이틀 씬
+	AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+	AddImage("Image/Title.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+	AddImage("Image/Player/Player.bmp", 256/*512*/, 128/*256*/, 8, 4, true, RGB(255, 0, 255));
+
+	//로딩 씬
+	AddImage("Image/mapImage.bmp", WIN_SIZE_X, WIN_SIZE_Y);
+	AddImage("Image/Text/Number.bmp", 60 /*40*/, 28 /*14*/, 5, 2, true, RGB(255, 0, 255));
+	AddImage("Image/Text/Stage.bmp", 74 /*40*/, 14 /*14*/, 5, 2, true, RGB(255, 0, 255));
 }
 
 void ImageManager::Release()

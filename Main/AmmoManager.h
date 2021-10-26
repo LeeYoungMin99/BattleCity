@@ -1,6 +1,7 @@
 #pragma once
 #include "Config.h"
 #include "GameEntity.h"
+ 
 
 class GameObject;
 class Ammo;
@@ -14,6 +15,7 @@ private:
 	Tank* playerTank = nullptr;
 	vector<Tank*>* enemyTanks = nullptr;
 	TILE_INFO* tileInfo = nullptr;
+
 	vector<Ammo*> vecAmmos;
 	vector<Ammo*>::iterator itAmmos;
 public:

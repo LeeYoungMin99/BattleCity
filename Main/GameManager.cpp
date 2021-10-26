@@ -15,6 +15,7 @@ void GameManager::Init()
     defeatDefensiveTank = 0;
     player1Life = 2;
     playerEnforceCount = 0;
+    player1GetItemCount = 0;
 
     state = GameState::Playing;
 

@@ -46,7 +46,7 @@ public:
 	bool CheckCollision(int idX, int idY);
 	bool CheckHitTank(Tank* enemyTank);
 
-	void SetMoveDir(string dir);
+	HRESULT SetMoveDir(string dir);
 	void SetIsFire(bool fire);
 	inline bool GetIsFire() { return this->isFire; }
 

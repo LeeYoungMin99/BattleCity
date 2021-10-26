@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "GameEntity.h"
 #include "BoomImage.h"
+ 
 
 typedef struct scoreInfo
 {
@@ -40,7 +41,7 @@ private:
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
 	bool clockItem = false;
-	int elapsedcount_2 = 0;
+	int fireElapsedCount = 0;
 
 	vector<Tank*> vecEnemys;
 	vector<Tank*>::iterator itEnemys;
