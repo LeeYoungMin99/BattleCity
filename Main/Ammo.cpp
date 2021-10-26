@@ -24,17 +24,13 @@ HRESULT Ammo::Init(TILE_INFO* tile, Tank* ownerTank, vector<Tank*>* enemyTanks, 
 
 
 	img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
+
+	boomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Boom_Effect.bmp");
+
 	if (img == nullptr)
 	{
 		return E_FAIL;
 	}
-
-	boomImg = ImageManager::GetSingleton()->FindImage("Image/Effect/Boom_Effect.bmp");
-	if (boomImg == nullptr)
-	{
-		return E_FAIL;
-	}
-
 
 	collision.left = (LONG)(pos.x - (bodySize / 2.0f));
 	collision.top = (LONG)(pos.y - (bodySize / 2.0f));
@@ -119,7 +115,7 @@ void Ammo::Render(HDC hdc)
 {
 	if (isFire)
 	{
-		//Rectangle(hdc, collision.left, collision.top, collision.right, collision.bottom);
+		Rectangle(hdc, collision.left, collision.top, collision.right, collision.bottom);
 		img->Render(hdc, (int)pos.x, (int)pos.y);
 		if (bRenderBoomImg)
 		{
@@ -351,7 +347,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 					(*itEnemyTanks)->SubtractHP(1);
 					if ((*itEnemyTanks)->GetHP() == 0)
 					{
-						(*itEnemyTanks)->IncreaseScore();
+						(*itEnemyTanks)->increaseScore();
 						GameManager::GetSingleton()->remainMonster--;
 					}
 				}
@@ -436,46 +432,30 @@ bool Ammo::CheckHitTank(Tank* enemyTank)
 	}
 }
 
-HRESULT Ammo::SetMoveDir(string dir)
+void Ammo::SetMoveDir(string dir)
 {
 	if (dir._Equal("Left"))
 	{
 		bulletDir = BulletDir::Left;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Left.bmp");
-		if (img == nullptr)
-		{
-			return E_FAIL;
-		}
 		SetMoveAngle((float)DEGREE_TO_RADIAN(180));
 	}
 	else if (dir._Equal("Right"))
 	{
 		bulletDir = BulletDir::Right;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Right.bmp");
-		if (img == nullptr)
-		{
-			return E_FAIL;
-		}
 		SetMoveAngle(0.0f);
 	}
 	else if (dir._Equal("Up"))
 	{
 		bulletDir = BulletDir::Up;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Up.bmp");
-		if (img == nullptr)
-		{
-			return E_FAIL;
-		}
 		SetMoveAngle((float)DEGREE_TO_RADIAN(90));
 	}
 	else if (dir._Equal("Down"))
 	{
 		bulletDir = BulletDir::Down;
 		img = ImageManager::GetSingleton()->FindImage("Image/Bullet/Missile_Down.bmp");
-		if (img == nullptr)
-		{
-			return E_FAIL;
-		}
 		SetMoveAngle((float)DEGREE_TO_RADIAN(270));
 	}
 }

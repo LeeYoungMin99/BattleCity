@@ -5,7 +5,7 @@
 #include "TankManager.h"
 #include "ItemFactory.h"
 
-HRESULT ItemManager::Init(TILE_INFO* tileInfo)
+HRESULT ItemManager::Init()
 {
 	itemFactory[0] = new HelmetItemFactory;
 	itemFactory[1] = new ClockItemFactory;
@@ -14,11 +14,13 @@ HRESULT ItemManager::Init(TILE_INFO* tileInfo)
 	itemFactory[4] = new GrenadeItemFactory;
 	itemFactory[5] = new TankLifeItemFactory;
 
+
+
+	
+
 	fortificationCount = 0;
 	bIsFortification = false;
 
-
-	this->tileInfo = tileInfo;
     return S_OK;
 }
 
@@ -67,7 +69,6 @@ void ItemManager::Release()
 void ItemManager::Fortification()
 {
 	int nexusIndex = 0;
-	fortificationCount = 0;
 	for (int i = 0; i < TILE_COUNT_X * TILE_COUNT_Y; i++)
 	{
 
@@ -136,12 +137,13 @@ void ItemManager::DestoryFortification()
 	fortificationCount = 0;
 }
 
-void ItemManager::CreateItem(int type, int tile, Tank* tank, TankManager* tankManager)
+void ItemManager::CreateItem(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo)
 {
 	Item* tempItem = itemFactory[type]->CreateTank();
-	tempItem->Init(type, tile, tank, tankManager, this->tileInfo, this);
+	tempItem->Init(type, tile, tank, tankMgr, tileInfo, this);
 
 	vecItems.push_back(tempItem);
+	this->tileInfo = tileInfo;
 }
 
 void ItemManager::UseItem()
@@ -152,6 +154,10 @@ void ItemManager::UseItem()
 		{
 			SAFE_DELETE(vecItems[i]);
 			vecItems.erase(vecItems.begin() + i);
+
+			/*Item* tempItem = (*itItemList);
+			itItemList = ItemList->erase(itItemList);
+			SAFE_DELETE(tempItem);*/
 		}
 	}
 }

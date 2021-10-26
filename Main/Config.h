@@ -49,6 +49,8 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 extern POINT g_ptMouse;
 
+
+
 //타일 관련
 #define TILE_SIZE	16
 #define TILE_COUNT_X	26
@@ -88,3 +90,12 @@ typedef struct tagTile
 	int bottomHit;
 
 } TILE_INFO;
+
+typedef struct ArgumentFuncPtr
+{
+	string sceneName;
+	string loadingSceneName;
+	/*TILE_INFO* tileInfo;
+	int saveIndex;
+	int loadIndex;*/
+} ARGUMENT_PTR, * LPARGUMENT_PTR;

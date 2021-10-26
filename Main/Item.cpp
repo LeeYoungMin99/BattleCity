@@ -4,27 +4,19 @@
 #include "TankManager.h"
 #include "ItemManager.h"
 
-HRESULT Item::Init(int type, int tile, Tank* tank, TankManager* tankManager, TILE_INFO* tileInfo, ItemManager* itemManager)
+HRESULT Item::Init(int type, int tile, Tank* tank, TankManager* tankMgr, TILE_INFO* tileInfo, ItemManager* itemManager)
 {
 	string itemName = "Image/Item/Item";
 	itemName += to_string(type+1);
 	itemName += ".bmp";
 
 	itemImage = ImageManager::GetSingleton()->FindImage(itemName.c_str());
-	if (itemImage == nullptr)
-	{
-		return E_FAIL;
-	}
 	itemScore = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
-	if (itemScore == nullptr)
-	{
-		return E_FAIL;
-	}
 
 	itemType = type;
 	itemTile = tile;
 	this->tank = tank;
-	this->tankManager = tankManager;
+	this->tankMgr = tankMgr;
 	rc.left = ((itemTile % 26) * 16) + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;
 	rc.top = ((itemTile / 26) * 16) + WIN_SIZE_Y / 2 - 8 * TILE_COUNT_Y;
 	rc.right = ((itemTile % 26) * 16) + 32 + WIN_SIZE_X / 2 - 8 * TILE_COUNT_X - 16;

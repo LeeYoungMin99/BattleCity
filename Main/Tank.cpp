@@ -657,30 +657,16 @@ void Tank::CheckItem()
 {
 	RECT temp = {};
 
-	for (auto& item : *ItemList)
+	for (itItemList = ItemList->begin(); itItemList != ItemList->end(); itItemList++)
 	{
-		if (IntersectRect(&temp, item->GetAddressRect(), &shape))
+		if (IntersectRect(&temp, &(*itItemList)->rc, &shape))
 		{
-			if (false == item->GetUseItem())
+			if (!(*itItemList)->GetUseItem())
 			{
-				item->UseItem();
-				item->SetUseItem(true);
-				++GameManager::GetSingleton()->player1GetItemCount;
-				break;
+				(*itItemList)->UseItem();
+				(*itItemList)->SetUseItem(true);
 			}
+			break;
 		}
 	}
-
-	//for (itItemList = ItemList->begin(); itItemList != ItemList->end(); itItemList++)
-	//{
-	//	if (IntersectRect(&temp, (*itItemList)->GetAddressRect(), &shape))
-	//	{
-	//		if (false == (*itItemList)->GetUseItem())
-	//		{
-	//			(*itItemList)->UseItem();
-	//			(*itItemList)->SetUseItem(true);
-	//			break;
-	//		}
-	//	}
-	//}
 }
