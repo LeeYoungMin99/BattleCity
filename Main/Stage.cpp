@@ -116,14 +116,14 @@ HRESULT Stage::Init()
 	{
 		return E_FAIL;
 	}
-
 	elapsedCount = 0;
-	stateElapsedCount = 0;
+
+
 	spawnCount = 0;
+	GameManager::GetSingleton()->remainSpawnMonster = 3;
+	GameManager::GetSingleton()->remainMonster = 3;
 
-	GameManager::GetSingleton()->remainSpawnMonster = 10;
-	GameManager::GetSingleton()->remainMonster = 10;
-
+	stateElapsedCount = 0;
 	return S_OK;
 }
 
@@ -389,7 +389,7 @@ void Stage::SpawnEnemyTank()
 		GameManager::GetSingleton()->remainSpawnMonster--;
 		currSpawnEnemy++;
 		elapsedCount -= spawmElapsedCount;
-		int randomType = RANDOM(1, 4);
+		int randomType = RANDOM(3, 3);
 
 		tankManager->AddEnemy((TankType)randomType, spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
 
