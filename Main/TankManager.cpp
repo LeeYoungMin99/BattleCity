@@ -140,11 +140,26 @@ void TankManager::Update()
 		}
 	}
 
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('T'))
+	{
+		renderTankCollider = !renderTankCollider;
+	}
 }
 
 
 void TankManager::Render(HDC hdc)
 {
+	if (renderTankCollider)
+	{
+		Rectangle(hdc, playerTank->GetShape().left, playerTank->GetShape().top, playerTank->GetShape().right, playerTank->GetShape().bottom);
+
+		for (itEnemys = vecEnemys.begin();
+			itEnemys != vecEnemys.end(); itEnemys++)
+		{
+			Rectangle(hdc, (*itEnemys)->GetShape().left, (*itEnemys)->GetShape().top, (*itEnemys)->GetShape().right, (*itEnemys)->GetShape().bottom);
+		}
+	}
+
 	playerTank->Render(hdc);
 
 	for (itEnemys = vecEnemys.begin();

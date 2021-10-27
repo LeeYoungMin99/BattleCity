@@ -11,10 +11,10 @@ HRESULT MainGame::Init()
 	TimerManager::GetSingleton()->Init();
 	SceneManager::GetSingleton()->Init();
 	GameManager::GetSingleton()->Init();
-	
+
 	SceneManager::GetSingleton()->ChangeScene("TitleScene");
 
-	srand((unsigned int) time(nullptr));
+	srand((unsigned int)time(nullptr));
 
 	hTimer = (HANDLE)SetTimer(g_hWnd, 0, 10, NULL);
 
@@ -42,7 +42,9 @@ void MainGame::Render(HDC hdc)
 	SceneManager::GetSingleton()->Render(hBackBufferDC);
 
 	//fps Ç¥½Ã.
-	//TimerManager::GetSingleton()->Render(hBackBufferDC);
+#ifdef _DEBUG
+	TimerManager::GetSingleton()->Render(hBackBufferDC);
+#endif
 
 	backBuffer->Render(hdc);
 }
@@ -90,7 +92,7 @@ LRESULT MainGame::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 	case WM_RBUTTONDOWN:
 		break;
 	case WM_MOUSEMOVE:
-		
+
 		break;
 	}
 	return DefWindowProc(hWnd, iMessage, wParam, lParam);

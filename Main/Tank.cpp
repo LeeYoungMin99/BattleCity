@@ -43,8 +43,6 @@ HRESULT PlayerTank::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManage
 
 	barrelPos = { pos.x + bodySize / 2, pos.y + bodySize / 2 };
 
-	bCheckTankCollider = false;
-
 	return S_OK;
 }
 
@@ -59,28 +57,16 @@ void PlayerTank::Update()
 
 	SpawnCollided();
 
-	Action();
-
-	if (KeyManager::GetSingleton()->IsOnceKeyDown('R'))
-	{
-		if (bCheckTankCollider)
-			bCheckTankCollider = false;
-		else
-			bCheckTankCollider = true;
-
-	}
+	DoAction();
 }
 
 void PlayerTank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-	if (bCheckTankCollider)
-		Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
-
 	if (bCheckSpawnStatus)
 	{
-		spawnImg->Render(hdc, (int)(pos.x -bodySize * 0.25f), (int)(pos.y - bodySize * 0.25f), spawnImgFrame, 0, 1.0f);
+		spawnImg->Render(hdc, (int)(pos.x - bodySize * 0.25f), (int)(pos.y - bodySize * 0.25f), spawnImgFrame, 0, 1.0f);
 	}
 	else
 	{
@@ -121,7 +107,7 @@ void PlayerTank::Fire()
 	}
 }
 
-void PlayerTank::Action()
+void PlayerTank::DoAction()
 {
 	if (!bCheckSpawnStatus)
 	{
@@ -159,7 +145,7 @@ void PlayerTank::SpwanAndShieldAnimation()
 	elapsedCount += TimerManager::GetSingleton()->GetDeltaTime();
 	if (bCheckShieldOn || bCheckSpawnStatus)
 	{
-		
+
 		spawnElapsedCount += TimerManager::GetSingleton()->GetDeltaTime() * 2;
 		if (bCheckSpawnStatus && elapsedCount >= spawnTime) { elapsedCount -= spawnTime; bCheckSpawnStatus = false; bCheckShieldOn = true; }
 		if (bCheckShieldOn && elapsedCount >= shieldTime) { bCheckShieldOn = false; }
@@ -348,26 +334,16 @@ void Tank::Update()
 
 	SpawnCollided();
 
-	Action();
+	DoAction();
 
 	FlashItemTank();
-
-
-	if (KeyManager::GetSingleton()->IsOnceKeyDown('R'))
-	{
-		if (bCheckTankCollider)
-			bCheckTankCollider = false;
-		else
-			bCheckTankCollider = true;
-
-	}
 }
 
 void Tank::Render(HDC hdc)
 {
 	if (bIsAlive == false)	return;
 
-		//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
+	//Rectangle(hdc, shape.left, shape.top, shape.right, shape.bottom);
 
 	if (bCheckSpawnStatus)
 	{
@@ -377,7 +353,7 @@ void Tank::Render(HDC hdc)
 	{
 		if (bHaveItem)
 		{
-			itemTank->Render(hdc, (int)(pos.x - bodySize * 0.33f), (int)(pos.y - bodySize * 0.33f), (int)moveDir + checkMoveCount, (((int)type - 1) * 2) + checkMoveCount_2, 2.0f);
+			itemTank->Render(hdc, (int)(pos.x - bodySize * 0.33f), (int)(pos.y - bodySize * 0.33f), (int)moveDir + checkMoveCount, (((int)type - 1) * 2) + checkItemTankMoveCount, 2.0f);
 		}
 		else
 		{
@@ -458,16 +434,11 @@ void Tank::Move()
 
 void Tank::Fire()
 {
-	testelapsed++;
+	fireElapsedCount = 0;
+	fireDelay = (float)(RANDOM(10, 15));
 
-	if (testelapsed >= delay_2)
-	{
-		testelapsed = 0;
-		delay_2 = (float)(RANDOM(10, 15));
-
-		currFireNumberOfAmmo++;
-		ammoManager->Fire(this);
-	}
+	currFireNumberOfAmmo++;
+	ammoManager->Fire(this);
 }
 
 void Tank::CorrectionPosX()
@@ -552,7 +523,7 @@ bool Tank::IsCollided()
 		}
 		if (IntersectRect(&temp, &((*itEnemyTanks)->shape), &shape))
 		{
-			if ((*itEnemyTanks)->bCheckSpawnCollided &&  (*itEnemyTanks)->bCheckSpawnStatus)
+			if ((*itEnemyTanks)->bCheckSpawnCollided && (*itEnemyTanks)->bCheckSpawnStatus)
 			{
 				return false;
 			}
@@ -592,29 +563,34 @@ void Tank::SpawnCollided()
 	}
 }
 
-void Tank::Action()
+void Tank::DoAction()
 {
 	if (!bCheckSpawnStatus)
 	{
 		if (!clockItem)
 		{
-			if (elapsedCount >= delay)
+			if (elapsedCount >= changeDirectionDelay)
 			{
 				elapsedCount = 0;
-				delay = (float)RANDOM(0, 3);
+				changeDirectionDelay = (float)RANDOM(0, 3);
 				previousDir = moveDir;
 				moveDir = (MoveDir)(RANDOM(0, 3) * 2);
 			}
 
+			fireElapsedCount++;
+
 			Move();
 
-			if (currFireNumberOfAmmo == 0)
+			if (fireElapsedCount >= fireDelay)
 			{
-				Fire();
-			}
-			else if (type == TankType::Rapid && currFireNumberOfAmmo == 1)
-			{
-				Fire();
+				if (currFireNumberOfAmmo == 0)
+				{
+					Fire();
+				}
+				else if (type == TankType::Rapid && currFireNumberOfAmmo == 1)
+				{
+					Fire();
+				}
 			}
 		}
 	}
@@ -642,14 +618,14 @@ void Tank::SpwanAnimation()
 
 void Tank::FlashItemTank()
 {
-	testelapsed_2++;
-	if (testelapsed_2 >= 10)
+	ItemTankMoveCount++;
+	if (ItemTankMoveCount >= 10)
 	{
-		testelapsed_2 = 0;
-		if (checkMoveCount_2 == 0)
-			checkMoveCount_2 = 1;
+		ItemTankMoveCount = 0;
+		if (checkItemTankMoveCount == 0)
+			checkItemTankMoveCount = 1;
 		else
-			checkMoveCount_2 = 0;
+			checkItemTankMoveCount = 0;
 	}
 }
 

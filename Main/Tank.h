@@ -33,8 +33,6 @@ protected:
 	int currFireNumberOfAmmo = 0;
 	POINTFLOAT barrelPos = {};
 
-	bool bCheckTankCollider = false;
-
 	AmmoManager* ammoManager = nullptr;
 	AmmoManager* targetAmmoManager = nullptr;
 	GameEntity* stageInfo = nullptr;
@@ -46,12 +44,12 @@ protected:
 	vector<Item*>* ItemList = nullptr;
 	vector<Item*>::iterator itItemList = {};
 
-	float delay = (float)RANDOM(1, 3);
+	float changeDirectionDelay = (float)RANDOM(1, 3);
 	float elapsedCount = 0.0f;
-	float delay_2 = (float)RANDOM(10, 15);		
-	int testelapsed = 0;						
-	int testelapsed_2 = 0;						
-	int checkMoveCount_2 = 0;					
+	float fireDelay = (float)RANDOM(10, 15);		
+	int fireElapsedCount = 0;						
+	int ItemTankMoveCount = 0;						
+	int checkItemTankMoveCount = 0;					
 	bool bHaveItem = false;						
 	bool clockItem = false;
 
@@ -75,9 +73,8 @@ public:
 	virtual bool IsCollided();
 	virtual void SetShape();
 
-
 	virtual void SpawnCollided();
-	virtual void Action();
+	virtual void DoAction();
 	void SpwanAnimation();
 	void FlashItemTank();
 
@@ -125,7 +122,7 @@ public:
 	virtual void Release() override;
 
 	virtual void Fire() override;
-	virtual void Action() override;
+	virtual void DoAction() override;
 
 	void SpwanAndShieldAnimation();
 

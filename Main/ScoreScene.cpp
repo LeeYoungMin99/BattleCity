@@ -8,12 +8,6 @@ HRESULT ScoreScene::Init()
 	{
 		return E_FAIL;
 	}
-	
-	noneHiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocre.bmp");
-	if (noneHiScore == nullptr)
-	{
-		return E_FAIL;
-	}
 
 	hiScore = ImageManager::GetSingleton()->FindImage("Image/Text/HISocreText.bmp");
 	if (hiScore == nullptr)
@@ -44,25 +38,25 @@ HRESULT ScoreScene::Init()
 	{
 		return E_FAIL;
 	}
-	
+
 	number = ImageManager::GetSingleton()->FindImage("Image/Text/Number_w.bmp");
 	if (number == nullptr)
 	{
 		return E_FAIL;
 	}
-	
+
 	enemyTank = ImageManager::GetSingleton()->FindImage("Image/Enemy/Enemy.bmp");
 	if (enemyTank == nullptr)
 	{
 		return E_FAIL;
 	}
-	
+
 	arrow = ImageManager::GetSingleton()->FindImage("Image/Icon/Arrow.bmp");
 	if (arrow == nullptr)
 	{
 		return E_FAIL;
 	}
-	
+
 	pts = ImageManager::GetSingleton()->FindImage("Image/Text/PTS.bmp");
 	if (pts == nullptr)
 	{
@@ -84,7 +78,7 @@ HRESULT ScoreScene::Init()
 	totalKill = 0;
 	elapsedcount = 0;
 	player1Score = 0;
-	hightScore = 0;
+	highScore = 0;
 	return S_OK;
 }
 
@@ -92,24 +86,27 @@ void ScoreScene::Update()
 {
 	if (!bNormalTankScoreFinish)
 	{
-		hightScore = GameManager::GetSingleton()->GetHightScore();
-
+		highScore = GameManager::GetSingleton()->GetHightScore();
 		bNormalTankScoreFinish = true;
-		player1Score = killNormalTank + (killSpeedTank * 2) + (killRapidTank * 3) + (killDefensiveTank * 4) + GameManager::GetSingleton()->GetScore() + 
-				GameManager::GetSingleton()->player1GetItemCount*5;
-	}
+		player1Score = killNormalTank + (killSpeedTank * 2) + (killRapidTank * 3) + (killDefensiveTank * 4) + GameManager::GetSingleton()->GetScore() +
+			GameManager::GetSingleton()->player1GetItemCount * 5;
+		GameManager::GetSingleton()->SetScore(player1Score);
 
+	}
 	if (!bTotalScore)
 		ScoreCalculate();
 
-	if (hightScore < player1Score)
+	if (highScore < player1Score)
 	{
-		hightScore = player1Score;
+		highScore = player1Score;
+		GameManager::GetSingleton()->ScoreSave();
 	}
 
 	if (bTotalScore)
 	{
 		elapsedcount++;
+		
+		
 		if (elapsedcount >= 100)
 		{
 			if (GameManager::GetSingleton()->player1Life >= 0 && GameManager::GetSingleton()->state != GameState::GameOver)
@@ -168,38 +165,30 @@ void ScoreScene::Render(HDC hdc)
 	if (backGround)
 		backGround->Render(hdc);
 
-	if (hightScore < 1)
-	{
-		if (noneHiScore)
-			noneHiScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7);				//하이스코어 (디폴트)
-	}
-	else
-	{
-		if (hiScore)																//하이스코어 점수 
-			hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y / 7);
+	if (hiScore)																//하이스코어 점수 
+		hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y / 7);
 
-		playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);		
-		if (hightScore >= 1)
+	playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);
+	if (highScore >= 1)
+	{
+		playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
+		playerScore->Render(hdc, WIN_SIZE_X / 2 + 10, WIN_SIZE_Y / 7, (highScore % 10) % 5, (highScore % 10) / 5);
+		if (highScore >= 10)
+			playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((highScore % 100) / 10) % 5, ((highScore % 100) / 10) / 5);
+		if (highScore >= 100)
 		{
-			playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
-			playerScore->Render(hdc, WIN_SIZE_X / 2 + 10, WIN_SIZE_Y / 7, (hightScore % 10) % 5, (hightScore % 10) / 5);
-			if (hightScore >= 10)
-				playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((hightScore % 100) / 10) % 5, ((hightScore % 100) / 10) / 5);
-			if (hightScore >= 100)
-			{
-				playerScore->Render(hdc, WIN_SIZE_X / 2 - 10, WIN_SIZE_Y / 7, (hightScore / 100) % 5, (hightScore / 100) / 5);
-			}
+			playerScore->Render(hdc, WIN_SIZE_X / 2 - 10, WIN_SIZE_Y / 7, (highScore / 100) % 5, (highScore / 100) / 5);
 		}
 	}
 
 
 	if (stage)		//스테이지 텍스트
-		stage->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 5);		
+		stage->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 5);
 
-	if (round < 10)	
+	if (round < 10)
 	{
 		if (number)	//스테이지 넘버 텍스트
-			number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);	
+			number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);
 	}
 	else if (round >= 10)
 	{
@@ -209,7 +198,7 @@ void ScoreScene::Render(HDC hdc)
 	}
 
 	if (player)		//플레이어 텍스트
-		player->Render(hdc, WIN_SIZE_X / 5 + 15, WIN_SIZE_Y / 4);			
+		player->Render(hdc, WIN_SIZE_X / 5 + 15, WIN_SIZE_Y / 4);
 
 	if (playerScore)
 	{
@@ -244,7 +233,7 @@ void ScoreScene::Render(HDC hdc)
 	}
 
 	if (totalScore)		//토탈스코어 텍스트
-		totalScore->Render(hdc, (int)(WIN_SIZE_X / 3 + 35), (int)(WIN_SIZE_Y * 0.8 - 15));	
+		totalScore->Render(hdc, (int)(WIN_SIZE_X / 3 + 35), (int)(WIN_SIZE_Y * 0.8 - 15));
 
 	if (bTotalScore)	//토탈 누적 킬수
 	{
