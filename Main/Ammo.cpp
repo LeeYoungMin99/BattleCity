@@ -164,6 +164,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
 					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+					tile[26 * (idY)+idX - 1].tileType == TileType::Ground;
 				}
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
@@ -183,6 +184,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY)+idX].bodyCollider.left = 0;
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
+					tile[26 * (idY)+idX].tileType == TileType::Ground;
 				}
 			}
 		}
@@ -205,6 +207,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
 					tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
+					tile[26 * (idY-1)+idX].tileType == TileType::Ground;
 				}
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
@@ -224,6 +227,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY)+idX].bodyCollider.left = 0;
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
+					tile[26 * (idY)+idX].tileType == TileType::Ground;
 				}
 			}
 		}
@@ -252,6 +256,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY)+idX - 1].bodyCollider.left = 0;
 					tile[26 * (idY)+idX - 1].bodyCollider.right = 0;
+					tile[26 * (idY)+idX - 1].tileType == TileType::Ground;
 				}
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
@@ -271,6 +276,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY)+idX].bodyCollider.left = 0;
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
+					tile[26 * (idY)+idX].tileType == TileType::Ground;
 				}
 			}
 		}
@@ -293,6 +299,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY - 1) + idX].bodyCollider.left = 0;
 					tile[26 * (idY - 1) + idX].bodyCollider.right = 0;
+					tile[26 * (idY-1)+idX].tileType == TileType::Ground;
 				}
 			}
 			if (IntersectRect(&rc, &collision, &(tile[26 * (idY)+(idX)].collider)))
@@ -312,6 +319,7 @@ bool Ammo::CheckCollision(int idX, int idY)
 				{
 					tile[26 * (idY)+idX].bodyCollider.left = 0;
 					tile[26 * (idY)+idX].bodyCollider.right = 0;
+					tile[26 * (idY)+idX].tileType == TileType::Ground;
 				}
 			}
 

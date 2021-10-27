@@ -170,6 +170,11 @@ void Stage::Update()
 	playerTankAmmoManager->Update();
 	enemyTankAmmoManager->Update();
 	tankManager->Update();
+
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('I'))
+	{
+		DebugCreateItem();
+	}
 }
 
 void Stage::Render(HDC hdc)
@@ -237,6 +242,24 @@ void Stage::CreateItem()
 			int itemtype = rand() % 6;
 			itemManager->CreateItem(itemtype, randtile, tankManager->GetPlayerTank(), tankManager);
 			break;
+		}
+	}
+}
+
+void Stage::DebugCreateItem()
+{
+	int randtile = 0;
+	int itemIndex = 0;
+	for (int i = 0; i < 6; i++)
+	{
+		while (true)
+		{
+			randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
+			if (tileInfo[randtile].tileType == TileType::Ground)
+			{
+				itemManager->CreateItem(i, randtile, tankManager->GetPlayerTank(), tankManager);
+				break;
+			}
 		}
 	}
 }
@@ -470,7 +493,13 @@ void Stage::PlayerLifeRender(HDC hdc)
 {
 	if (GameManager::GetSingleton()->player1Life >= 0)
 	{
-		stageLevel->Render(hdc, 494, 270, GameManager::GetSingleton()->player1Life % 5, GameManager::GetSingleton()->player1Life / 5);
+		int tmpPlayer1Life = GameManager::GetSingleton()->player1Life;
+		int intervalPosX = 0;
+		do
+		{
+			stageLevel->Render(hdc, 494 - (intervalPosX++ * 12), 270, (tmpPlayer1Life % 10) % 5, (tmpPlayer1Life % 10) / 5);
+			tmpPlayer1Life /= 10;
+		} while (tmpPlayer1Life != 0);
 	}
 	else
 	{
@@ -480,15 +509,14 @@ void Stage::PlayerLifeRender(HDC hdc)
 
 void Stage::StageLevelRender(HDC hdc)
 {
-	if (GameManager::GetSingleton()->stageLevel < 10)
+	int tmpStageLevel = GameManager::GetSingleton()->stageLevel;
+	int intervalPosX = 0;
+	do
 	{
-		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel % 5, GameManager::GetSingleton()->stageLevel / 5);
-	}
-	else if (GameManager::GetSingleton()->stageLevel >= 10)
-	{
-		stageLevel->Render(hdc, 490, 390, GameManager::GetSingleton()->stageLevel / 10, GameManager::GetSingleton()->stageLevel / 50);
-		stageLevel->Render(hdc, 502, 390, (GameManager::GetSingleton()->stageLevel % 10) % 5, (GameManager::GetSingleton()->stageLevel % 10) / 5);
-	}
+		stageLevel->Render(hdc, 490 - (intervalPosX++ *12), 390, (tmpStageLevel % 10) % 5, (tmpStageLevel % 10) / 5);
+		tmpStageLevel /= 10;
+	} while (tmpStageLevel != 0);
+
 }
 
 void Stage::NexusDestroyRender(HDC hdc)
