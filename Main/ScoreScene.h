@@ -9,7 +9,6 @@ class ScoreScene : public GameEntity
 {
 private:
 	//Image* hiScoreText;	//하이스코어 갱신될시 사용
-	Image* noneHiScore = nullptr;
 	Image* hiScore = nullptr;
 	Image* totalScore = nullptr;
 	Image* player = nullptr;
@@ -22,7 +21,7 @@ private:
 	Image* backGround = nullptr;
 
 	int elapsedcount = 0;
-	int hightScore = 0;
+	int highScore = 0;
 	int player1Score = 0;
 
 	int killNormalTank = 0, killSpeedTank = 0, killRapidTank = 0, killDefensiveTank = 0;		//종류별 죽인 탱크수

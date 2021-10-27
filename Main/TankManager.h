@@ -43,6 +43,8 @@ private:
 	bool clockItem = false;
 	int fireElapsedCount = 0;
 
+	bool renderTankCollider = false;
+
 	vector<Tank*> vecEnemys;
 	vector<Tank*>::iterator itEnemys;
 

@@ -3,7 +3,7 @@
 void GameManager::Init()
 {
     player1Score = 0;
-    hightScore = 100;
+    highScore = 0;
     ScoreLoad();
 
     remainSpawnMonster=0;
@@ -26,7 +26,7 @@ void GameManager::ScoreSave()
 {
     string filePath = "Save/ScoreData.txt"/* + to_string(saveIndex) + ".map"*/;
 
-    hightScore = player1Score;
+    highScore = player1Score;
 
     HANDLE hFile = CreateFile(filePath.c_str(),
         GENERIC_WRITE,                  //읽기, 쓰기 타입
@@ -38,7 +38,7 @@ void GameManager::ScoreSave()
     //쓰기
     DWORD writtenByte;
     if (WriteFile(hFile,                                    //파일 핸들
-        (LPCVOID)&hightScore,                                       // 메모리 시작 주소
+        (LPCVOID)&highScore,                                       // 메모리 시작 주소
         sizeof(int)/* * TILE_COUNT_X * TILE_COUNT_Y*/,  // 메모리 크기
         &writtenByte,                                   // 실제 쓰여진 파일 용량
         NULL) == false)
@@ -63,19 +63,19 @@ void GameManager::ScoreLoad()
     //읽기
 
     DWORD readByte;
-    if (ReadFile(hFile, (LPVOID)&hightScore, sizeof(int)/* * TILE_COUNT_X * TILE_COUNT_Y*/, &readByte, NULL) == false)
+    if (ReadFile(hFile, (LPVOID)&highScore, sizeof(int)/* * TILE_COUNT_X * TILE_COUNT_Y*/, &readByte, NULL) == false)
     {
         MessageBox(g_hWnd, "LOAD_FAIL"/*맵 데이터 로드에 실패했습니다.*/, "ERROR"/*에러*/, MB_OK);
     }
 
-    //return hightScore;
+    //return highScore;
     CloseHandle(hFile);
 }
 
 void GameManager::GameInit()
 {
     player1Score = 0;
-    hightScore = 0;
+    ScoreLoad();
 
     remainSpawnMonster = 0;
     remainMonster = 0;

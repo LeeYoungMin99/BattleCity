@@ -12,7 +12,7 @@ public:
 	int defeatRapidTank = 0;
 	int defeatDefensiveTank = 0;
 
-	int hightScore = 0;	 // 최고 점수
+	int highScore = 0;	 // 최고 점수
 	int player1Score = 0;
 	int player1Life = 0;
 	int playerEnforceCount = 0;
@@ -36,7 +36,7 @@ public:
 
 	inline void SetScore(int player1Score) { this->player1Score = player1Score; }
 	inline int GetScore() { return this->player1Score; }
-	inline int GetHightScore() { return this->hightScore; }
+	inline int GetHightScore() { return this->highScore; }
 	void GameInit();
 };
 
