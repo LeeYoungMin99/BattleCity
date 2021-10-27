@@ -19,7 +19,7 @@ void GameManager::Init()
 
     state = GameState::Playing;
 
-    stageLevel = 10;
+    stageLevel = 1;
 }
 
 void GameManager::ScoreSave()
