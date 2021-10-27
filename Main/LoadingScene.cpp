@@ -46,16 +46,13 @@ void LoadingScene::Render(HDC hdc)
 
 	stageText->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 2 - 10);
 
-	if (GameManager::GetSingleton()->stageLevel < 10)
+	int tmpStageLevel = GameManager::GetSingleton()->stageLevel;
+	int intervalPosX = 0;
+	do
 	{
-		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 60, WIN_SIZE_Y / 2 - 10, GameManager::GetSingleton()->stageLevel % 5, GameManager::GetSingleton()->stageLevel / 5);
-	}
-	else if (GameManager::GetSingleton()->stageLevel >= 10)
-	{
-		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 60, WIN_SIZE_Y / 2 - 10, GameManager::GetSingleton()->stageLevel / 10, GameManager::GetSingleton()->stageLevel / 50);
-		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 72, WIN_SIZE_Y / 2 - 10, (GameManager::GetSingleton()->stageLevel % 10) % 5, (GameManager::GetSingleton()->stageLevel%10) / 5);
-	}
-
+		stageLevel->Render(hdc, WIN_SIZE_X / 2 + 60 - (12*intervalPosX++), WIN_SIZE_Y / 2 - 10, (tmpStageLevel % 10) % 5, (tmpStageLevel % 10) / 5);
+		tmpStageLevel /= 10;
+	} while (tmpStageLevel != 0);
 }
 
 void LoadingScene::Release()
