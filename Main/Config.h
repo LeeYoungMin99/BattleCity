@@ -74,13 +74,13 @@ typedef struct tagSampleTile
 typedef struct tagTile
 {
 	TileType tileType;
-	RECT rc;				// bullet Hit Collider
+	RECT rc;				
 	//image
 	// sample tile의 아이디 (프레임 X, 프레임 Y)
 	int frameX, frameY;
 
-	RECT collider;		// HitCollider 일때 
-	RECT bodyCollider;
+	RECT collider;		// bullet Hit Collider
+	RECT bodyCollider;	// Body Collider
 
 	int leftHit;
 	int rightHit;

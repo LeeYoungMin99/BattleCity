@@ -28,7 +28,7 @@ void SceneManager::Init()
 {
 	SceneManager::GetSingleton()->AddScene("TitleScene", new TitleScene());
 	SceneManager::GetSingleton()->AddScene("ScoreScene", new ScoreScene());
-	SceneManager::GetSingleton()->AddScene("Stage", DBG_NEW Stage()); //
+	SceneManager::GetSingleton()->AddScene("Stage", new Stage()); //
 	SceneManager::GetSingleton()->AddScene("GameOverScene", new GameOverScene());
 	SceneManager::GetSingleton()->AddScene("LoadingScene", new LoadingScene());
 }
