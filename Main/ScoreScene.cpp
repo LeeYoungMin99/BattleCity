@@ -162,56 +162,58 @@ void ScoreScene::Update()
 
 void ScoreScene::Render(HDC hdc)
 {
+	int intervalPosX = 0;
+
 	if (backGround)
 		backGround->Render(hdc);
 
 	if (hiScore)																//하이스코어 점수 
 		hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y / 7);
 
-	playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);
-	if (highScore >= 1)
+	//playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);
+	int tmpHighScore = highScore;
+	tmpHighScore *= 100;
+	do
 	{
-		playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
-		playerScore->Render(hdc, WIN_SIZE_X / 2 + 10, WIN_SIZE_Y / 7, (highScore % 10) % 5, (highScore % 10) / 5);
-		if (highScore >= 10)
-			playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((highScore % 100) / 10) % 5, ((highScore % 100) / 10) / 5);
-		if (highScore >= 100)
-		{
-			playerScore->Render(hdc, WIN_SIZE_X / 2 - 10, WIN_SIZE_Y / 7, (highScore / 100) % 5, (highScore / 100) / 5);
-		}
-	}
+		playerScore->Render(hdc, WIN_SIZE_X / 2 +30 - 10 * intervalPosX++, WIN_SIZE_Y / 7, (tmpHighScore % 10) % 5, (tmpHighScore % 10) / 5);
+		tmpHighScore /= 10;
+	} while (tmpHighScore != 0);
+	/*if (highScore >= 10)
+		playerScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7, ((highScore % 100) / 10) % 5, ((highScore % 100) / 10) / 5);
+	if (highScore >= 100)
+	{
+		playerScore->Render(hdc, WIN_SIZE_X / 2 - 10, WIN_SIZE_Y / 7, (highScore / 100) % 5, (highScore / 100) / 5);
+	}*/
+	
 
 
 	if (stage)		//스테이지 텍스트
 		stage->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 5);
 
-	if (round < 10)
+	intervalPosX = 0;
+	do
 	{
-		if (number)	//스테이지 넘버 텍스트
-			number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);
-	}
-	else if (round >= 10)
-	{
-		number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round / 10, round / 50);
-		number->Render(hdc, WIN_SIZE_X / 2 + 62, WIN_SIZE_Y / 5, (round % 10) % 5, (round % 10) / 5);
+		number->Render(hdc, WIN_SIZE_X / 2 + 50 + (intervalPosX++)*12, WIN_SIZE_Y / 5, ((round+1)%10) % 5, ((round + 1) % 10) / 5);
+		round /= 10;
+	} while (round != 0);
 
-	}
 
 	if (player)		//플레이어 텍스트
 		player->Render(hdc, WIN_SIZE_X / 5 + 15, WIN_SIZE_Y / 4);
 
 	if (playerScore)
 	{
-		playerScore->Render(hdc, WIN_SIZE_X / 4 + 30, WIN_SIZE_Y / 4 + 15, 0, 0);	//플레이어 점수
-		if (player1Score >= 1)
+		int tmpPlayer1Score = player1Score;
+		
+		intervalPosX = 0;
+		tmpPlayer1Score *= 100;
+		do
 		{
-			playerScore->Render(hdc, WIN_SIZE_X / 4 + 20, WIN_SIZE_Y / 4 + 15, 0, 0);
-			playerScore->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 4 + 15, (player1Score % 10) % 5, (player1Score % 10) / 5);
-			if (player1Score >= 10)
-				playerScore->Render(hdc, WIN_SIZE_X / 4, WIN_SIZE_Y / 4 + 15, ((player1Score % 100) / 10) % 5, ((player1Score % 100) / 10) / 5);
-			if (player1Score >= 100)
-				playerScore->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 4 + 15, (player1Score / 100) % 5, (player1Score / 100) / 5);
-		}
+			playerScore->Render(hdc, WIN_SIZE_X / 4 + (10 - (intervalPosX++)*10), WIN_SIZE_Y / 4 + 15, ((tmpPlayer1Score) % 10) % 5, (tmpPlayer1Score % 10) / 5);
+			tmpPlayer1Score /= 10;
+
+		} while (tmpPlayer1Score != 0);
+
 	}
 
 	for (int i = 0; i < 4; i++)		// 에너미 탱크 랜더
@@ -237,21 +239,21 @@ void ScoreScene::Render(HDC hdc)
 
 	if (bTotalScore)	//토탈 누적 킬수
 	{
-		if (totalKill < 10)
+		intervalPosX = 0;
+		int tmpTotalKill = totalKill;
+		do
 		{
-			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)(WIN_SIZE_Y * 0.8 - 15), totalKill % 5, totalKill / 5);
-		}
-		else
-		{
-			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 40), (int)(WIN_SIZE_Y * 0.8 - 15), (totalKill % 10) % 5, (totalKill % 10) / 5);
-			number->Render(hdc, (int)(WIN_SIZE_X / 3 + 25), (int)(WIN_SIZE_Y * 0.8 - 15), (totalKill / 10) % 5, (totalKill / 10) / 5);
-		}
+			number->Render(hdc, WIN_SIZE_X / 2 + 30 - 10 * intervalPosX++, WIN_SIZE_Y *0.8-15, (tmpTotalKill % 10) % 5, (tmpTotalKill % 10) / 5);
+			tmpTotalKill /= 10;
+		} while (tmpTotalKill != 0);
 	}
 
 	// 점수 계산
 	if (bNormalTankScoreFinish)		// 노말
 	{
 		// 잡은 마리수 표기
+
+		
 		if (normalTankCount < 10)
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, normalTankCount % 5, normalTankCount / 5);
@@ -263,6 +265,15 @@ void ScoreScene::Render(HDC hdc)
 		}
 
 		//점수 표기
+
+		intervalPosX = 0;
+		int tmpnormalTankCount = normalTankCount*100;
+		do
+		{
+			number->Render(hdc, WIN_SIZE_X / 4 - 10- (12 * intervalPosX++), WIN_SIZE_Y / 3 + 20, (tmpnormalTankCount %10) % 5, (tmpnormalTankCount % 10) / 5);
+			tmpnormalTankCount /= 10;
+		} while (tmpnormalTankCount != 0);
+		/*
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 3 + 20, 0, 0);
 		if (!normalTankCount == 0)
 		{
@@ -276,7 +287,7 @@ void ScoreScene::Render(HDC hdc)
 				number->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 3 + 20, (normalTankCount % 10) % 5, (normalTankCount % 10) / 5);
 				number->Render(hdc, WIN_SIZE_X / 4 - 22, WIN_SIZE_Y / 3 + 20, (normalTankCount / 10) % 5, (normalTankCount / 10) / 5);
 			}
-		}
+		}*/
 	}
 
 	if (bSpeedTankScoreFinish)		// 스피드
@@ -292,21 +303,29 @@ void ScoreScene::Render(HDC hdc)
 			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankCount / 10) % 5, (speedTankCount / 10) / 5);
 		}
 
-		//점수 표기
-		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
-		if (!speedTankCount == 0)
+		intervalPosX = 0;
+		int tmpSpeedTankScore = speedTankScore * 100;
+		do
 		{
-			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
-			if (speedTankScore < 10)
-			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, speedTankScore % 5, speedTankScore / 5);
-			}
-			else
-			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankScore % 10) % 5, (speedTankScore % 10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankScore / 10) % 5, (speedTankScore / 10) / 5);
-			}
-		}
+			number->Render(hdc, WIN_SIZE_X / 4 - 10-(12 * intervalPosX++), (WIN_SIZE_Y / 3 + 20) + 45, (tmpSpeedTankScore % 10) % 5, (tmpSpeedTankScore % 10) / 5);
+			tmpSpeedTankScore /= 10;
+		} while (tmpSpeedTankScore != 0);
+
+		//점수 표기
+		//number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
+		//if (!speedTankCount == 0)
+		//{
+		//	number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
+		//	if (speedTankScore < 10)
+		//	{
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, speedTankScore % 5, speedTankScore / 5);
+		//	}
+		//	else
+		//	{
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankScore % 10) % 5, (speedTankScore % 10) / 5);
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankScore / 10) % 5, (speedTankScore / 10) / 5);
+		//	}
+		//}
 	}
 
 	if (bRapidTankScoreFinish)		// 래피드
@@ -323,22 +342,30 @@ void ScoreScene::Render(HDC hdc)
 		}
 
 		// 점수 표기
-		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
-		if (!rapidTankCount == 0)
+		intervalPosX = 0;
+		int tmpRapidTankScore = rapidTankScore * 100;
+		do
 		{
-			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
+			number->Render(hdc, WIN_SIZE_X / 4 - 10 -(12 * intervalPosX++), (WIN_SIZE_Y / 3 + 20) + 90, (tmpRapidTankScore % 10) % 5, (tmpRapidTankScore % 10) / 5);
+			tmpRapidTankScore /= 10;
+		} while (tmpRapidTankScore != 0);
 
-			if (rapidTankScore < 10)
-			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, rapidTankScore % 5, rapidTankScore / 5);
-			}
-			else
-			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankScore % 10) % 5, (rapidTankScore % 10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankScore / 10) % 5, (rapidTankScore / 10) / 5);
-			}
+		//number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
+		//if (!rapidTankCount == 0)
+		//{
+		//	number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
 
-		}
+		//	if (rapidTankScore < 10)
+		//	{
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, rapidTankScore % 5, rapidTankScore / 5);
+		//	}
+		//	else
+		//	{
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankScore % 10) % 5, (rapidTankScore % 10) / 5);
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankScore / 10) % 5, (rapidTankScore / 10) / 5);
+		//	}
+
+		//}
 	}
 
 	if (bDefensiveTankScoreFinish)		//디펜시브
@@ -355,22 +382,31 @@ void ScoreScene::Render(HDC hdc)
 		}
 
 		//점수 표기
-		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
-		if (!defensiveTankCount == 0)
+		// 점수 표기
+		intervalPosX = 0;
+		int tmpDefensivaTanKScore = defensiveTankScore * 100;
+		do
 		{
-			number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
+			number->Render(hdc, WIN_SIZE_X / 4 - 10 - (12 * intervalPosX++), (WIN_SIZE_Y / 3 + 20) + 135, (tmpDefensivaTanKScore % 10) % 5, (tmpDefensivaTanKScore % 10) / 5);
+			tmpDefensivaTanKScore /= 10;
+		} while (tmpDefensivaTanKScore != 0);
 
-			if (defensiveTankScore < 9)
-			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, defensiveTankScore % 5, defensiveTankScore / 5);
-			}
-			else
-			{
-				number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankScore % 10) % 5, (defensiveTankScore % 10) / 5);
-				number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankScore / 10) % 5, (defensiveTankScore / 10) / 5);
-			}
+		//number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
+		//if (!defensiveTankCount == 0)
+		//{
+		//	number->Render(hdc, WIN_SIZE_X / 4, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
 
-		}
+		//	if (defensiveTankScore < 9)
+		//	{
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, defensiveTankScore % 5, defensiveTankScore / 5);
+		//	}
+		//	else
+		//	{
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 10, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankScore % 10) % 5, (defensiveTankScore % 10) / 5);
+		//		number->Render(hdc, WIN_SIZE_X / 4 - 22, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankScore / 10) % 5, (defensiveTankScore / 10) / 5);
+		//	}
+
+		//}
 	}
 }
 

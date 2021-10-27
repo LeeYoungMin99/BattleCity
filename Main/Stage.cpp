@@ -170,6 +170,11 @@ void Stage::Update()
 	playerTankAmmoManager->Update();
 	enemyTankAmmoManager->Update();
 	tankManager->Update();
+
+	if (KeyManager::GetSingleton()->IsOnceKeyDown('I'))
+	{
+		DebugCreateItem();
+	}
 }
 
 void Stage::Render(HDC hdc)
@@ -237,6 +242,24 @@ void Stage::CreateItem()
 			int itemtype = rand() % 6;
 			itemManager->CreateItem(itemtype, randtile, tankManager->GetPlayerTank(), tankManager);
 			break;
+		}
+	}
+}
+
+void Stage::DebugCreateItem()
+{
+	int randtile = 0;
+	int itemIndex = 0;
+	for (int i = 0; i < 6; i++)
+	{
+		while (true)
+		{
+			randtile = rand() % (TILE_COUNT_X * TILE_COUNT_Y);
+			if (tileInfo[randtile].tileType == TileType::Ground)
+			{
+				itemManager->CreateItem(i, randtile, tankManager->GetPlayerTank(), tankManager);
+				break;
+			}
 		}
 	}
 }

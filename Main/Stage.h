@@ -22,6 +22,8 @@ public:
 	virtual void Release() override;
 	void CreateItem();
 
+	void DebugCreateItem();
+
 	//Update()
 	bool CloseSlate();
 	bool RotateGameOverScene();
