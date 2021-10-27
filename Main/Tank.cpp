@@ -670,17 +670,4 @@ void Tank::CheckItem()
 			}
 		}
 	}
-
-	//for (itItemList = ItemList->begin(); itItemList != ItemList->end(); itItemList++)
-	//{
-	//	if (IntersectRect(&temp, (*itItemList)->GetAddressRect(), &shape))
-	//	{
-	//		if (false == (*itItemList)->GetUseItem())
-	//		{
-	//			(*itItemList)->UseItem();
-	//			(*itItemList)->SetUseItem(true);
-	//			break;
-	//		}
-	//	}
-	//}
 }

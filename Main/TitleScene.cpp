@@ -28,8 +28,7 @@ HRESULT TitleScene::Init()
 	pos.x = (LONG)(WIN_SIZE_X * 0.3);
 	pos.y = (LONG)(WIN_SIZE_Y * 0.59);
 
-	// 디버깅 용 
-	slidePos = (int)(WIN_SIZE_Y * 1.5);	//슬라이드 효과
+	slidePos = (int)(WIN_SIZE_Y * 1.5);
 	titleStart = false;
 
 	selecTitle = selectedTitle::player_1;

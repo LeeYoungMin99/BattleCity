@@ -166,19 +166,19 @@ void ScoreScene::Update()
 void ScoreScene::Render(HDC hdc)
 {
 	if (backGround)
-		backGround->Render(hdc);	//회색화면 백그라운드
+		backGround->Render(hdc);
 
 	if (hightScore < 1)
 	{
 		if (noneHiScore)
-			noneHiScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7);				//하이스코어 텍스트 (디폴트)
+			noneHiScore->Render(hdc, WIN_SIZE_X / 2, WIN_SIZE_Y / 7);				//하이스코어 (디폴트)
 	}
 	else
 	{
-		if (hiScore)																//하이스코어 있을 때.
+		if (hiScore)																//하이스코어 점수 
 			hiScore->Render(hdc, WIN_SIZE_X / 3, WIN_SIZE_Y / 7);
 
-		playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);		//하이스코어 점수 1,10...10000자리
+		playerScore->Render(hdc, WIN_SIZE_X / 2 + 30, WIN_SIZE_Y / 7, 0, 0);		
 		if (hightScore >= 1)
 		{
 			playerScore->Render(hdc, WIN_SIZE_X / 2 + 20, WIN_SIZE_Y / 7, 0, 0);
@@ -193,13 +193,13 @@ void ScoreScene::Render(HDC hdc)
 	}
 
 
-	if (stage)
-		stage->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 5);		//스테이지 텍스트
+	if (stage)		//스테이지 텍스트
+		stage->Render(hdc, WIN_SIZE_X / 2 - 30, WIN_SIZE_Y / 5);		
 
-	if (round < 10)
+	if (round < 10)	
 	{
-		if (number)
-			number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);	//스테이지 넘버 텍스트
+		if (number)	//스테이지 넘버 텍스트
+			number->Render(hdc, WIN_SIZE_X / 2 + 50, WIN_SIZE_Y / 5, round % 5, round / 5);	
 	}
 	else if (round >= 10)
 	{
@@ -208,12 +208,12 @@ void ScoreScene::Render(HDC hdc)
 
 	}
 
-	if (player)
-		player->Render(hdc, WIN_SIZE_X / 5 + 15, WIN_SIZE_Y / 4);			//플레이어 텍스트
+	if (player)		//플레이어 텍스트
+		player->Render(hdc, WIN_SIZE_X / 5 + 15, WIN_SIZE_Y / 4);			
 
 	if (playerScore)
 	{
-		playerScore->Render(hdc, WIN_SIZE_X / 4 + 30, WIN_SIZE_Y / 4 + 15, 0, 0);	//플레이어 누적 점수 1,10...10000자리
+		playerScore->Render(hdc, WIN_SIZE_X / 4 + 30, WIN_SIZE_Y / 4 + 15, 0, 0);	//플레이어 점수
 		if (player1Score >= 1)
 		{
 			playerScore->Render(hdc, WIN_SIZE_X / 4 + 20, WIN_SIZE_Y / 4 + 15, 0, 0);
@@ -225,7 +225,7 @@ void ScoreScene::Render(HDC hdc)
 		}
 	}
 
-	for (int i = 0; i < 4; i++)		// 에너미 탱크 종류별로 랜더
+	for (int i = 0; i < 4; i++)		// 에너미 탱크 랜더
 	{
 		if (enemyTank)
 			enemyTank->Render(hdc, WIN_SIZE_X / 2 + 30, (WIN_SIZE_Y / 3 + 35) + (i * 45), 0, i, 0.5f);
@@ -243,10 +243,10 @@ void ScoreScene::Render(HDC hdc)
 			pts->Render(hdc, WIN_SIZE_X / 2 - 90, (WIN_SIZE_Y / 3 + 20) + (i * 45));
 	}
 
-	if (totalScore)
-		totalScore->Render(hdc, (int)(WIN_SIZE_X / 3 + 35), (int)(WIN_SIZE_Y * 0.8 - 15));	//토탈스코어 텍스트
+	if (totalScore)		//토탈스코어 텍스트
+		totalScore->Render(hdc, (int)(WIN_SIZE_X / 3 + 35), (int)(WIN_SIZE_Y * 0.8 - 15));	
 
-	if (bTotalScore)													//토탈 누적 킬수
+	if (bTotalScore)	//토탈 누적 킬수
 	{
 		if (totalKill < 10)
 		{
@@ -260,20 +260,20 @@ void ScoreScene::Render(HDC hdc)
 	}
 
 	// 점수 계산
-	if (bNormalTankScoreFinish)		//노말
+	if (bNormalTankScoreFinish)		// 노말
 	{
 		// 잡은 마리수 표기
-		if (normalTankCount < 10)	//1의자리
+		if (normalTankCount < 10)
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, normalTankCount % 5, normalTankCount / 5);
 		}
-		else //10의자리
+		else
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, WIN_SIZE_Y / 3 + 20, (normalTankCount % 10) % 5, (normalTankCount % 10) / 5);
 			number->Render(hdc, WIN_SIZE_X / 2 - 50, WIN_SIZE_Y / 3 + 20, (normalTankCount / 10) % 5, (normalTankCount / 10) / 5);
 		}
 
-		//점수-> 순서대로 1, 10, 100 ,1000 자리
+		//점수 표기
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, WIN_SIZE_Y / 3 + 20, 0, 0);
 		if (!normalTankCount == 0)
 		{
@@ -287,25 +287,23 @@ void ScoreScene::Render(HDC hdc)
 				number->Render(hdc, WIN_SIZE_X / 4 - 10, WIN_SIZE_Y / 3 + 20, (normalTankCount % 10) % 5, (normalTankCount % 10) / 5);
 				number->Render(hdc, WIN_SIZE_X / 4 - 22, WIN_SIZE_Y / 3 + 20, (normalTankCount / 10) % 5, (normalTankCount / 10) / 5);
 			}
-
 		}
-
 	}
 
-	if (bSpeedTankScoreFinish)		//스피드
+	if (bSpeedTankScoreFinish)		// 스피드
 	{
 		// 잡은 마리수 표기
-		if (speedTankCount < 10)	//1의자리
+		if (speedTankCount < 10)
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 45, speedTankCount % 5, speedTankCount / 5);
 		}
-		else //10의자리
+		else
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankCount % 10) % 5, (speedTankCount % 10) / 5);
 			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 45, (speedTankCount / 10) % 5, (speedTankCount / 10) / 5);
 		}
 
-		//점수 순서대로 1, 10, 100 ,1000 자리
+		//점수 표기
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 45, 0, 0);
 		if (!speedTankCount == 0)
 		{
@@ -322,20 +320,20 @@ void ScoreScene::Render(HDC hdc)
 		}
 	}
 
-	if (bRapidTankScoreFinish)		//래피드
+	if (bRapidTankScoreFinish)		// 래피드
 	{
 		// 잡은 마리수 표기
-		if (rapidTankCount < 10)	//1의자리
+		if (rapidTankCount < 10)
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 90, rapidTankCount % 5, rapidTankCount / 5);
 		}
-		else //10의자리
+		else
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankCount % 10) % 5, (rapidTankCount % 10) / 5);
 			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 90, (rapidTankCount / 10) % 5, (rapidTankCount / 10) / 5);
 		}
 
-		//점수 순서대로 1, 10, 100 ,1000 자리
+		// 점수 표기
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 90, 0, 0);
 		if (!rapidTankCount == 0)
 		{
@@ -354,20 +352,20 @@ void ScoreScene::Render(HDC hdc)
 		}
 	}
 
-	if (bDefensiveTankScoreFinish)		//보스
+	if (bDefensiveTankScoreFinish)		//디펜시브
 	{
 		// 잡은 마리수 표기
-		if (defensiveTankCount < 10)	//1의자리
+		if (defensiveTankCount < 10)
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 135, defensiveTankCount % 5, defensiveTankCount / 5);
 		}
-		else //10의자리
+		else
 		{
 			number->Render(hdc, WIN_SIZE_X / 2 - 40, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankCount % 10) % 5, (defensiveTankCount % 10) / 5);
 			number->Render(hdc, WIN_SIZE_X / 2 - 50, (WIN_SIZE_Y / 3 + 20) + 135, (defensiveTankCount / 10) % 5, (defensiveTankCount / 10) / 5);
 		}
 
-		//점수 순서대로 1, 10, 100 ,1000 자리
+		//점수 표기
 		number->Render(hdc, WIN_SIZE_X / 4 + 10, (WIN_SIZE_Y / 3 + 20) + 135, 0, 0);
 		if (!defensiveTankCount == 0)
 		{

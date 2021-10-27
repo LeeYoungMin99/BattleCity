@@ -93,12 +93,12 @@ HRESULT Stage::Init()
 		}
 	}
 
-	playerTankAmmoManager = DBG_NEW AmmoManager;
-	enemyTankAmmoManager = DBG_NEW AmmoManager;
+	playerTankAmmoManager = new AmmoManager;
+	enemyTankAmmoManager = new AmmoManager;
 
-	tankManager = DBG_NEW TankManager;
+	tankManager = new TankManager;
 
-	itemManager = DBG_NEW ItemManager;
+	itemManager = new ItemManager;
 	itemManager->Init(tileInfo);
 
 	tankManager->Init(enemyTankAmmoManager, playerTankAmmoManager, tileInfo, this, itemManager->GetAddressVecItem());
@@ -120,8 +120,8 @@ HRESULT Stage::Init()
 
 
 	spawnCount = 0;
-	GameManager::GetSingleton()->remainSpawnMonster = 3;
-	GameManager::GetSingleton()->remainMonster = 3;
+	GameManager::GetSingleton()->remainSpawnMonster = 10;
+	GameManager::GetSingleton()->remainMonster = 10;
 
 	stateElapsedCount = 0;
 	return S_OK;
@@ -129,8 +129,6 @@ HRESULT Stage::Init()
 
 void Stage::Update()
 {
-	cout << GameManager::GetSingleton()->player1GetItemCount << endl;
-
 	//게임 끝났을 때 
 	if (GameManager::GetSingleton()->state == GameState::Done)
 	{
@@ -389,7 +387,7 @@ void Stage::SpawnEnemyTank()
 		GameManager::GetSingleton()->remainSpawnMonster--;
 		currSpawnEnemy++;
 		elapsedCount -= spawmElapsedCount;
-		int randomType = RANDOM(3, 3);
+		int randomType = RANDOM(1, 4);
 
 		tankManager->AddEnemy((TankType)randomType, spawnEnemyPos[GameManager::GetSingleton()->spawnCount++]);
 

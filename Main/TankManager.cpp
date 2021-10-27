@@ -19,11 +19,11 @@ HRESULT TankManager::Init(AmmoManager* ammoManager, AmmoManager* targetAmmoManag
 		scoreImg[i].scoreImg = ImageManager::GetSingleton()->FindImage("Image/Icon/Point.bmp");
 	}
 
-	tankFactory[0] = DBG_NEW PlayerTankFactory;
-	tankFactory[1] = DBG_NEW NormalEnemyTankFactory;
-	tankFactory[2] = DBG_NEW SpeedEnemyTankFactory;
-	tankFactory[3] = DBG_NEW RapidEnemyTankFactory;
-	tankFactory[4] = DBG_NEW DefensiveEnemyTankFactory;
+	tankFactory[0] = new PlayerTankFactory;
+	tankFactory[1] = new NormalEnemyTankFactory;
+	tankFactory[2] = new SpeedEnemyTankFactory;
+	tankFactory[3] = new RapidEnemyTankFactory;
+	tankFactory[4] = new DefensiveEnemyTankFactory;
 
 	this->playerTank = tankFactory[0]->CreateTank();
 	this->tileInfo = tile;

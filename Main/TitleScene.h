@@ -15,8 +15,8 @@ private:
 	POINT pos = {};
 
 	selectedTitle selecTitle = {};
-	int slidePos = 0; //슬라이드효과 테스트
-	bool titleStart = false; //디버깅용
+	int slidePos = 0;		 
+	bool titleStart = false; 
 
 public:
 	virtual ~TitleScene() = default;
