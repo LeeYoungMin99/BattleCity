@@ -24,6 +24,7 @@ private:
 	int highScore = 0;
 	int player1Score = 0;
 
+	// 변수는 한 줄에 하나
 	int killNormalTank = 0, killSpeedTank = 0, killRapidTank = 0, killDefensiveTank = 0;		//종류별 죽인 탱크수
 	int normalTankCount = 0, speedTankCount = 0, rapidTankCount = 0, defensiveTankCount = 0;	//죽인 탱크를 1씩 카운트하기위한 변수
 	int normalTankScore = 0, speedTankScore = 0, rapidTankScore = 0, defensiveTankScore = 0;	//스코어 점수

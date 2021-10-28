@@ -33,7 +33,7 @@ public:
 
 	inline Tank* GetTank() { return tank; }
 	inline TankManager* GetEnemyManager() { return tankManager; };
-	inline int GetType() { return this->itemType; }
+	inline int GetType() { return this->itemType; } // const 한정자 어디로 갔는지..
 	inline ItemManager* GetItemManager() { return itemManager; }
 	inline void SetUseItem(bool useItem) { this->useItem = useItem; }
 	inline bool GetUseItem() { return this->useItem; }

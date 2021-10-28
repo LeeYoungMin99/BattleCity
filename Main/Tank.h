@@ -11,7 +11,7 @@ class Item;
 class Tank : public GameObject
 {
 protected:
-	int HP = 1;
+	int HP = 1; // 이건 왜 hp가 아니라 HP 인가
 	Image* spawnImg = nullptr;
 	Image* itemTank = nullptr;
 	float spawnTime = 2.0f;
@@ -37,12 +37,12 @@ protected:
 	AmmoManager* targetAmmoManager = nullptr;
 	GameEntity* stageInfo = nullptr;
 	TILE_INFO* tileInfo = nullptr;
-	Tank* playerTank = nullptr;
+	Tank* playerTank = nullptr; // Tank 클래스가 이 변수를 왜 가져야 하는가?
 	vector<Tank*>* enemyTanks = nullptr;
-	vector<Tank*>::iterator itEnemyTanks = {};
+	vector<Tank*>::iterator itEnemyTanks = {}; // 멤버로 사용할 이유가 없음
 	ItemManager* itemManager = nullptr;
-	vector<Item*>* ItemList = nullptr;
-	vector<Item*>::iterator itItemList = {};
+	vector<Item*>* ItemList = nullptr; // 탱크가 ItemList를 가져야 할 이유는?
+	vector<Item*>::iterator itItemList = {}; // 멤버로 사용할 이유가 없음
 
 	float changeDirectionDelay = (float)RANDOM(1, 3);
 	float elapsedCount = 0.0f;
@@ -67,7 +67,7 @@ public:
 	virtual void Move();
 	virtual void Fire();
 
-	virtual void CorrectionPosX();
+	virtual void CorrectionPosX(); // 함수는 동사로 시작해야 함
 	virtual void CorrectionPosY();
 
 	virtual bool IsCollided();
@@ -78,7 +78,7 @@ public:
 	void SpwanAnimation();
 	void FlashItemTank();
 
-	inline virtual void IncreaseScore() = 0;
+	inline virtual void IncreaseScore() = 0; // inline이 왜 있는지?
 
 	inline void SubtractHP(int damage) { this->HP -= damage; }
 	inline void SubtractCurrFireNumberOfAmmo(int a) { this->currFireNumberOfAmmo -= a; }
@@ -102,6 +102,7 @@ public:
 
 	void CheckItem();
 
+	// 어떨 땐 default 어떨 땐 {}
 	Tank() {};
 	virtual ~Tank() {}
 };

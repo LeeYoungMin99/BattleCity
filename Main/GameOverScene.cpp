@@ -47,5 +47,5 @@ void GameOverScene::Render(HDC hdc)
 
 void GameOverScene::Release()
 {
-
+	// gameOver와 backGround를 nullptr로 해줬으면 더 좋았을 것
 }

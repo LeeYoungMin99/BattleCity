@@ -7,10 +7,7 @@ void KeyManager::Init()
 		keyUp[i] = true;
 		keyDown[i] = false;
 
-		//keyUp.set(i, true);
-		//keyDown.set(i, false);
-
-		//keyUp.operator<<
+		// 안 쓰는 주석
 	}
 }
 
@@ -20,17 +17,7 @@ void KeyManager::Release()
 
 bool KeyManager::IsOnceKeyDown(int key)
 {
-	// 함수 호출 시점에 가상키(VK_...)가 어떤 상태인지 확인이 가능하다.
-	/*
-		1. 0x0000 ( 0000 0000 0000 0000 )
-		-> 이전 프레임에 누른적이 없고 호출시점에도 눌려있지 않다.
-		2. 0x0001 ( 0000 0000 0000 0001 )
-		-> 이전 프레임에 누른적이 있고 호출시점에는 눌려있지 않다.
-		3. 0x8000 ( 1000 0000 0000 0000 )
-		-> 이전 프레임에 누른적이 없고 호출시점에는 눌려있다.
-		4. 0x8001 ( 1000 0000 0000 0001 )
-		-> 이전 프레임에 누르적이 있고 호출시점에도 눌려있다.
-	*/
+	// 안 쓰는 주석
 	if (GetAsyncKeyState(key) & 0x8000)
 	{
 		if (keyDown[key] == false)
@@ -75,20 +62,7 @@ bool KeyManager::IsStayKeyDown(int key)
 	{
 		return true;
 	}
-	//else
-	//{
-	//}
-
-	//if (GetAsyncKeyState(key) & 0x0001)
-	//{
-	//	cout << "3. true : " << time(&currTime) << endl;
-	//	return true;
-	//}
-	//else
-	//{
-	//	cout << "4. false : " << time(&currTime) << endl;
-	//}
-	//cout << endl << endl;
+	// 안 쓰는 코드
 
 	return false;
 }

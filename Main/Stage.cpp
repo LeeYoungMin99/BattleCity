@@ -137,7 +137,7 @@ void Stage::Update()
 	}
 	else if (GameManager::GetSingleton()->state == GameState::Playing || GameManager::GetSingleton()->state == GameState::DestoryNexus) //게임 진행중
 	{
-		//SpawnEnemyTank
+		//SpawnEnemyTank => 의미 없는 주석
 		SpawnEnemyTank();
 
 		//ShowBulletCollider

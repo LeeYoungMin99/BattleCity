@@ -10,7 +10,7 @@ class AmmoManager;
 class Tank;
 class TankFactory;
 class ItemManager;
-class Stage : public GameEntity
+class Stage : public GameEntity // StageScene이 아닌 이유는?
 {
 public:
 	virtual ~Stage() = default;
