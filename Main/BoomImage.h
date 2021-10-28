@@ -1,6 +1,7 @@
 #pragma once
 #include "Config.h"
 
+// 얘는 왜 필요한 건가
 typedef struct BoomImageInfo
 {
 	bool bRenderBoomImg			= false;

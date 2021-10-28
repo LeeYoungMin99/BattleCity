@@ -6,6 +6,7 @@ enum class GameState{Playing, Done, DestoryNexus, GameOver};
 
 class GameManager : public Singleton<GameManager>
 {
+	// Ä¸½¶È­°¡ ±úÁü
 public:
 	int defeatNormalTank = 0;
 	int defeatSpeedTank = 0;
@@ -31,7 +32,7 @@ public:
 	virtual ~GameManager() = default;
 
 	void Init();
-	void ScoreSave();
+	void ScoreSave(); // ÇÔ¼ö´Â µ¿»çºÎÅÍ ½ÃÀÛ
 	void ScoreLoad();
 
 	inline void SetScore(int player1Score) { this->player1Score = player1Score; }

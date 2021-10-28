@@ -1,7 +1,7 @@
 #pragma once
 
 class Tank;
-class TankFactory
+class TankFactory // 인터페이스 역할은 앞에 I를 붙여주면 좋음
 {
 public:
 	virtual Tank* CreateTank() = 0;

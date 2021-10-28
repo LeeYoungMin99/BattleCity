@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "GameEntity.h"
 
-enum class selectedTitle{player_1, player_2, CONSTRUCTION};
+enum class selectedTitle{player_1, player_2, CONSTRUCTION}; // 컨벤션이 일관성 없음
 
 class Image;
 class TitleScene : public GameEntity

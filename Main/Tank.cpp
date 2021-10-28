@@ -389,7 +389,7 @@ void Tank::Move()
 		pos.x += moveSpeed;
 		SetShape();
 
-		if (IsCollided() || shape.right > 416 + STAGE_SIZE_X)
+		if (IsCollided() || shape.right > 416 + STAGE_SIZE_X) // 매직 넘버
 		{
 			pos.x -= moveSpeed;
 			SetShape();

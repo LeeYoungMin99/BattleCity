@@ -7,10 +7,10 @@
 HRESULT Item::Init(int type, int tile, Tank* tank, TankManager* tankManager, TILE_INFO* tileInfo, ItemManager* itemManager)
 {
 	string itemName = "Image/Item/Item";
-	itemName += to_string(type+1);
+	itemName += to_string(type+1); // 띄어쓰기
 	itemName += ".bmp";
 
-	itemImage = ImageManager::GetSingleton()->FindImage(itemName.c_str());
+	itemImage = ImageManager::GetSingleton()->FindImage(itemName.c_str()); // sprintf()를 썼으면 좀 더 깔끔하지 않았을까 싶음.
 	if (itemImage == nullptr)
 	{
 		return E_FAIL;

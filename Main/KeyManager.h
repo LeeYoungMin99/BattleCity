@@ -11,19 +11,7 @@ using namespace std;
 class KeyManager : public Singleton<KeyManager>
 {
 private:
-	// 멤버변수 (데이터타입, 자료구조)
-	//vector<int>
-	//bool keyState[KEY_MAX_COUNT];
-
-//protected:
-//	static KeyManager* instance;		// static 멤버 변수
-//
-//	Singleton() {};		// 생성자, 소멸자를 직접 호출하지 못하게 할거다.
-//	~Singleton() {};
-//
-//public:
-//	static KeyManager* GetSingleton();
-//	void ReleaseSingleton();
+	// 쓸데 없는 주석
 
 	bitset<KEY_MAX_COUNT>	keyUp;	// 키가 안 눌린 상태인지 아닌지
 	bitset<KEY_MAX_COUNT>	keyDown;// 키가 눌린 상태인지 아닌지
